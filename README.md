@@ -20,6 +20,19 @@ GTK pour l'interface avec l'utilisateur ?
 
 limite de champ de vision
 
+## build
+Build binary
+```shell
+cd build
+cmake ../src
+cmake --build .
+```
+Building Xcode Project
+```shell
+cd build
+cmake -G Xcode ../src
+```
+
 ## Les classes
 
 Object Scene

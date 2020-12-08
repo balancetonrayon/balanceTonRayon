@@ -1,15 +1,21 @@
 #pragma once
+
 #include <vector>
 #include <glm/geometric.hpp>
 #include <glm/gtx/intersect.hpp>
 #include <glm/vec3.hpp>
-#include "ray.hpp"
+#include "Ray.hpp"
 
 struct PhysicalObject
 {
     glm::vec3 pos;
 
-    explicit PhysicalObject(glm::vec3 pos) : pos(pos) {}
+    explicit PhysicalObject(glm::vec3 pos = glm::vec3()) : pos(pos) {}
+};
+
+struct LightSource : public PhysicalObject
+{
+    glm::vec3 color;
 };
 
 struct ObjectBase : public PhysicalObject
@@ -21,11 +27,6 @@ struct ObjectBase : public PhysicalObject
     std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc);
 
     explicit ObjectBase(glm::vec3 pos) : PhysicalObject(pos) {}
-};
-
-struct LightSource : public PhysicalObject
-{
-    glm::vec3 color;
 };
 
 struct Camera : public PhysicalObject
