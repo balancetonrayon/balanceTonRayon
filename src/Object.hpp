@@ -11,20 +11,18 @@ struct PhysicalObject
 {
     glm::vec3 pos;
 
-    PhysicalObject();
-    explicit PhysicalObject(glm::vec3 pos) : pos(pos) {}
+    explicit PhysicalObject(glm::vec3 pos = glm::vec3()) : pos(pos) {}
 
-    ~PhysicalObject();
+    //~PhysicalObject();
 };
 
 struct LightSource : public PhysicalObject
 {
     glm::vec3 color;
 
-    LightSource();
-    explicit LightSource(glm::vec3 pos, glm::vec3 color) : PhysicalObject(pos), color(color) {}
+    explicit LightSource(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3()) : PhysicalObject(pos), color(color) {}
 
-    ~LightSource();
+    //~LightSource();
 };
 
 struct ObjectBase : public PhysicalObject
@@ -41,8 +39,6 @@ struct ObjectBase : public PhysicalObject
 
     ~ObjectBase();
 };
-
-
 
 struct Camera : public PhysicalObject
 {
@@ -63,11 +59,10 @@ struct Camera : public PhysicalObject
         return Ray(pos, glm::normalize(dir));
     };
 
-    Camera();
-    explicit Camera(glm::vec3 pos, float sx, float sy, unsigned rx, unsigned ry, float fL) : PhysicalObject(pos), sizeX(sx), sizeY(sy),
-                                                                                             resX(rx), resY(ry), focalLength(fL) {}
+    explicit Camera(glm::vec3 pos = glm::vec3(), float sx = 1, float sy = 1, unsigned rx = 1000, unsigned ry = 1000, float fL = 1) : PhysicalObject(pos), sizeX(sx), sizeY(sy),
+                                                                                                                                     resX(rx), resY(ry), focalLength(fL) {}
 
-    ~Camera();
+    //~Camera();
 };
 
 struct Plane : public ObjectBase
