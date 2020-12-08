@@ -7,23 +7,39 @@
 #include <glm/gtx/intersect.hpp>
 #include <glm/vec3.hpp>
 #include "Ray.hpp"
+#include "RayTracing.hpp"
+
+std::ostream &operator<<(std::ostream &out, const glm::vec3 &vec)
+{
+    out << "{"
+        << vec.x << " " << vec.y << " " << vec.z
+        << "}";
+
+    return out;
+}
 
 struct PhysicalObject
 {
     glm::vec3 pos;
 
     explicit PhysicalObject(glm::vec3 pos = glm::vec3()) : pos(pos) {}
-};
-std::ostream &operator<<(std::ostream &Stream, PhysicalObject &Obj) {}
 
-struct LightSource : public PhysicalObject
+    virtual std::ostream &printInfo(std::ostream &os) const = 0;
+};
+
+struct LightSource : public virtual PhysicalObject
 {
     glm::vec3 color;
 
     explicit LightSource(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3()) : PhysicalObject(pos), color(color) {}
+
+    std::ostream &printInfo(std::ostream &os) const
+    {
+        return os << "LightSource: in " << pos << ", of color: " << color;
+    }
 };
 
-struct ObjectBase : public PhysicalObject
+struct ObjectBase : public virtual PhysicalObject
 {
     glm::vec3 color;
     float transparency;
@@ -35,7 +51,7 @@ struct ObjectBase : public PhysicalObject
     explicit ObjectBase(glm::vec3 pos, float t, float r) : PhysicalObject(pos), transparency(t), refractiveIndex(r) {}
 };
 
-struct Camera : public PhysicalObject
+struct Camera : public virtual PhysicalObject
 {
     // Size of the screen
     float sizeX;
@@ -56,9 +72,14 @@ struct Camera : public PhysicalObject
 
     explicit Camera(glm::vec3 pos = glm::vec3(), float sx = 1, float sy = 1, unsigned rx = 1000, unsigned ry = 1000, float fL = 1) : PhysicalObject(pos), sizeX(sx), sizeY(sy),
                                                                                                                                      resX(rx), resY(ry), focalLength(fL) {}
+
+    std::ostream &printInfo(std::ostream &os) const
+    {
+        return os << "Camera: in " << pos << ", of size: " << sizeX;
+    }
 };
 
-struct Plane : public ObjectBase
+struct Plane : public virtual ObjectBase
 {
     glm::vec3 normal; //Orthogonal vector in unit length
 
@@ -80,9 +101,14 @@ struct Plane : public ObjectBase
     }
 
     explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 normal = glm::vec3(1, 1, 1)) : ObjectBase(pos), normal(glm::normalize(normal)) {}
+
+    std::ostream &printInfo(std::ostream &os) const
+    {
+        return os << "Plane: in " << pos << ", of normal " << normal;
+    }
 };
 
-struct Sphere : public ObjectBase
+struct Sphere : public virtual ObjectBase
 {
     float radius;
 
@@ -105,38 +131,14 @@ struct Sphere : public ObjectBase
     }
 
     explicit Sphere(glm::vec3 pos, float radius) : ObjectBase(pos), radius(radius) {}
+
+    std::ostream &printInfo(std::ostream &os) const
+    {
+        return os << "Sphere: in " << pos << ", of radius: " << radius;
+    }
 };
 
-std::ostream &operator<<(std::ostream &out, const glm::vec3 &vec)
+std::ostream &operator<<(std::ostream &stream, PhysicalObject const &obj)
 {
-    out << "{"
-        << vec.x << " " << vec.y << " " << vec.z
-        << "}";
-
-    return out;
+    return obj.printInfo(stream);
 }
-
-// A eventuellement mieux coder
-std::ostream &operator<<(std::ostream &Stream, LightSource &Obj)
-{
-    Stream << "LightSource: in " << Obj.pos << ", of color: " << Obj.color;
-    return Stream;
-};
-
-std::ostream &operator<<(std::ostream &Stream, Camera &Obj)
-{
-    Stream << "Camera: in " << Obj.pos << ", of size: " << Obj.sizeX;
-    return Stream;
-};
-
-std::ostream &operator<<(std::ostream &Stream, Sphere &Obj)
-{
-    Stream << "Sphere: in " << Obj.pos << ", of radius: " << Obj.radius;
-    return Stream;
-};
-
-std::ostream &operator<<(std::ostream &Stream, Plane &Obj)
-{
-    Stream << "Plane: in " << Obj.pos << ", of normal " << Obj.normal;
-    return Stream;
-};
