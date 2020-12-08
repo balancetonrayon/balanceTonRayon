@@ -1,4 +1,5 @@
 #pragma once
+#define GLM_ENABLE_EXPERIMENTAL
 
 #include <vector>
 #include <glm/geometric.hpp>
@@ -16,6 +17,16 @@ struct PhysicalObject
     ~PhysicalObject();
 };
 
+struct LightSource : public PhysicalObject
+{
+    glm::vec3 color;
+
+    LightSource();
+    explicit LightSource(glm::vec3 pos, glm::vec3 color) : PhysicalObject(pos), color(color) {}
+
+    ~LightSource();
+};
+
 struct ObjectBase : public PhysicalObject
 {
     glm::vec3 color;
@@ -26,21 +37,12 @@ struct ObjectBase : public PhysicalObject
 
     ObjectBase();
     explicit ObjectBase(glm::vec3 pos) : PhysicalObject(pos) {}
-
     explicit ObjectBase(glm::vec3 pos, float t, float r) : PhysicalObject(pos), transparency(t), refractiveIndex(r) {}
 
     ~ObjectBase();
 };
 
-struct LightSource : public PhysicalObject
-{
-    glm::vec3 color;
 
-    LightSource();
-    explicit LightSource(glm::vec3 pos, glm::vec3 color) : ObjectBase(pos), color(color) {}
-
-    ~LightSource();
-};
 
 struct Camera : public PhysicalObject
 {
@@ -57,7 +59,7 @@ struct Camera : public PhysicalObject
     Ray genRay(unsigned x, unsigned y)
     {
         //EXCEPTION A AJOUTER
-        glm::vec3 dir;
+        glm::vec3 dir((0.5 - ((float)x) / resX) * sizeX, (-0.5 + ((float)y) / resY) * sizeY, focalLength);
         return Ray(pos, glm::normalize(dir));
     };
 

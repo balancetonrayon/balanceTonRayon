@@ -4,7 +4,7 @@
 struct Ray
 {
     glm::vec3 initPt;
-    glm::vec3 dir; //in unit length
+    glm::vec3 dir; //normalized
 
     Ray();
 
