@@ -3,22 +3,25 @@
 int main(int argc, const char **argv)
 {
     Scene scene;
-    Plane plan;
-    Camera camera;
-    LightSource LSrc;
-    scene.add(plan);
-    scene.add(camera);
-    scene.add(LSrc);
+    
+    auto plane = std::make_shared<Plane>();
+    auto camera = std::make_shared<Camera>();
+    auto lightSource = std::make_shared<LightSource>();
+    
+    scene.addObject(plane);
+    scene.setCamera(camera);
+    scene.addSource(lightSource);
+    
     auto objects = scene.getObjects();
     auto sources = scene.getSources();
 
     std::cout << camera << std::endl;
-    std::cout << plan << std::endl;
-    std::cout << LSrc << std::endl;
+    std::cout << plane << std::endl;
+    std::cout << lightSource << std::endl;
 
     for (auto object : objects)
     {
-        //std::cout << object << std::endl;
+        std::cout << *object << std::endl;
     }
 
     return 0;

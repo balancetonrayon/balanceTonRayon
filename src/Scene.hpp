@@ -1,31 +1,30 @@
 #pragma once
+
+#include <memory>
 #include "Object.hpp"
 
 class Scene
 {
-    std::vector<PhysicalObject> objects;
+    std::vector<std::shared_ptr<PhysicalObject>> objects;
 
-    std::vector<LightSource> sources;
+    std::vector<std::shared_ptr<LightSource>> sources;
 
-    Camera camera;
+    std::shared_ptr<Camera> camera;
 
 public:
-    auto getObjects() { return objects; }
-    auto getSources() { return sources; }
-    auto getCamera() { return camera; }
-
-    void add(const Camera &cam)
-    {
-        camera = cam;
-    }
-
-    void add(const LightSource &LSrc)
-    {
-        sources.push_back(LSrc);
-    }
-
-    void add(const ObjectBase &object)
+    auto getObjects() const { return objects; }
+    auto getSources() const { return sources; }
+    auto getCamera() const { return camera; }
+    
+    void addObject(std::shared_ptr<PhysicalObject> object)
     {
         objects.push_back(object);
     }
+    
+    void addSource(std::shared_ptr<LightSource> source)
+    {
+        sources.push_back(source);
+    }
+    
+    void setCamera(std::shared_ptr<Camera> camera) { this->camera = camera; }
 };
