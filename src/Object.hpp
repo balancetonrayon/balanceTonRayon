@@ -1,9 +1,10 @@
 #pragma once
+
 #include <vector>
 #include <glm/geometric.hpp>
 #include <glm/gtx/intersect.hpp>
 #include <glm/vec3.hpp>
-#include "ray.hpp"
+#include "Ray.hpp"
 
 struct PhysicalObject
 {
@@ -56,12 +57,12 @@ struct Camera : public PhysicalObject
     Ray genRay(unsigned x, unsigned y)
     {
         //EXCEPTION A AJOUTER
-        glm::vec3 dir();
+        glm::vec3 dir;
         return Ray(pos, glm::normalize(dir));
     };
 
     Camera();
-    explicit Camera(glm::vec3 pos, float sx, float sy, unsigned rx, unsigned ry, float fL) : ObjectBase(pos), sizeX(sx), sizeY(xy),
+    explicit Camera(glm::vec3 pos, float sx, float sy, unsigned rx, unsigned ry, float fL) : PhysicalObject(pos), sizeX(sx), sizeY(sy),
                                                                                              resX(rx), resY(ry), focalLength(fL) {}
 
     ~Camera();
