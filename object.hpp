@@ -9,7 +9,10 @@ struct PhysicalObject
 {
     glm::vec3 pos;
 
+    PhysicalObject();
     explicit PhysicalObject(glm::vec3 pos) : pos(pos) {}
+
+    ~PhysicalObject();
 };
 
 struct ObjectBase : public PhysicalObject
@@ -20,24 +23,48 @@ struct ObjectBase : public PhysicalObject
 
     std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc);
 
+    ObjectBase();
     explicit ObjectBase(glm::vec3 pos) : PhysicalObject(pos) {}
+
+    explicit ObjectBase(glm::vec3 pos, float t, float r) : PhysicalObject(pos), transparency(t), refractiveIndex(r) {}
+
+    ~ObjectBase();
 };
 
 struct LightSource : public PhysicalObject
 {
     glm::vec3 color;
+
+    LightSource();
+    explicit LightSource(glm::vec3 pos, glm::vec3 color) : ObjectBase(pos), color(color) {}
+
+    ~LightSource();
 };
 
 struct Camera : public PhysicalObject
 {
+    // Size of the screen
+    float sizeX;
+    float sizeY;
+
+    // Resolution of the screen
     unsigned resX;
-    unsigned resY; 
+    unsigned resY;
+
     float focalLength;
 
-    Ray genRay(unsigned x, unsigned y) {
-        glm::vec3 dir;
-        return Ray(pos, dir);
+    Ray genRay(unsigned x, unsigned y)
+    {
+        //EXCEPTION A AJOUTER
+        glm::vec3 dir();
+        return Ray(pos, glm::normalize(dir));
     };
+
+    Camera();
+    explicit Camera(glm::vec3 pos, float sx, float sy, unsigned rx, unsigned ry, float fL) : ObjectBase(pos), sizeX(sx), sizeY(xy),
+                                                                                             resX(rx), resY(ry), focalLength(fL) {}
+
+    ~Camera();
 };
 
 struct Plane : public ObjectBase
@@ -62,7 +89,6 @@ struct Plane : public ObjectBase
     }
 
     Plane();
-
     explicit Plane(glm::vec3 pos, glm::vec3 normal) : ObjectBase(pos), normal(glm::normalize(normal)) {}
 
     ~Plane();
@@ -91,7 +117,6 @@ struct Sphere : public ObjectBase
     }
 
     Sphere();
-
     explicit Sphere(glm::vec3 pos, float radius) : ObjectBase(pos), radius(radius) {}
 
     ~Sphere();
