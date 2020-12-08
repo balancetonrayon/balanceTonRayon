@@ -1,4 +1,5 @@
 #include "Object.hpp"
+#include "utils.hpp"
 
 std::ostream &LightSource::printInfo(std::ostream &os) const
 {

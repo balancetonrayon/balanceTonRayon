@@ -19,6 +19,7 @@ set(SRC
     RayTracing.hpp
     Ray.hpp
     Object.hpp
+    utils.hpp
 )
 
 target_sources(RayTracing PRIVATE "${SRC}")

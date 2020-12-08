@@ -15,10 +15,6 @@ int main(int argc, const char **argv)
     auto objects = scene.getObjects();
     auto sources = scene.getSources();
 
-    std::cout << camera << std::endl;
-    std::cout << plane << std::endl;
-    std::cout << lightSource << std::endl;
-
     for (auto object : objects)
     {
         std::cout << *object << std::endl;

@@ -9,14 +9,6 @@
 #include "Ray.hpp"
 #include "RayTracing.hpp"
 
-std::ostream &operator<<(std::ostream &out, const glm::vec3 &vec)
-{
-    out << "{"
-        << vec.x << " " << vec.y << " " << vec.z
-        << "}";
-
-    return out;
-}
 
 struct PhysicalObject
 {
@@ -25,6 +17,11 @@ struct PhysicalObject
     virtual std::ostream &printInfo(std::ostream &os) const = 0;
 
     explicit PhysicalObject(glm::vec3 pos = glm::vec3()) : pos(pos) {}
+    
+    friend std::ostream &operator<<(std::ostream &stream, PhysicalObject const &obj)
+    {
+        return obj.printInfo(stream);
+    }
 };
 
 struct LightSource : public virtual PhysicalObject
@@ -87,8 +84,3 @@ struct Sphere : public virtual ObjectBase
 
     std::ostream &printInfo(std::ostream &os) const;
 };
-
-std::ostream &operator<<(std::ostream &stream, PhysicalObject const &obj)
-{
-    return obj.printInfo(stream);
-}
