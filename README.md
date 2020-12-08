@@ -24,6 +24,10 @@ limite de champ de vision
 
 Object Scene
 
+Object base
+
+- geometrie (x, y, z)
+
 Object Ray
 
 - longueur d'onde (phase 3)
@@ -40,6 +44,8 @@ Object Source lumineuse
 
 - couleur
 - cône
+
+Object Camera
 
 intersection et union : object qui contient plusieurs objets
 
