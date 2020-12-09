@@ -2,10 +2,11 @@
 
 int main(int argc, const char **argv)
 {
+
     Scene scene;
 
     auto plane = std::make_shared<Plane>();
-    auto camera = std::make_shared<Camera>(glm::vec3(0, 0, 1));
+    auto camera = std::make_shared<Camera>(glm::vec3(0, 0, 1), 0.1, 0.1, 11, 11, 0.2);
     auto lightSource = std::make_shared<LightSource>(glm::vec3(5, 0, 10));
 
     scene.addObject(plane);
@@ -15,6 +16,7 @@ int main(int argc, const char **argv)
     auto objects = scene.getObjects();
     auto sources = scene.getSources();
 
+    cv::mat pixels;
     std::cout << *camera << std::endl;
     for (auto object : objects)
     {
@@ -32,7 +34,11 @@ int main(int argc, const char **argv)
             {
                 std::cout << *object << std::endl;
                 shadowRays = object->intersect(primRay, *lightSource);
-                if (shadowRays.size()) std::cout << "Y";
+                if (shadowRays.size())
+                {
+                    std::cout << "Y" << std::endl;
+                };
+                
             }
         }
     }
