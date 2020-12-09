@@ -30,6 +30,8 @@ Contexte d'utilisation : ray_tracing pour l'affichage et la modélisation d'une 
 - importation d'objets définis de façon externe
 - importation de textures
 
+#### Interaction avec le développeur 
+
 #### 4 - Fonctions de base
 
 -
@@ -83,6 +85,7 @@ Contexte d'utilisation : ray_tracing pour l'affichage et la modélisation d'une 
 ### 2 - Les concepts de modularité et d'extensibilité
 
 - utiliser un maximum l'héritage de classes
+- maximiser le polymorphisme. On va éviter de créer chaque fonction pour chaque objet. Cela compliquerait nettement l'ajout de futures formes.
 - éventuellement utiliser des templates pour gérer la précision des calculs.
 
 ### 3 - Les interactions entre ces éléments

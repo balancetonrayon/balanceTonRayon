@@ -5,7 +5,7 @@
 
 class Scene
 {
-    std::vector<std::shared_ptr<PhysicalObject>> objects;
+    std::vector<std::shared_ptr<ObjectBase>> objects;
 
     std::vector<std::shared_ptr<LightSource>> sources;
 
@@ -16,7 +16,7 @@ public:
     auto getSources() const { return sources; }
     auto getCamera() const { return camera; }
     
-    void addObject(std::shared_ptr<PhysicalObject> object)
+    void addObject(std::shared_ptr<ObjectBase> object)
     {
         objects.push_back(object);
     }

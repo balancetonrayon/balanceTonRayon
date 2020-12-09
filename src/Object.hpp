@@ -9,27 +9,61 @@
 #include "Ray.hpp"
 #include "RayTracing.hpp"
 
-
+//!  The core Object class.
+/*!
+  Every object which has a physical meaning is deriving from this class.
+*/
 struct PhysicalObject
 {
+    //! A public variable.
+    /*!
+      pos is the 3D location of the object.
+    */
     glm::vec3 pos;
 
+    //! A pure virtual function returning the information about an object.
+    /*!
+      \param os the current ostream.
+      \return the information of the object as an ostream
+    */
     virtual std::ostream &printInfo(std::ostream &os) const = 0;
 
+    //! The default constructor.
+    /*!
+      It puts the object in (0,0,0).
+    */
     explicit PhysicalObject(glm::vec3 pos = glm::vec3()) : pos(pos) {}
-    
+
     friend std::ostream &operator<<(std::ostream &stream, PhysicalObject const &obj)
     {
         return obj.printInfo(stream);
     }
 };
 
+//!  The light-source Object class.
+/*!
+  The object represents a light-source, which is located at pos.
+*/
 struct LightSource : public virtual PhysicalObject
 {
+
+    //! A public variable.
+    /*!
+      color represents the color of the light-source.
+    */
     glm::vec3 color;
 
+    //! A normal member taking one argument and returning the information about an object.
+    /*!
+      \param os the current ostream
+      \return The information of the object as an ostream
+    */
     std::ostream &printInfo(std::ostream &os) const;
 
+    //! The default constructor.
+    /*!
+      It puts the object in (0, 0, 0), and selects (0, 0, 0) as the color of the source.
+    */
     explicit LightSource(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3()) : PhysicalObject(pos), color(color) {}
 };
 
@@ -39,7 +73,7 @@ struct ObjectBase : public virtual PhysicalObject
     float transparency;
     float refractiveIndex;
 
-    std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc);
+    virtual std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc) = 0;
 
     explicit ObjectBase(glm::vec3 pos) : PhysicalObject(pos) {}
     explicit ObjectBase(glm::vec3 pos, float t, float r) : PhysicalObject(pos), transparency(t), refractiveIndex(r) {}
@@ -47,6 +81,12 @@ struct ObjectBase : public virtual PhysicalObject
 
 struct Camera : public virtual PhysicalObject
 {
+    //! A public variable.
+    /*!
+      Direction of the camera.
+    */
+    glm::vec3 dir;
+
     // Size of the screen
     float sizeX;
     float sizeY;
@@ -57,30 +97,71 @@ struct Camera : public virtual PhysicalObject
 
     float focalLength;
 
+    //! A normal member taking two arguments and returning the generated ray
+    /*!
+      \param x the number of the x pixel
+      \return the number of the y pixel
+    */
     Ray genRay(unsigned x, unsigned y);
+
+    //! A normal member taking one argument and returning the information about an object.
+    /*!
+      \param os the current osstream
+      \return The information of the object as an ostream
+    */
     std::ostream &printInfo(std::ostream &os) const;
 
+    //! The default constructor.
+    /*!
+      Creates a Camera at (0, 0, 0) with screen of size (1, 1) and (1000, 1000) pixels 1 away from the image sensor.
+    */
     explicit Camera(glm::vec3 pos = glm::vec3(), float sx = 1, float sy = 1, unsigned rx = 1000, unsigned ry = 1000, float fL = 1) : PhysicalObject(pos), sizeX(sx), sizeY(sy),
                                                                                                                                      resX(rx), resY(ry), focalLength(fL) {}
 };
 
 struct Plane : public virtual ObjectBase
 {
-    glm::vec3 normal; //Orthogonal vector in unit length
+    //! A public variable.
+    /*!
+      The normal vector of the plane
+    */
+    glm::vec3 normal; //
 
     std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc);
+
+    //! A normal member taking one argument and returning the information about an object.
+    /*!
+      \param os the current osstream
+      \return The information of the object as an ostream
+    */
     std::ostream &printInfo(std::ostream &os) const;
 
-    explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 normal = glm::vec3(1, 1, 1)) : ObjectBase(pos), normal(glm::normalize(normal)) {}
+    //! The default constructor.
+    /*Creates a Plan of normal (0, 0, 1) and containing (0, 0, 0) by default.
+    */
+    explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 normal = glm::vec3(0, 0, 1)) : ObjectBase(pos), normal(glm::normalize(normal)) {}
 };
 
 struct Sphere : public virtual ObjectBase
 {
+    //! A public variable.
+    /*!
+      The radius of the sphere
+    */
     float radius;
 
     std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc);
 
-    explicit Sphere(glm::vec3 pos, float radius) : ObjectBase(pos), radius(radius) {}
-
+    //! A normal member taking one argument and returning the information about an object.
+    /*!
+      \param os the current osstream
+      \return The information of the object as an ostream
+    */
     std::ostream &printInfo(std::ostream &os) const;
+
+    //! The default constructor.
+    /*!
+      Creates a Sphere in (0, 0, 0) of radius 1 by default.
+    */
+    explicit Sphere(glm::vec3 pos = glm::vec3(), float radius = 1) : ObjectBase(pos), radius(radius) {}
 };

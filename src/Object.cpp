@@ -10,7 +10,7 @@ Ray Camera::genRay(unsigned x, unsigned y)
 {
     //EXCEPTION A AJOUTER
     glm::vec3 dir((0.5 - ((float)x) / resX) * sizeX, (-0.5 + ((float)y) / resY) * sizeY, focalLength);
-    return Ray(pos, glm::normalize(dir));
+    return Ray(pos, dir);
 };
 
 std::ostream &Camera::printInfo(std::ostream &os) const
