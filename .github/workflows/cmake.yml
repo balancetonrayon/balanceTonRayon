@@ -18,11 +18,9 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: Install dependencies
-      run: sudo apt-get update
-      run: sudo apt-get install libglm-dev
-
-      # OpenCV install
       run: |
+        sudo apt-get update
+        sudo apt-get install libglm-dev
         wget -O opencv.zip https://github.com/opencv/opencv/archive/master.zip
         unzip opencv.zip
         mkdir -p build && cd build
