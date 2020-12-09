@@ -12,13 +12,14 @@ add_executable(RayTracing main.cpp)
 
 set(SRC
     Scene.cpp
-    RayTracing.cpp
+    RayTracer.cpp
     Object.cpp
     
     Scene.hpp
-    RayTracing.hpp
+    RayTracer.hpp
     Ray.hpp
     Object.hpp
+    
     utils.hpp
 )
 

@@ -7,7 +7,6 @@
 #include <glm/gtx/intersect.hpp>
 #include <glm/vec3.hpp>
 #include "Ray.hpp"
-#include "RayTracing.hpp"
 
 //!  The core Object class.
 /*!

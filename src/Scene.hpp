@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "RayTracer.hpp"
 #include "Object.hpp"
 
 class Scene
@@ -10,6 +11,8 @@ class Scene
     std::vector<std::shared_ptr<LightSource>> sources;
 
     std::shared_ptr<Camera> camera;
+    
+    RayTracer rt;
 
 public:
     auto getObjects() const { return objects; }
@@ -27,4 +30,6 @@ public:
     }
     
     void setCamera(std::shared_ptr<Camera> camera) { this->camera = camera; }
+    
+    void render();
 };
