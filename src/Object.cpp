@@ -27,18 +27,15 @@ std::vector<Ray> Plane::intersect(const Ray ray, const LightSource ltSrc)
     bool inter = glm::intersectRayPlane(ray.initPt, ray.dir, pos, normal, distance);
     if (inter)
     {
-        std::cout << "Distance à l'intersection: " << distance << std::endl;
         glm::vec3 intersectPt = distance * ray.initPt;
         glm::vec3 dir = glm::normalize(-intersectPt + ltSrc.pos);
 
         // Si la source n'est pas derrière le plan, on ajoute le rayon réfléchi
-        std::cout << glm::dot(dir, normal) << std::endl;
         if (glm::dot(dir, normal) > 0)
         {
             rays.push_back(Ray(intersectPt, dir));
         }
     }
-    std::cout << rays.size() << std::endl;
     return rays;
 }
 
@@ -54,13 +51,15 @@ std::vector<Ray> Sphere::intersect(const Ray ray, const LightSource ltSrc)
     glm::vec3 intersectPt;
     glm::vec3 normal;
     bool inter = glm::intersectRaySphere(ray.initPt, ray.dir, pos, radius, intersectPt, normal);
-
-    glm::vec3 dir = glm::normalize(intersectPt - ltSrc.pos);
-
-    // Si la source n'est pas derrière la sphère, on ajoute le rayon réfléchi
-    if (glm::dot(dir, normal) > 0)
+    if (inter)
     {
-        rays.push_back(Ray(intersectPt, dir));
+        glm::vec3 dir = glm::normalize(ltSrc.pos- intersectPt);
+
+        // Si la source n'est pas derrière la sphère, on ajoute le rayon réfléchi
+        if (glm::dot(dir, normal) > 0)
+        {
+            rays.push_back(Ray(intersectPt, dir));
+        }
     }
     return rays;
 }

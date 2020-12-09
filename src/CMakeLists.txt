@@ -25,7 +25,7 @@ set(SRC
 target_sources(RayTracing PRIVATE "${SRC}")
 
 # GLM
-find_package(GLM CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 target_include_directories(RayTracing PUBLIC "${GLM_INCLUDE_DIRS}")
 
 # OpenCV
