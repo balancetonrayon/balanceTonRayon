@@ -1,5 +1,7 @@
 #include "Scene.hpp"
 
+#include <opencv2/opencv.hpp>
+
 int main(int argc, const char **argv)
 {
     Scene scene;
@@ -21,6 +23,7 @@ int main(int argc, const char **argv)
         std::cout << *object << std::endl;
     }
 
+    cv::Mat image;
     for (unsigned x = 0; x < camera->resX; ++x)
     {
         for (unsigned y = 0; y < camera->resY; ++y)
