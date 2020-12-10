@@ -26,7 +26,7 @@ std::vector<Ray> Plane::intersect(const Ray ray, const LightSource ltSrc, float 
     bool inter = glm::intersectRayPlane(ray.initPt, ray.dir, pos, normal, distance);
     if (inter)
     {
-        glm::vec3 intersectPt = distance * ray.initPt;
+        glm::vec3 intersectPt = distance * ray.dir;
         glm::vec3 dir = glm::normalize(ltSrc.pos-intersectPt);
 
         hitNormal = normal;
