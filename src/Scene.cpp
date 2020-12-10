@@ -9,6 +9,7 @@ void Scene::render()
 
     for (unsigned x = 0; x < camera->resX; ++x)
     {
+        //std::cout << x << std::endl;
         for (unsigned y = 0; y < camera->resY; ++y)
         {
             Ray primRay = camera->genRay(x, y);
@@ -28,12 +29,14 @@ void Scene::render()
             }
             if (hitObject)
             {
+
                 shadowRays = hitObject->intersect(primRay, *lightSource, distance, hitNormal);
-                //std::cout << 0.18 / M_PI * lightSource->intensity * /*lightSource->color **/ std::max(0.f, glm::dot(hitNormal, -primRay.dir)) * 255 << std::endl;
+                //std::cout << hitNormal << " " << shadowRays[0].dir << std::endl;
+                //std::cout << "intensity: " << lightSource->intensity << " dot: " << std::max(0.f, glm::dot(hitNormal, shadowRays[0].dir)) << " albedo: " << hitObject->albedo << std::endl;
                 cv::Vec3b &color = image.at<cv::Vec3b>(x, y);
-                color[0] = /*hitObject->albedo*/ 0.18 / M_PI * lightSource->intensity * /*lightSource->color **/ std::max(0.f, glm::dot(hitNormal, shadowRays[0].dir)) * 255*4;
-                color[1] = /*hitObject->albedo*/ 0.18 / M_PI * lightSource->intensity * /*lightSource->color **/ std::max(0.f, glm::dot(hitNormal, shadowRays[0].dir)) * 255*4;
-                color[2] = /*hitObject->albedo*/ 0.18 / M_PI * lightSource->intensity * /*lightSource->color **/ std::max(0.f, glm::dot(hitNormal, shadowRays[0].dir)) * 255*4;
+                color[0] = hitObject->albedo / M_PI * lightSource->intensity * /*lightSource->color **/ std::max(0.f, glm::dot(hitNormal, shadowRays[0].dir)) * 255 * 4;
+                color[1] = hitObject->albedo / M_PI * lightSource->intensity * /*lightSource->color **/ std::max(0.f, glm::dot(hitNormal, shadowRays[0].dir)) * 255 * 4;
+                color[2] = hitObject->albedo / M_PI * lightSource->intensity * /*lightSource->color **/ std::max(0.f, glm::dot(hitNormal, shadowRays[0].dir)) * 255 * 4;
                 image.at<cv::Vec3b>(x, y) = color;
             };
         }

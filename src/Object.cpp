@@ -22,14 +22,14 @@ std::ostream &Camera::printInfo(std::ostream &os) const
 std::vector<Ray> Plane::intersect(const Ray ray, const LightSource ltSrc, float &distance, glm::vec3 &hitNormal)
 {
     std::vector<Ray> rays;
-    // Calcul du point d'intersection
 
-    bool inter = glm::intersectRayPlane(ray.initPt, ray.dir, pos, hitNormal, distance);
+    bool inter = glm::intersectRayPlane(ray.initPt, ray.dir, pos, normal, distance);
     if (inter)
     {
         glm::vec3 intersectPt = distance * ray.initPt;
-        glm::vec3 dir = glm::normalize(-intersectPt + ltSrc.pos);
+        glm::vec3 dir = glm::normalize(ltSrc.pos-intersectPt);
 
+        hitNormal = normal;
         rays.push_back(Ray(intersectPt, dir));
     }
     return rays;
@@ -37,7 +37,7 @@ std::vector<Ray> Plane::intersect(const Ray ray, const LightSource ltSrc, float 
 
 std::ostream &Plane::printInfo(std::ostream &os) const
 {
-    return os << "Sphere: " << std::endl
+    return os << "Plan: " << std::endl
               << "at: " << pos << std::endl
               << "normal: " << normal << std::endl
               << "albedo: " << albedo;
