@@ -43,7 +43,7 @@ struct PhysicalObject
 /*!
   The object represents a light-source, which is located at pos.
 */
-struct LightSource : public virtual PhysicalObject
+struct LightSource : public PhysicalObject
 {
 
     //! A public variable.
@@ -66,7 +66,7 @@ struct LightSource : public virtual PhysicalObject
     explicit LightSource(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3()) : PhysicalObject(pos), color(color), intensity(3) {}
 };
 
-struct ObjectBase : public virtual PhysicalObject
+struct ObjectBase : public PhysicalObject
 {
     glm::vec3 color;
     float transparency;
@@ -82,7 +82,7 @@ struct ObjectBase : public virtual PhysicalObject
     //explicit ObjectBase(glm::vec3 pos, float t, float r, float a) : PhysicalObject(pos), transparency(t), refractiveIndex(r), albedo(a) {}
 };
 
-struct Camera : public virtual PhysicalObject
+struct Camera : public PhysicalObject
 {
     //! A public variable.
     /*!
@@ -122,7 +122,7 @@ struct Camera : public virtual PhysicalObject
                                                                                                                                      resX(rx), resY(ry), focalLength(fL) {}
 };
 
-struct Plane : public virtual ObjectBase
+struct Plane : public ObjectBase
 {
     //! A public variable.
     /*!
@@ -145,7 +145,7 @@ struct Plane : public virtual ObjectBase
     explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 normal = glm::vec3(0, 0, 1), float t = 0, float r = 1, float a = 0.18) : ObjectBase(pos, t, r, a), normal(glm::normalize(normal)) {}
 };
 
-struct Sphere : public virtual ObjectBase
+struct Sphere : public ObjectBase
 {
     //! A public variable.
     /*!

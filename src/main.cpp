@@ -13,7 +13,7 @@ void test()
 
     auto camera = std::make_shared<Camera>(glm::vec3(0, 0, 1.5), 0.1, 0.1, 1000, 1000, 0.05);
     auto lightSource = std::make_shared<LightSource>(glm::vec3(5, 0, 1000));
-
+    
     //scene.addObject(plane);
 
     scene.addObject(sphere2);
