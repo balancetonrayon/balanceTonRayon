@@ -12,6 +12,6 @@ struct Ray
 
     friend std::ostream &operator<<(std::ostream &stream, Ray const &ray)
     {
-        return stream << "Ray of initPt: " << ray.initPt << " and direction: " << ray.dir/(ray.dir[0]);
+        return stream << "Ray of initPt: " << ray.initPt << " and direction: " << ray.dir;
     }
 };

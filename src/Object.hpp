@@ -48,7 +48,7 @@ struct LightSource : public PhysicalObject
 
     //! A public variable.
     /*!
-      color represents the color of the light-source.
+      color represents the color of the light-source. color elements are between 0 and 1.
     */
     glm::vec3 color;
     float intensity;
@@ -63,19 +63,24 @@ struct LightSource : public PhysicalObject
     /*!
       It puts the object in (0, 0, 0), and selects (0, 0, 0) as the color of the source.
     */
-    explicit LightSource(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3()) : PhysicalObject(pos), color(color), intensity(3) {}
+    explicit LightSource(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1)) : PhysicalObject(pos), color(color), intensity(3) {}
 };
 
 struct ObjectBase : public PhysicalObject
 {
+    //! A public variable.
+    /*!
+      color represents the color of the light-source. color elements are between 0 and 1.
+    */
     glm::vec3 color;
+
     float transparency;
     float refractiveIndex;
     float albedo;
 
     virtual std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc, float &distance, glm::vec3 &normal) = 0;
 
-    explicit ObjectBase(glm::vec3 pos = glm::vec3(), float t = 0, float r = 1, float a = 0.18) : PhysicalObject(pos), transparency(t), refractiveIndex(r), albedo(a)
+    explicit ObjectBase(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1), float t = 0, float r = 1, float a = 0.18) : PhysicalObject(pos), color(color), transparency(t), refractiveIndex(r), albedo(a)
     {
         std::cout << pos << std::endl;
     }
@@ -142,7 +147,7 @@ struct Plane : public ObjectBase
     //! The default constructor.
     /*Creates a Plan of normal (0, 0, 1) and containing (0, 0, 0) by default.
     */
-    explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 normal = glm::vec3(0, 0, 1), float t = 0, float r = 1, float a = 0.18) : ObjectBase(pos, t, r, a), normal(glm::normalize(normal)) {}
+    explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1), glm::vec3 normal = glm::vec3(0, 0, 1), float t = 0, float r = 1, float a = 0.18) : ObjectBase(pos, color, t, r, a), normal(glm::normalize(normal)) {}
 };
 
 struct Sphere : public ObjectBase
@@ -166,5 +171,5 @@ struct Sphere : public ObjectBase
     /*!
       Creates a Sphere in (0, 0, 0) of radius 1 by default.
     */
-    explicit Sphere(glm::vec3 pos = glm::vec3(), float radius = 1, float t = 0, float r = 1, float a = 0.18) : ObjectBase(pos, t, r, a), radius(radius) {}
+    explicit Sphere(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1), float radius = 1, float t = 0, float r = 1, float a = 0.18) : ObjectBase(pos, color, t, r, a), radius(radius) {}
 };
