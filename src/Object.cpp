@@ -19,22 +19,18 @@ std::ostream &Camera::printInfo(std::ostream &os) const
     return os << "Camera: in " << pos << ", of size: " << sizeX;
 }
 
-std::vector<Ray> Plane::intersect(const Ray ray, const LightSource ltSrc)
+std::vector<Ray> Plane::intersect(const Ray ray, const LightSource ltSrc, float &distance, glm::vec3 &hitNormal)
 {
     std::vector<Ray> rays;
     // Calcul du point d'intersection
-    float distance;
-    bool inter = glm::intersectRayPlane(ray.initPt, ray.dir, pos, normal, distance);
+
+    bool inter = glm::intersectRayPlane(ray.initPt, ray.dir, pos, hitNormal, distance);
     if (inter)
     {
         glm::vec3 intersectPt = distance * ray.initPt;
         glm::vec3 dir = glm::normalize(-intersectPt + ltSrc.pos);
 
-        // Si la source n'est pas derrière le plan, on ajoute le rayon réfléchi
-        if (glm::dot(dir, normal) > 0)
-        {
-            rays.push_back(Ray(intersectPt, dir));
-        }
+        rays.push_back(Ray(intersectPt, dir));
     }
     return rays;
 }
@@ -44,22 +40,18 @@ std::ostream &Plane::printInfo(std::ostream &os) const
     return os << "Plane: in " << pos << ", of normal " << normal;
 }
 
-std::vector<Ray> Sphere::intersect(const Ray ray, const LightSource ltSrc)
+std::vector<Ray> Sphere::intersect(const Ray ray, const LightSource ltSrc, float &distance, glm::vec3 &hitNormal)
 {
     std::vector<Ray> rays;
 
     glm::vec3 intersectPt;
-    glm::vec3 normal;
-    bool inter = glm::intersectRaySphere(ray.initPt, ray.dir, pos, radius, intersectPt, normal);
+    bool inter = glm::intersectRaySphere(ray.initPt, ray.dir, pos, radius, intersectPt, hitNormal);
     if (inter)
     {
-        glm::vec3 dir = glm::normalize(ltSrc.pos- intersectPt);
+        glm::vec3 dir = glm::normalize(ltSrc.pos - intersectPt);
+        distance = glm::distance(intersectPt, ray.initPt);
 
-        // Si la source n'est pas derrière la sphère, on ajoute le rayon réfléchi
-        if (glm::dot(dir, normal) > 0)
-        {
-            rays.push_back(Ray(intersectPt, dir));
-        }
+        rays.push_back(Ray(intersectPt, dir));
     }
     return rays;
 }

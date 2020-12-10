@@ -51,7 +51,7 @@ struct LightSource : public virtual PhysicalObject
       color represents the color of the light-source.
     */
     glm::vec3 color;
-
+    float intensity;
     //! A normal member taking one argument and returning the information about an object.
     /*!
       \param os the current ostream
@@ -63,7 +63,7 @@ struct LightSource : public virtual PhysicalObject
     /*!
       It puts the object in (0, 0, 0), and selects (0, 0, 0) as the color of the source.
     */
-    explicit LightSource(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3()) : PhysicalObject(pos), color(color) {}
+    explicit LightSource(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3()) : PhysicalObject(pos), color(color), intensity(3) {}
 };
 
 struct ObjectBase : public virtual PhysicalObject
@@ -71,8 +71,9 @@ struct ObjectBase : public virtual PhysicalObject
     glm::vec3 color;
     float transparency;
     float refractiveIndex;
+    float albedo;
 
-    virtual std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc) = 0;
+    virtual std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc, float &distance, glm::vec3 &normal) = 0;
 
     /*explicit ObjectBase(glm::vec3 pos = glm::vec3()) : PhysicalObject(pos) {
       std::cout << pos << std::endl;
@@ -127,8 +128,9 @@ struct Plane : public virtual ObjectBase
       The normal vector of the plane
     */
     glm::vec3 normal; //
+    float albedo;
 
-    std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc);
+    std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc, float &distance, glm::vec3 &normal);
 
     //! A normal member taking one argument and returning the information about an object.
     /*!
@@ -140,7 +142,7 @@ struct Plane : public virtual ObjectBase
     //! The default constructor.
     /*Creates a Plan of normal (0, 0, 1) and containing (0, 0, 0) by default.
     */
-    explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 normal = glm::vec3(0, 0, 1)) : PhysicalObject(pos), normal(glm::normalize(normal)) {}
+    explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 normal = glm::vec3(0, 0, 1)) : PhysicalObject(pos), normal(glm::normalize(normal)), albedo(0.18) {}
 };
 
 struct Sphere : public virtual ObjectBase
@@ -150,8 +152,9 @@ struct Sphere : public virtual ObjectBase
       The radius of the sphere
     */
     float radius;
+    float albedo;
 
-    std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc);
+    std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc, float &distance, glm::vec3 &normal);
 
     //! A normal member taking one argument and returning the information about an object.
     /*!
@@ -164,5 +167,5 @@ struct Sphere : public virtual ObjectBase
     /*!
       Creates a Sphere in (0, 0, 0) of radius 1 by default.
     */
-    explicit Sphere(glm::vec3 pos = glm::vec3(), float radius = 1) : PhysicalObject(pos), radius(radius) {}
+    explicit Sphere(glm::vec3 pos = glm::vec3(), float radius = 1, float albedo = 0.18) : PhysicalObject(pos), radius(radius), albedo(albedo) {}
 };

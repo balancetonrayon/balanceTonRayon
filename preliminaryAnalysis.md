@@ -30,7 +30,9 @@ Contexte d'utilisation : ray_tracing pour l'affichage et la modélisation d'une 
 - importation d'objets définis de façon externe
 - importation de textures
 
-#### Interaction avec le développeur 
+#### Interaction avec le développeur
+
+- affichage des objets sous forme de texte pour faciliter le débug
 
 #### 4 - Fonctions de base
 
