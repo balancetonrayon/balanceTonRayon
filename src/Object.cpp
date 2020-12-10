@@ -37,7 +37,10 @@ std::vector<Ray> Plane::intersect(const Ray ray, const LightSource ltSrc, float 
 
 std::ostream &Plane::printInfo(std::ostream &os) const
 {
-    return os << "Plane: in " << pos << ", of normal " << normal;
+    return os << "Sphere: " << std::endl
+              << "at: " << pos << std::endl
+              << "normal: " << normal << std::endl
+              << "albedo: " << albedo;
 }
 
 std::vector<Ray> Sphere::intersect(const Ray ray, const LightSource ltSrc, float &distance, glm::vec3 &hitNormal)
@@ -58,5 +61,8 @@ std::vector<Ray> Sphere::intersect(const Ray ray, const LightSource ltSrc, float
 
 std::ostream &Sphere::printInfo(std::ostream &os) const
 {
-    return os << "Sphere: in " << pos << ", of radius: " << radius;
+    return os << "Sphere: " << std::endl
+              << "at: " << pos << std::endl
+              << "radius: " << radius << std::endl
+              << "albedo: " << albedo;
 }
