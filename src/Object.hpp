@@ -75,9 +75,9 @@ struct ObjectBase : public virtual PhysicalObject
 
     virtual std::vector<Ray> intersect(const Ray ray, const LightSource ltSrc, float &distance, glm::vec3 &normal) = 0;
 
-    /*explicit ObjectBase(glm::vec3 pos = glm::vec3()) : PhysicalObject(pos) {
+    explicit ObjectBase(glm::vec3 pos = glm::vec3()) : PhysicalObject(pos) {
       std::cout << pos << std::endl;
-    }*/
+    }
     //explicit ObjectBase(glm::vec3 pos, float t, float r) : PhysicalObject(pos), transparency(t), refractiveIndex(r) {}
 };
 
@@ -142,7 +142,7 @@ struct Plane : public virtual ObjectBase
     //! The default constructor.
     /*Creates a Plan of normal (0, 0, 1) and containing (0, 0, 0) by default.
     */
-    explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 normal = glm::vec3(0, 0, 1)) : PhysicalObject(pos), normal(glm::normalize(normal)), albedo(0.18) {}
+    explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 normal = glm::vec3(0, 0, 1)) : ObjectBase(pos), normal(glm::normalize(normal)), albedo(0.18) {}
 };
 
 struct Sphere : public virtual ObjectBase
@@ -167,5 +167,5 @@ struct Sphere : public virtual ObjectBase
     /*!
       Creates a Sphere in (0, 0, 0) of radius 1 by default.
     */
-    explicit Sphere(glm::vec3 pos = glm::vec3(), float radius = 1, float albedo = 0.18) : PhysicalObject(pos), radius(radius), albedo(albedo) {}
+    explicit Sphere(glm::vec3 pos = glm::vec3(), float radius = 1, float albedo = 0.18) : ObjectBase(pos), radius(radius), albedo(albedo) {}
 };
