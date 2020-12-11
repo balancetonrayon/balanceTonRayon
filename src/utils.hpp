@@ -11,6 +11,12 @@ inline std::ostream &operator<<(std::ostream &os, const glm::vec3 &vec)
     return os;
 }
 
-/*inline cv::Vec3b glm::vec3::(cv::Vec3b){
-    return cv::Vec3b(x, y, z);
-}*/
+namespace detail
+{
+
+inline cv::Vec3b glm2cv(glm::vec3 in)
+{
+    return cv::Vec3b(in.x, in.y, in.z);
+}
+
+}
