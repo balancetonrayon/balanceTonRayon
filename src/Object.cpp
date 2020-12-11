@@ -26,8 +26,16 @@ std::vector<Ray> Plane::intersect(const Ray ray, const LightSource ltSrc, float 
     bool inter = glm::intersectRayPlane(ray.initPt, ray.dir, pos, normal, distance);
     if (inter)
     {
-        glm::vec3 intersectPt = distance * ray.dir;
-        glm::vec3 dir = glm::normalize(ltSrc.pos-intersectPt);
+        glm::vec3 intersectPt = ray.initPt + distance * ray.dir;
+        glm::vec3 dir = glm::normalize(ltSrc.pos - intersectPt);
+
+        /*std::vector<Ray> rays;
+        std::cout << ray << std::endl
+                  << *this << std::endl
+                  << intersectPt << std::endl
+                  << distance
+                  << std::endl
+                  << std::endl;*/
 
         hitNormal = normal;
         rays.push_back(Ray(intersectPt, dir));
@@ -40,7 +48,8 @@ std::ostream &Plane::printInfo(std::ostream &os) const
     return os << "Plan: " << std::endl
               << "at: " << pos << std::endl
               << "normal: " << normal << std::endl
-              << "albedo: " << albedo;
+              << "albedo: " << albedo << std::endl
+              << "reflexion: " << reflexionIndex;
 }
 
 std::vector<Ray> Sphere::intersect(const Ray ray, const LightSource ltSrc, float &distance, glm::vec3 &hitNormal)
