@@ -5,8 +5,8 @@
 inline std::ostream &operator<<(std::ostream &os, const glm::vec3 &vec)
 {
     os << "{"
-        << vec.x << " " << vec.y << " " << vec.z
-        << "}";
+       << vec.x << " " << vec.y << " " << vec.z
+       << "}";
 
     return os;
 }
@@ -14,9 +14,14 @@ inline std::ostream &operator<<(std::ostream &os, const glm::vec3 &vec)
 namespace detail
 {
 
-inline cv::Vec3b glm2cv(glm::vec3 in)
-{
-    return cv::Vec3b(in.x, in.y, in.z);
-}
+    inline cv::Vec3b glm2cv(glm::vec3 in)
+    {
+        return cv::Vec3b(in.x, in.y, in.z);
+    }
 
-}
+    inline glm::vec3 cv2glm(cv::Vec3b in)
+    {
+        return glm::vec3(in[0], in[1], in[2]);
+    }
+
+} // namespace detail
