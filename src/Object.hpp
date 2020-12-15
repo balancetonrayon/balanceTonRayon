@@ -261,6 +261,8 @@ protected:
 
 class Sphere : public ObjectBase
 {
+    
+public:
     //! A public variable.
     /*!
       The radius of the sphere
