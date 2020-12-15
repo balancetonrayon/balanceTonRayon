@@ -47,7 +47,7 @@ jobs:
 
         # opencv
         if [ ! -d opencv/.git ]; then
-          git clone https://github.com/opencv/opencv.git 2>/dev/null
+          git clone https://github.com/opencv/opencv.git
         fi
         git -C opencv checkout master
         cd opencv
