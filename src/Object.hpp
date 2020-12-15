@@ -222,7 +222,7 @@ protected:
     std::ostream &printInfo(std::ostream &os) const override;
 };
 
-struct Plane : public ObjectBase
+class Plane : public ObjectBase
 {
     
 public:
@@ -259,7 +259,7 @@ protected:
     std::ostream &printInfo(std::ostream &os) const override;
 };
 
-struct Sphere : public ObjectBase
+class Sphere : public ObjectBase
 {
     //! A public variable.
     /*!
