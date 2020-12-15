@@ -8,25 +8,25 @@ Contexte d'utilisation : ray_tracing pour l'affichage et la modélisation d'une 
 
 ### 2 - Fonctions souhaitées par les utilisateurs de la bibliothèque à la fois pour la description des composantes de la scène que pour les moteurs d'exécution
 
-- faire du ray_tracing
-- pouvoir définir la scène de façon simple
-- pouvoir faire le rendu du plus d'objet possible
-- pouvoir utiliser plusieurs moteurs graphiques
-- (pouvoir utiliser plusieurs algos de ray tracing)
-- le calcul doit être aussi rapide que possible
-- avoir un code bien documenté
-- avoir un code facile à compléter
+- Faire du ray tracing : rendu d'une scene avec tracé de rayons
+- Pouvoir définir la scène de façon simple (langage approprié facile à mettre en oeuvre)
+- Pouvoir faire le rendu du plus d'objets possible (spheres, plans, parallélépipèdes rectangles, etc)
+- Pouvoir utiliser plusieurs moteurs graphiques
+- Pouvoir utiliser plusieurs algorithmes de ray tracing et les paramétrer
+- Le calcul doit être aussi rapide que possible : proposer une parallélisation, ou plusieurs types de parallélisations
+- Avoir un code bien documenté : documentation du code en lui même mais aussi de la librairie (instruction pour ajouter des formes, algorithmes et types de caméras ?)
+- Avoir un code facile à compléter : structure nécessaire facile à trouver et quantité de code minimisées
 
 ### 3 - Définition des interactions
 
 #### Interaction directe avec l'utilisateur
 
 - affichage de la scène après rendu
-- entrée des données pour définir la scène (manuel, XML)
+- entrée des données pour définir la scène (manuel, XML), pour définir les modalités du rendu (profondeur de récursion, type d'algorithme) et de calcul du rendu (antialialiasing)
 
 #### Interaction avec la mémoire de l'ordinateur
 
-- sauvegarde des images
+- sauvegarde des images sous plusieurs formats
 - importation d'objets définis de façon externe
 - importation de textures
 
@@ -71,6 +71,7 @@ Contexte d'utilisation : ray_tracing pour l'affichage et la modélisation d'une 
 - Classe Forme
 
   - pourcentage de transparence
+  - pourcentage de réflexion et de transmission
   - texture ou couleur
   - indice de réfraction
   - intersect() qui renvoie les nouveaux rayons si intersection
@@ -79,10 +80,12 @@ Contexte d'utilisation : ray_tracing pour l'affichage et la modélisation d'une 
 
   - couleur
   - cône
+  - méthode pour calculer le shadowRay
 
 - Classe Camera : Objet Physique
 
   - taille et resolution de l'écran
+  - genRay() qui génère un rayon correspondant à un pixel de la caméra
 
 ### 2 - Les concepts de modularité et d'extensibilité
 
@@ -105,7 +108,7 @@ texture : affiché par openGL, calcul de la position de la texture; texture de b
 
 rayon : oeil -> objet -> ... -> source
 
-Exemples d'algorithmes de ray-tracing :
+Exemples d'algorithmes de ray-tracing : scratchapixels2.0
 
 ### Représentation d'une scène d'objets
 

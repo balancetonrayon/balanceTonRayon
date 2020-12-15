@@ -8,7 +8,7 @@ class Scene
 {
     std::vector<std::shared_ptr<ObjectBase>> objects;
 
-    std::vector<std::shared_ptr<LightSource>> sources;
+    std::vector<std::shared_ptr<Light>> sources;
 
     std::shared_ptr<Camera> camera;
     
@@ -24,7 +24,7 @@ public:
         objects.push_back(object);
     }
     
-    void addSource(std::shared_ptr<LightSource> source)
+    void addSource(std::shared_ptr<Light> source)
     {
         sources.push_back(source);
     }
