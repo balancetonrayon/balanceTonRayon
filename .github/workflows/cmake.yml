@@ -41,7 +41,7 @@ jobs:
           sudo apt-get install libglm-dev
         elif [ "$RUNNER_OS" == "macOS" ]; then
           brew install glm
-        else [ "$RUNNER_OS" == "Windows" ]; then
+        elif [ "$RUNNER_OS" == "Windows" ]; then
           vcpkg install glm
         fi
 
