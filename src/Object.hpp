@@ -9,7 +9,6 @@
 #include <algorithm>
 #include "Ray.hpp"
 
-
 //!  The core Object class.
 /*!
   Every object which has a physical meaning is deriving from this class.
@@ -53,7 +52,13 @@ struct Light : public PhysicalObject
       color represents the color of the light-source. color elements are between 0 and 1.
     */
     cv::Vec3b color;
+
+    //! A public variable.
+    /*!
+      intensity represents the color of the light-source. color elements are between 0 and 1.
+    */
     float intensity;
+
     //! A normal member taking one argument and returning the information about an object.
     /*!
       \param os the current ostream
@@ -61,40 +66,44 @@ struct Light : public PhysicalObject
     */
     std::ostream &printInfo(std::ostream &os) const;
 
+    //! A pure virtual function completing the ray going from the intersect point to the light source.
+    /*!
+      \param hitPt the intersection point
+      \param ray the ray going from the intersection point to the light source passed as reference
+      \param rayColor the color of the ray (vector of elements between 0 and 1) passed as reference
+      \return the distance between the intersection and the source 
+    */
     virtual float outboundRay(const glm::vec3 hitPt, Ray &ray, cv::Vec3b &rayColor) const = 0;
+
     //! The default constructor.
     /*!
       It puts the object in (0, 0, 0), and selects (0, 0, 0) as the color of the source.
     */
-    explicit Light(glm::vec3 pos = glm::vec3(), cv::Vec3b color = cv::Vec3b(1, 1, 1), float i=1) : PhysicalObject(pos),
-                                                                                                 color(color), intensity(i)
+    explicit Light(glm::vec3 pos = glm::vec3(), cv::Vec3b color = cv::Vec3b(1, 1, 1), float i = 1) : PhysicalObject(pos),
+                                                                                                     color(color), intensity(i)
     {
     }
 };
 
 struct DirectLight : public Light
 {
-    float outboundRay(const glm::vec3 hitPt, Ray &ray, cv::Vec3b &rayColor) const
-    {
-        ray.initPt = hitPt;
-        ray.dir = glm::normalize(pos - hitPt);
-        rayColor = color * intensity;
-        return glm::distance(hitPt, pos);
-    }
+    float outboundRay(const glm::vec3 hitPt, Ray &ray, cv::Vec3b &rayColor) const;
+
+    //! The default constructor.
+    /*!
+      It puts the object in (0, 0, 0), and selects (0, 0, 0) as the color of the source.
+    */
     explicit DirectLight(glm::vec3 pos = glm::vec3(), cv::Vec3b color = cv::Vec3b(1, 1, 1), float i = 3) : Light(pos, color, i) {}
 };
 
 struct SpotLight : public Light
 {
-    float outboundRay(const glm::vec3 hitPt, Ray &ray, cv::Vec3b &rayColor) const
-    {
-        ray.initPt = hitPt;
-        ray.dir = glm::normalize(pos - hitPt);
-        rayColor = detail::glm2cv(detail::cv2glm(color) * std::min(255.0f, (float)(intensity / (4 * M_PI * glm::dot(pos - hitPt, pos - hitPt)))));
-        //std::cout << intensity <<" "<<rayColor << std::endl;
-        return glm::distance(hitPt, pos);
-    }
+    float outboundRay(const glm::vec3 hitPt, Ray &ray, cv::Vec3b &rayColor) const;
 
+    //! The default constructor.
+    /*!
+      It puts the object in (0, 0, 0), and selects (0, 0, 0) as the color of the source.
+    */
     explicit SpotLight(glm::vec3 pos = glm::vec3(), cv::Vec3b color = cv::Vec3b(1, 1, 1), float i = 10000) : Light(pos, color, i) {}
 };
 
