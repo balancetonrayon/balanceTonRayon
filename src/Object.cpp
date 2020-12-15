@@ -6,6 +6,22 @@ std::ostream &Light::printInfo(std::ostream &os) const
     return os << "Light: in " << pos << ", of color: " << color;
 }
 
+float DirectLight::outboundRay(const glm::vec3 hitPt, Ray &ray, cv::Vec3b &rayColor) const
+{
+    ray.initPt = hitPt;
+    ray.dir = glm::normalize(pos - hitPt);
+    rayColor = color * intensity;
+    return glm::distance(hitPt, pos);
+}
+
+float SpotLight::outboundRay(const glm::vec3 hitPt, Ray &ray, cv::Vec3b &rayColor) const
+{
+    ray.initPt = hitPt;
+    ray.dir = glm::normalize(pos - hitPt);
+    rayColor = detail::glm2cv(detail::cv2glm(color) * std::min(255.0f, (float)(intensity / (4 * M_PI * glm::dot(pos - hitPt, pos - hitPt)))));
+    return glm::distance(hitPt, pos);
+}
+
 Ray Camera::genRay(unsigned x, unsigned y)
 {
     //EXCEPTION A AJOUTER
