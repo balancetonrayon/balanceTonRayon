@@ -2,8 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include <glm/vec3.hpp>
 
-inline std::ostream &operator<<(std::ostream &os, const glm::vec3 &vec)
-{
+inline std::ostream &operator<<(std::ostream &os, const glm::vec3 &vec) {
     os << "{"
        << vec.x << " " << vec.y << " " << vec.z
        << "}";
@@ -11,17 +10,18 @@ inline std::ostream &operator<<(std::ostream &os, const glm::vec3 &vec)
     return os;
 }
 
-namespace detail
-{
+namespace detail {
 
-    inline cv::Vec3b glm2cv(glm::vec3 in)
-    {
+    inline cv::Vec3b glm2cv(const glm::vec3 &in) {
         return cv::Vec3b(in.x, in.y, in.z);
     }
 
-    inline glm::vec3 cv2glm(cv::Vec3b in)
-    {
+    inline glm::vec3 cv2glm(const cv::Vec3b &in) {
         return glm::vec3(in[0], in[1], in[2]);
+    }
+
+    inline glm::vec3 mult(const glm::vec3 &lhs, const glm::vec3 &rhs) {
+        return glm::vec3(lhs.x*rhs.x, lhs.y*rhs.y, lhs.z*rhs.z);
     }
 
 } // namespace detail

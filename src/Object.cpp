@@ -36,7 +36,7 @@ std::ostream &Camera::printInfo(std::ostream &os) const
     return os << "Camera: in " << pos << ", of size: " << sizeX;
 }
 
-std::vector<Ray> Plane::intersect(const Ray iRay, const std::shared_ptr<Light> ltSrc, float &iDistance, float &lDistance, glm::vec3 &hitNormal, cv::Vec3b &rColor)
+std::vector<Ray> Plane::intersect(const Ray iRay, const std::shared_ptr<Light> ltSrc, float &iDistance, float &lDistance, glm::vec3 &hitNormal, cv::Vec3b &rColor) const
 {
     std::vector<Ray> rays;
     /*if (glm::dot(iRay.dir, normal) > 0)
@@ -70,7 +70,7 @@ std::ostream &Plane::printInfo(std::ostream &os) const
               << "reflexion: " << reflexionIndex;
 }
 
-std::vector<Ray> Sphere::intersect(const Ray iRay, const std::shared_ptr<Light> ltSrc, float &iDistance, float &lDistance, glm::vec3 &hitNormal, cv::Vec3b &rColor)
+std::vector<Ray> Sphere::intersect(const Ray iRay, const std::shared_ptr<Light> ltSrc, float &iDistance, float &lDistance, glm::vec3 &hitNormal, cv::Vec3b &rColor) const
 {
     std::vector<Ray> rays;
 
