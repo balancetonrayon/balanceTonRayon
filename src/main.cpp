@@ -11,7 +11,7 @@ void daltons(Scene &scene)
     auto sphere3 = std::make_shared<Sphere>(glm::vec3(4.16, 0.44, 0.20), cv::Vec3b(0, 0, 1), 0.20, 0, 0, 0.1, 0.80);
 
     auto camera = std::make_shared<Camera>(glm::vec3(0, 0, 0.66), 0.1, 0.1, 2000, 2000, 0.05);
-    auto lightSource = std::make_shared<directLight>(glm::vec3(5, 2.5, 3), cv::Vec3b(4, 4, 4), 100);
+    auto lightSource = std::make_shared<DirectLight>(glm::vec3(5, 2.5, 3), cv::Vec3b(4, 4, 4), 100);
 
     scene.addObject(plane);
     scene.addObject(sphere1);
