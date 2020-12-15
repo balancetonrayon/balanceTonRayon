@@ -40,7 +40,7 @@ struct PhysicalObject
     }
 };
 
-//!  The light-source Object class.
+//!  The Light Object class.
 /*!
   The object represents a light-source, which is located at pos.
 */

@@ -1,5 +1,6 @@
 #include "Object.hpp"
 #include "utils.hpp"
+#include <glm/gtc/constants.hpp>
 
 std::ostream &Light::printInfo(std::ostream &os) const
 {
@@ -18,7 +19,7 @@ float SpotLight::outboundRay(const glm::vec3 hitPt, Ray &ray, cv::Vec3b &rayColo
 {
     ray.initPt = hitPt;
     ray.dir = glm::normalize(pos - hitPt);
-    rayColor = detail::glm2cv(detail::cv2glm(color) * std::min(255.0f, (float)(intensity / (4 * M_PI * glm::dot(pos - hitPt, pos - hitPt)))));
+    rayColor = detail::glm2cv(detail::cv2glm(color) * std::min(255.0f, (float)(intensity / (4 * glm::pi<float>() * glm::dot(pos - hitPt, pos - hitPt)))));
     return glm::distance(hitPt, pos);
 }
 

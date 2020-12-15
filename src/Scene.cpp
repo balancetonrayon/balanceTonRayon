@@ -1,7 +1,8 @@
 #include "Scene.hpp"
 #include <algorithm>
-#define MAX_DEPTH 30
 #include <opencv2/opencv.hpp>
+#include <glm/gtc/constants.hpp>
+#define MAX_DEPTH 30
 
 cv::Vec3b castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource, std::vector<std::shared_ptr<ObjectBase>> const &objects, const int &depth = 0)
 {
@@ -38,9 +39,7 @@ cv::Vec3b castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource, std
             //          << shadowRays[0] << std::endl;
             // Delete acne
             //std::cout << hitNormal << std::endl;
-            shadowRays[0].initPt[0] = hitNormal[0] * 0.0001 + shadowRays[0].initPt[0];
-            shadowRays[0].initPt[1] = hitNormal[1] * 0.0001 + shadowRays[0].initPt[1];
-            shadowRays[0].initPt[2] = hitNormal[2] * 0.0001 + shadowRays[0].initPt[2];
+            shadowRays[0].biais(hitNormal, 0.0001f);
 
             bool blocked = false;
             float iDistance; // distance with the intersection
@@ -66,7 +65,7 @@ cv::Vec3b castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource, std
             }
             cv::Vec3b ref1;
             cv::multiply(rColor, hitObject->color, ref1);
-            color = ref1 * (1 - hitObject->reflexionIndex) * (!blocked) * hitObject->albedo * 255 / M_PI * std::max(0.f, glm::dot(hitNormal, shadowRays[0].dir)) * 2;
+            color = ref1 * (1 - hitObject->reflexionIndex) * (!blocked) * hitObject->albedo * 255 / glm::pi<float>() * std::max(0.f, glm::dot(hitNormal, shadowRays[0].dir)) * 2;
 
             // Calcul des rayons de diffusion
             //std::cout << *hitObject/*->reflexionIndex*/ << std::endl;
