@@ -72,7 +72,7 @@ struct Light : public PhysicalObject
     }
 };
 
-struct directLight : public Light
+struct DirectLight : public Light
 {
     float outboundRay(const glm::vec3 hitPt, Ray &ray, cv::Vec3b &rayColor) const
     {
@@ -81,10 +81,10 @@ struct directLight : public Light
         rayColor = color * intensity;
         return glm::distance(hitPt, pos);
     }
-    explicit directLight(glm::vec3 pos = glm::vec3(), cv::Vec3b color = cv::Vec3b(1, 1, 1), float i = 3) : Light(pos, color, i) {}
+    explicit DirectLight(glm::vec3 pos = glm::vec3(), cv::Vec3b color = cv::Vec3b(1, 1, 1), float i = 3) : Light(pos, color, i) {}
 };
 
-struct spotLight : public Light
+struct SpotLight : public Light
 {
     float outboundRay(const glm::vec3 hitPt, Ray &ray, cv::Vec3b &rayColor) const
     {
@@ -95,7 +95,7 @@ struct spotLight : public Light
         return glm::distance(hitPt, pos);
     }
 
-    explicit spotLight(glm::vec3 pos = glm::vec3(), cv::Vec3b color = cv::Vec3b(1, 1, 1), float i = 10000) : Light(pos, color, i) {}
+    explicit SpotLight(glm::vec3 pos = glm::vec3(), cv::Vec3b color = cv::Vec3b(1, 1, 1), float i = 10000) : Light(pos, color, i) {}
 };
 
 struct ObjectBase : public PhysicalObject
