@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v2
@@ -41,6 +41,8 @@ jobs:
           sudo apt-get install libglm-dev
         elif [ "$RUNNER_OS" == "macOS" ]; then
           brew install glm
+        else [ "$RUNNER_OS" == "Windows" ]; then
+          vcpkg install glm
         fi
 
         # opencv
