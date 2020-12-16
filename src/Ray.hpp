@@ -1,14 +1,14 @@
 #pragma once
 
 #include <glm/vec3.hpp>
+
 #include "utils.hpp"
 
 //!  The Ray Object class.
 /*!
   The object ray is caracterized by an initial point and a direction
 */
-struct Ray
-{
+struct Ray {
     //! A public variable.
     /*!
       pos is the 3D initial point.
@@ -21,16 +21,18 @@ struct Ray
     */
     glm::vec3 dir;
 
-    Ray() : initPt(glm::vec3(0, 0, 0)), dir(glm::normalize(glm::vec3(1, 0, 0))){};
-    Ray(glm::vec3 initPt, glm::vec3 dir) : initPt(initPt), dir(glm::normalize(dir)){};
+    /*!
+     ray The color of the ray
+     */
+    glm::vec3 color;
 
-    void biais(glm::vec3 hitNormal, float biaisCoeff)
-    {
-        initPt = initPt + hitNormal * biaisCoeff;
-    }
+    Ray() : initPt(glm::vec3(0, 0, 0)), dir(glm::normalize(glm::vec3(1, 0, 0))) {}
 
-    friend std::ostream &operator<<(std::ostream &stream, Ray const &ray)
-    {
+    Ray(glm::vec3 initPt, glm::vec3 dir) : initPt(initPt), dir(glm::normalize(dir)) {}
+
+    void biais(glm::vec3 hitNormal, float biaisCoeff) { initPt = initPt + hitNormal * biaisCoeff; }
+
+    friend std::ostream &operator<<(std::ostream &stream, Ray const &ray) {
         return stream << "Ray of initPt: " << ray.initPt << " and direction: " << ray.dir;
     }
 };
