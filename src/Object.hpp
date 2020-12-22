@@ -90,6 +90,10 @@ protected:
     std::ostream &printInfo(std::ostream &os) const override;
 };
 
+//!  The DirectLight class.
+/*!
+  It represents a light which is infinetely far.
+*/
 class DirectLight : public Light {
 public:
     Ray outboundRay(const glm::vec3 hitPt) const override;
@@ -104,6 +108,10 @@ public:
         : Light(pos, color, i) {}
 };
 
+//!  The SpotLight class.
+/*!
+  It represents a light which intensity decreases with the square of the distance
+*/
 class SpotLight : public Light {
 public:
     Ray outboundRay(const glm::vec3 hitPt) const override;
@@ -127,9 +135,28 @@ public:
     */
     cv::Vec3b color;
 
+    //! A public variable.
+    /*!
+      The transparency helps determining how much light is refracted.
+    */
     float transparency;
+    
+    //! A public variable.
+    /*!
+      The refactive index is used to compute refracted rays
+    */
     float refractiveIndex;
+
+    //! A public variable.
+    /*!
+      The reflexion index is the amount of light directly reflected.
+    */
     float reflexionIndex;
+
+    //! A public variable.
+    /*!
+      The amount of light which is diffused.
+    */
     float albedo;
 
     virtual std::vector<Ray> intersect(const Ray ray, const std::shared_ptr<Light> ltSrc,
@@ -146,6 +173,10 @@ public:
           albedo(a) {}
 };
 
+//!  The Camera class.
+/*!
+  It represents and contains all the information about the camera
+*/
 class Camera : public PhysicalObject {
 public:
     //! A public variable.
@@ -182,19 +213,23 @@ public:
 
 protected:
     //! A normal member taking one argument and returning the information about
-    //! an object.
+    //! an object. It replaces the pure virtual member of PhysicalObject
     /*!
-      \param os the current osstream
+      \param os the current ostream
       \return The information of the object as an ostream
     */
     std::ostream &printInfo(std::ostream &os) const override;
 };
 
+//!  The Plane class.
+/*!
+  It represents a solid plane.
+*/
 class Plane : public ObjectBase {
 public:
     //! A public variable.
     /*!
-      The normal vector of the plane
+      The normal vector of the plane.
     */
     glm::vec3 normal;  //
 
@@ -212,19 +247,23 @@ public:
 
 protected:
     //! A normal member taking one argument and returning the information about
-    //! an object.
+    //! an object. It replaces the pure virtual member of PhysicalObject
     /*!
-      \param os the current osstream
+      \param os the current ostream
       \return The information of the object as an ostream
     */
     std::ostream &printInfo(std::ostream &os) const override;
 };
 
+//!  The Sphere class.
+/*!
+  It represents a solid sphere.
+*/
 class Sphere : public ObjectBase {
 public:
     //! A public variable.
     /*!
-      The radius of the sphere
+      The radius of the sphere.
     */
     float radius;
 
@@ -242,9 +281,9 @@ public:
 
 protected:
     //! A normal member taking one argument and returning the information about
-    //! an object.
+    //! an object. It replaces the pure virtual member of PhysicalObject
     /*!
-      \param os the current osstream
+      \param os the current ostream
       \return The information of the object as an ostream
     */
     std::ostream &printInfo(std::ostream &os) const override;
