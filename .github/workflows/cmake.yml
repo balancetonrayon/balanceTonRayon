@@ -1,6 +1,6 @@
 name: CMake
 
-on: [push]
+on: [push, pull_request]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
     - uses: actions/checkout@v2
@@ -46,14 +46,21 @@ jobs:
         fi
 
         # opencv
-        git clone https://github.com/opencv/opencv.git
+        if [ ! -d opencv/.git ]; then
+          git clone https://github.com/opencv/opencv.git
+        fi
         git -C opencv checkout master
         cd opencv
         git pull
         mkdir -p build && cd build
         cmake ../
         cmake --build .
-        sudo make install
+        
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          make install
+        else
+            sudo make install
+        fi
       shell: bash
 
     - name: Create Build Environment

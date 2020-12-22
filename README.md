@@ -17,3 +17,8 @@ Building Xcode Project
 cd build
 cmake -G Xcode ../src
 ```
+
+Lint
+```shell
+cpplint --recursive src
+```
