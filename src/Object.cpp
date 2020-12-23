@@ -27,9 +27,8 @@ std::vector<Ray> SpotLight::outboundRays(const glm::vec3 hitPt) const {
     ray.initPt = hitPt;
     ray.dir = glm::normalize(pos - hitPt);
     ray.color =
-        color *
-        std::min(255.0f, static_cast<float>(intensity / (4 * glm::pi<float>() *
-                                                         glm::dot(pos - hitPt, pos - hitPt))));
+        color * static_cast<float>(intensity / (4 * glm::pi<float>() *
+glm::dot(pos - hitPt, pos - hitPt)));
     rays.push_back(ray);                                       
     return rays;
 }
@@ -68,7 +67,7 @@ std::ostream &Camera::printInfo(std::ostream &os) const {
 
 std::vector<Ray> Plane::intersect(const Ray iRay, const std::shared_ptr<Light> ltSrc,
                                   float &iDistance, float &lDistance, glm::vec3 &hitNormal,
-                                  cv::Vec3b &rColor) const {
+                                  glm::vec3 &rColor) const {
     std::vector<Ray> rays;
     /*if (glm::dot(iRay.dir, normal) > 0)
         normal = -normal;*/
@@ -82,7 +81,7 @@ std::vector<Ray> Plane::intersect(const Ray iRay, const std::shared_ptr<Light> l
 
         //lDistance sho
         lDistance = glm::distance(intersectPt, ltSrc->pos);
-        rColor = detail::glm2cv(oRay.color);
+        rColor = oRay.color;
         /*std::vector<Ray> rays;
         std::cout << ray << std::endl
                   << *this << std::endl
@@ -105,7 +104,7 @@ std::ostream &Plane::printInfo(std::ostream &os) const {
 
 std::vector<Ray> Sphere::intersect(const Ray iRay, const std::shared_ptr<Light> ltSrc,
                                    float &iDistance, float &lDistance, glm::vec3 &hitNormal,
-                                   cv::Vec3b &rColor) const {
+                                glm::vec3 &rColor) const {
     std::vector<Ray> rays;
 
     glm::vec3 intersectPt;
@@ -116,7 +115,7 @@ std::vector<Ray> Sphere::intersect(const Ray iRay, const std::shared_ptr<Light> 
         // std::cout << "sphere distance: " << iDistance;
         Ray oRay = ltSrc->outboundRays(intersectPt)[0];
         lDistance = glm::distance(intersectPt, ltSrc->pos);
-        rColor = detail::glm2cv(oRay.color);
+        rColor = oRay.color;
         /*std::vector<Ray> rays;
         std::cout << ray << std::endl
                   << *this << std::endl

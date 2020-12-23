@@ -57,16 +57,16 @@ glm::vec3 refract(const Ray &iRay, const glm::vec3 &normal, const float &refract
     return k < 0 ? glm::vec3() : eta * iRay.dir + (eta * cosi - sqrtf(k)) * n;
 }
 
-cv::Vec3b castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource, std::vector<std::shared_ptr<ObjectBase>> const &objects, const int &depth = 0)
+glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource, std::vector<std::shared_ptr<ObjectBase>> const &objects, const int &depth = 0)
 {
-    cv::Vec3b color(0, 0, 0);
+    glm::vec3 color(0, 0, 0);
     if (depth > MAX_DEPTH) {
         return color;
     } else {
         // std::cout << std::endl << std::endl;
         std::vector<Ray> shadowRays;
         glm::vec3 hitNormal;
-        cv::Vec3b rColor;
+        glm::vec3 rColor;
         float closestDistance = INFINITY;
         float lDistance;  // light distance
         float iDistance;  // intersection distance
@@ -98,7 +98,7 @@ cv::Vec3b castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource, std
             std::vector<Ray> sRays;
             glm::vec3 norm;
 
-            cv::Vec3b _rColor;  // unsaved
+            glm::vec3 _rColor;  // unsaved
             for (auto object : objects) {
                 sRays = object->intersect(shadowRays[0], lightSource, iDistance, lDistance, norm,
                                           _rColor);
@@ -115,10 +115,8 @@ cv::Vec3b castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource, std
                     blocked = true;
                 }
             }
-            cv::Vec3b ref1;
-            cv::multiply(rColor, hitObject->color, ref1);
-            color = ref1 * (1 - hitObject->reflexionIndex) * (!blocked) * hitObject->albedo * 255 /
-                    glm::pi<float>() * std::max(0.f, glm::dot(hitNormal, shadowRays[0].dir)) * 2;
+            color = detail::mult(rColor, hitObject->color) * (1 - hitObject->reflexionIndex) * (float)(!blocked) * hitObject->albedo /
+                    glm::pi<float>() * std::max(0.f, glm::dot(hitNormal, shadowRays[0].dir));
 
             // Calcul des rayons de diffusion
             // std::cout << *hitObject/*->reflexionIndex*/ << std::endl;
@@ -134,11 +132,9 @@ cv::Vec3b castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource, std
                 // shadowRays[0].dir[2] < -reflectedRay.dir[2] - 1e4)
                 //    std::cout << "\nInbound: " << shadowRays[0].dir[2] <<
                 //    "\nOutbound: " << reflectedRay.dir[2] << std::endl;
-                cv::Vec3b ref;
-                cv::multiply(hitObject->color,
-                             castRay(reflectedRay, lightSource, objects, depth + 1), ref);
+                
                 // std::cout << ref << std::endl;
-                color += hitObject->reflexionIndex * ref;
+                color += detail::mult(hitObject->color, castRay(reflectedRay, lightSource, objects, depth + 1)) * hitObject->reflexionIndex;
                 // std::cout << color << std::endl;
             }
 
@@ -166,6 +162,7 @@ cv::Vec3b castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource, std
                 hitColor += reflectionColor * kr + refractionColor * (1 - kr);*/
             }
         }
+        if (color[0]>255 || color[1]>255 || color[2]>255) std::cout << color << std::endl;
         return color;
     }
 }
@@ -183,7 +180,7 @@ void Scene::render() {
             int depth = 0;
             Ray primRay = camera->genRay(x, y);
             // std::cout << primRay << std::endl;
-            color = castRay(primRay, lightSource, objects, depth);
+            color = detail::glm2cv(castRay(primRay, lightSource, objects, depth));
             image.at<cv::Vec3b>(x, y) = color;
         }
     }

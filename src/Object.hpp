@@ -105,7 +105,7 @@ public:
       source.
     */
     explicit DirectLight(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
-                         float i = 3)
+                         float i = 2000)
         : Light(pos, color, i) {}
 };
 
@@ -123,7 +123,7 @@ public:
       source.
     */
     explicit SpotLight(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
-                       float i = 10000)
+                       float i = 100)
         : Light(pos, color, i) {}
 };
 
@@ -158,7 +158,7 @@ public:
       color represents the color of the light-source. color elements are between
       0 and 1.
     */
-    cv::Vec3b color;
+    glm::vec3 color;
 
     //! A public variable.
     /*!
@@ -186,9 +186,9 @@ public:
 
     virtual std::vector<Ray> intersect(const Ray ray, const std::shared_ptr<Light> ltSrc,
                                        float &iDistance, float &lDistance, glm::vec3 &normal,
-                                       cv::Vec3b &rColor) const = 0;
+                                       glm::vec3 &rColor) const = 0;
 
-    explicit ObjectBase(glm::vec3 pos = glm::vec3(), cv::Vec3b color = cv::Vec3b(1, 1, 1),
+    explicit ObjectBase(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
                         float t = 0, float r = 1, float R = 1, float a = 0.18)
         : PhysicalObject(pos),
           color(color),
@@ -303,12 +303,12 @@ public:
 
     std::vector<Ray> intersect(const Ray ray, const std::shared_ptr<Light> ltSrc, float &iDistance,
                                float &lDistance, glm::vec3 &normal,
-                               cv::Vec3b &rColor) const override;
+                               glm::vec3 &rColor) const override;
 
     //! The default constructor.
     /*Creates a Plan of normal (0, 0, 1) and containing (0, 0, 0) by default.
      */
-    explicit Plane(glm::vec3 pos = glm::vec3(), cv::Vec3b color = cv::Vec3b(1, 1, 1),
+    explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
                    glm::vec3 normal = glm::vec3(0, 0, 1), float t = 0, float r = 1, float R = 1,
                    float a = 0.18)
         : ObjectBase(pos, color, t, r, R, a), normal(glm::normalize(normal)) {}
@@ -337,13 +337,13 @@ public:
 
     std::vector<Ray> intersect(const Ray ray, const std::shared_ptr<Light> ltSrc, float &iDistance,
                                float &lDistance, glm::vec3 &normal,
-                               cv::Vec3b &rColor) const override;
+                               glm::vec3 &rColor) const override;
 
     //! The default constructor.
     /*!
       Creates a Sphere in (0, 0, 0) of radius 1 by default.
     */
-    explicit Sphere(glm::vec3 pos = glm::vec3(), cv::Vec3b color = cv::Vec3b(1, 1, 1),
+    explicit Sphere(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
                     float radius = 1, float t = 0, float r = 1, float R = 1, float a = 0.18)
         : ObjectBase(pos, color, t, r, R, a), radius(radius) {}
 

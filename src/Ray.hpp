@@ -21,22 +21,21 @@ struct Ray {
     */
     glm::vec3 dir;
 
+    //! A public variable.
     /*!
-      The color of the ray. Each elemebt of the vec3 is contained in [0, 1]
+      The color of the ray. Each element of the vec3 is contained in [0, 1].
      */
     glm::vec3 color;
 
     //! The default constructor.
     /*!
-      It puts the object in (0, 0, 0), and selects (0, 0, 0) as the color of the
-      source.
+      It creates a ray starting at 0,0,0 and going towards increasing x.
     */
-    Ray() : initPt(glm::vec3(0, 0, 0)), dir(glm::normalize(glm::vec3(1, 0, 0))) {}
+    Ray() : initPt(glm::vec3(0, 0, 0)), dir(glm::vec3(1, 0, 0)) {}
 
     //! The specialized constructor.
     /*!
-      It puts the object in (0, 0, 0), and selects (0, 0, 0) as the color of the
-      source.
+      It creates a Ray with specified initial point and direction.
     */
     Ray(glm::vec3 initPt, glm::vec3 dir) : initPt(initPt), dir(glm::normalize(dir)) {}
 
