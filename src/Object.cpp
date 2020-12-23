@@ -1,5 +1,6 @@
 #include "Object.hpp"
 
+#include <cmath>
 #include <memory>
 
 #include <glm/gtc/constants.hpp>
@@ -10,15 +11,18 @@ std::ostream &Light::printInfo(std::ostream &os) const {
     return os << "Light: in " << pos << ", of color: " << color;
 }
 
-Ray DirectLight::outboundRay(glm::vec3 hitPt) const {
+std::vector<Ray> DirectLight::outboundRays(glm::vec3 hitPt) const {
+    std::vector<Ray> rays;
     Ray ray;
     ray.initPt = hitPt;
     ray.dir = glm::normalize(pos - hitPt);
     ray.color = color * intensity;
-    return ray;
+    rays.push_back(ray);
+    return rays;
 }
 
-Ray SpotLight::outboundRay(const glm::vec3 hitPt) const {
+std::vector<Ray> SpotLight::outboundRays(const glm::vec3 hitPt) const {
+    std::vector<Ray> rays;
     Ray ray;
     ray.initPt = hitPt;
     ray.dir = glm::normalize(pos - hitPt);
@@ -26,15 +30,24 @@ Ray SpotLight::outboundRay(const glm::vec3 hitPt) const {
         color *
         std::min(255.0f, static_cast<float>(intensity / (4 * glm::pi<float>() *
                                                          glm::dot(pos - hitPt, pos - hitPt))));
-    return ray;
+    rays.push_back(ray);                                       
+    return rays;
 }
 
-Ray Camera::genRay(unsigned x, unsigned y) {
-    // EXCEPTION A AJOUTER
+Ray Camera::genRay(unsigned x, unsigned y) noexcept {
     // Z is the altitude : - X of the image
-    glm::vec3 dir(focalLength, (-0.5 + static_cast<float>(y) / resY) * sizeY,
-                  (0.5 - static_cast<float>(x) / resX) * sizeX);
-    return Ray(pos, dir);
+    try {
+        if (x>resX || y>resY || x<0 || y<0) throw Camera::pixel_out_of_range();
+    }
+    catch (Camera::pixel_out_of_range exception) {
+        std::cout << "Pixel out of range" << std::endl; 
+    }
+
+    glm::vec3 rDir = dir * focalLength + hv * (float)((float)y / resY - 0.5) * sizeY + 
+                  vv * (float)((float)x / resX - 0.5) * sizeX;
+
+    //std::cout << Ray(pos, dir) << std::endl;
+    return Ray(pos, rDir);
 }
 
 std::ostream &Camera::printInfo(std::ostream &os) const {
@@ -52,7 +65,10 @@ std::vector<Ray> Plane::intersect(const Ray iRay, const std::shared_ptr<Light> l
     if (inter) {
         glm::vec3 intersectPt = iRay.initPt + iDistance * iRay.dir;
         hitNormal = normal;
-        Ray oRay = ltSrc->outboundRay(intersectPt);
+
+        Ray oRay = ltSrc->outboundRays(intersectPt)[0];
+
+        //lDistance sho
         lDistance = glm::distance(intersectPt, ltSrc->pos);
         rColor = detail::glm2cv(oRay.color);
         /*std::vector<Ray> rays;
@@ -86,7 +102,7 @@ std::vector<Ray> Sphere::intersect(const Ray iRay, const std::shared_ptr<Light> 
     if (inter) {
         iDistance = glm::distance(iRay.initPt, intersectPt);
         // std::cout << "sphere distance: " << iDistance;
-        Ray oRay = ltSrc->outboundRay(intersectPt);
+        Ray oRay = ltSrc->outboundRays(intersectPt)[0];
         lDistance = glm::distance(intersectPt, ltSrc->pos);
         rColor = detail::glm2cv(oRay.color);
         /*std::vector<Ray> rays;

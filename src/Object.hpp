@@ -5,6 +5,8 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <cmath>
+#include <exception>
 
 #include <glm/geometric.hpp>
 #include <glm/gtx/intersect.hpp>
@@ -67,10 +69,9 @@ public:
     //! point to the light source.
     /*!
       \param hitPt the intersection point
-      \param ray the ray going from the intersection point to the light source
-      \return the resulting ray
+      \return the resulting rays
     */
-    virtual Ray outboundRay(glm::vec3 hitPt) const = 0;
+    virtual std::vector<Ray> outboundRays(glm::vec3 hitPt) const = 0;
 
     //! The default constructor.
     /*!
@@ -96,7 +97,7 @@ protected:
 */
 class DirectLight : public Light {
 public:
-    Ray outboundRay(const glm::vec3 hitPt) const override;
+    std::vector<Ray> outboundRays(const glm::vec3 hitPt) const override;
 
     //! The default constructor.
     /*!
@@ -114,7 +115,7 @@ public:
 */
 class SpotLight : public Light {
 public:
-    Ray outboundRay(const glm::vec3 hitPt) const override;
+    std::vector<Ray> outboundRays(const glm::vec3 hitPt) const override;
 
     //! The default constructor.
     /*!
@@ -122,6 +123,24 @@ public:
       source.
     */
     explicit SpotLight(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
+                       float i = 10000)
+        : Light(pos, color, i) {}
+};
+
+//!  The AreaLight class.
+/*!
+  It represents a light which intensity decreases with the square of the distance
+*/
+class AreaLight : public Light {
+public:
+    std::vector<Ray> outboundRays(const glm::vec3 hitPt) const override;
+
+    //! The default constructor.
+    /*!
+      It puts the object in (0, 0, 0), and selects (0, 0, 0) as the color of the
+      source.
+    */
+    explicit AreaLight(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
                        float i = 10000)
         : Light(pos, color, i) {}
 };
@@ -181,10 +200,23 @@ class Camera : public PhysicalObject {
 public:
     //! A public variable.
     /*!
-      Direction of the camera.
+      Normal direction of the camera.
     */
     glm::vec3 dir;
 
+    //! A public variable.
+    /*!
+      Vertical vector of the camera's screen.
+      \sa hv
+    */
+    glm::vec3 vv;
+
+    //! A public variable.
+    /*!
+      Vertical vector of the camera's screen.
+      \sa vv
+    */
+    glm::vec3 hv;
     // Size of the screen
     float sizeX;
     float sizeY;
@@ -198,18 +230,44 @@ public:
     //! A normal member taking two arguments and returning the generated ray
     /*!
       \param x the number of the x pixel
-      \return the number of the y pixel
+      \param y the number of the y pixel
+      \return the generated ray
     */
-    Ray genRay(unsigned x, unsigned y);
+    Ray genRay(unsigned x, unsigned y) noexcept;
 
     //! The default constructor.
     /*!
       Creates a Camera at (0, 0, 0) with screen of size (1, 1) and (1000, 1000)
-      pixels 1 away from the image sensor.
+      pixels 1 away from the image sensor. The camera is assumed horizontal.
     */
-    explicit Camera(glm::vec3 pos = glm::vec3(), float sx = 1, float sy = 1, unsigned rx = 1000,
+    explicit Camera(glm::vec3 pos = glm::vec3(), glm::vec3 dir= glm::vec3(1,0,0), float sx = 1, float sy = 1, unsigned rx = 1000,
                     unsigned ry = 1000, float fL = 1)
-        : PhysicalObject(pos), sizeX(sx), sizeY(sy), resX(rx), resY(ry), focalLength(fL) {}
+        : PhysicalObject(pos), dir(glm::normalize(dir)), sizeX(sx), sizeY(sy), resX(rx), resY(ry), focalLength(fL) 
+    {
+        if (dir[2]) std::cout << "Erreur, rotation suivant l'axe vertical interdite"<<std::endl;
+        vv = glm::vec3(0, 0, -1);
+        if (!dir[0]) {
+            if (dir[1]>0) {
+                hv = glm::vec3(-1, 0, 0);
+            }
+            if (dir[1]<0) {
+                hv = glm::vec3(1, 0, 0);
+            }
+        }
+        else if (!dir[1]) {
+            if (dir[0]>0) {
+                hv = glm::vec3(0, 1, 0);
+            }
+            if (dir[0]<0) {
+                hv = glm::vec3(0, -1, 0);
+            }
+        }
+        else {
+            float y = std::sqrt(1/(1+dir[2]*dir[2]/(dir[1]*dir[1])));
+            hv = glm::vec3(-dir[2]/dir[1]*y, y, 0);
+        }
+        //std::cout <<"pos : "<<pos <<std::endl<< vv << std::endl << dir << std::endl << hv << std::endl;
+    }
 
 protected:
     //! A normal member taking one argument and returning the information about
@@ -219,6 +277,9 @@ protected:
       \return The information of the object as an ostream
     */
     std::ostream &printInfo(std::ostream &os) const override;
+
+class pixel_out_of_range {
+};
 };
 
 //!  The Plane class.

@@ -4,6 +4,7 @@
     <meta>
         <name> Les Daltons </name>
         <size> 1000 1000 </size>
+        <max_depth> 30 </max_depth>
     </meta>
     <camera>
         <pos> 0 0 0.66 </pos>
@@ -32,7 +33,7 @@
             <pos> 6.16 0.66 1 </pos>
             <color> 1 1 1 </color>
             <radius> 1 </radius>
-            <reflexion> 0.99 </reflexion>
+            <reflexion> 0.8 </reflexion>
             <refractive></refractive>
             <albedo> 0.22 </albedo>
         </sphere>
