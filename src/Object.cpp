@@ -34,8 +34,20 @@ std::vector<Ray> SpotLight::outboundRays(const glm::vec3 hitPt) const {
     return rays;
 }
 
+std::vector<Ray> AreaLight::outboundRays(const glm::vec3 hitPt) const {
+    std::vector<Ray> rays;
+    Ray ray;
+    ray.initPt = hitPt;
+    ray.dir = glm::normalize(pos - hitPt);
+    ray.color =
+        color *
+        std::min(255.0f, static_cast<float>(intensity / (4 * glm::pi<float>() *
+                                                         glm::dot(pos - hitPt, pos - hitPt))));
+    rays.push_back(ray);                                       
+    return rays;
+}
+
 Ray Camera::genRay(unsigned x, unsigned y) noexcept {
-    // Z is the altitude : - X of the image
     try {
         if (x>resX || y>resY || x<0 || y<0) throw Camera::pixel_out_of_range();
     }

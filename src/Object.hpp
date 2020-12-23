@@ -129,20 +129,26 @@ public:
 
 //!  The AreaLight class.
 /*!
+  \class AreaLight
+  \brief Statistical Area Light
   It represents a light which intensity decreases with the square of the distance
 */
 class AreaLight : public Light {
+protected:
+    int numberOfRays;
+    glm::vec3 vv;
+    glm::vec3 hv;
 public:
     std::vector<Ray> outboundRays(const glm::vec3 hitPt) const override;
 
     //! The default constructor.
     /*!
-      It puts the object in (0, 0, 0), and selects (0, 0, 0) as the color of the
-      source.
+      It puts the object in (0, 0, 0), and sets the color of the
+      source as white.
     */
     explicit AreaLight(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
-                       float i = 10000)
-        : Light(pos, color, i) {}
+                       float i = 10000, int n = 64)
+        : Light(pos, color, i), numberOfRays(n) {}
 };
 
 class ObjectBase : public PhysicalObject {
@@ -194,7 +200,8 @@ public:
 
 //!  The Camera class.
 /*!
-  It represents and contains all the information about the camera
+  \class Camera  
+  It represents and contains all the information about the camera.
 */
 class Camera : public PhysicalObject {
 public:
