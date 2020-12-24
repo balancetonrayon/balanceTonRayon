@@ -39,7 +39,6 @@ struct Ray {
     */
     Ray(glm::vec3 initPt, glm::vec3 dir) : initPt(initPt), dir(glm::normalize(dir)) {}
 
-    
     void biais(glm::vec3 hitNormal, float biaisCoeff) { initPt = initPt + hitNormal * biaisCoeff; }
 
     //! An overload of the operator << to print rays for debug.

@@ -2,11 +2,11 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include <algorithm>
+#include <cmath>
+#include <exception>
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <cmath>
-#include <exception>
 
 #include <glm/geometric.hpp>
 #include <glm/gtx/intersect.hpp>
@@ -138,6 +138,7 @@ protected:
     int numberOfRays;
     glm::vec3 vv;
     glm::vec3 hv;
+
 public:
     std::vector<Ray> outboundRays(const glm::vec3 hitPt) const override;
 
@@ -165,7 +166,7 @@ public:
       The transparency helps determining how much light is refracted.
     */
     float transparency;
-    
+
     //! A public variable.
     /*!
       The refactive index is used to compute refracted rays
@@ -200,7 +201,7 @@ public:
 
 //!  The Camera class.
 /*!
-  \class Camera  
+  \class Camera
   It represents and contains all the information about the camera.
 */
 class Camera : public PhysicalObject {
@@ -247,33 +248,37 @@ public:
       Creates a Camera at (0, 0, 0) with screen of size (1, 1) and (1000, 1000)
       pixels 1 away from the image sensor. The camera is assumed horizontal.
     */
-    explicit Camera(glm::vec3 pos = glm::vec3(), glm::vec3 dir= glm::vec3(1,0,0), float sx = 1, float sy = 1, unsigned rx = 1000,
-                    unsigned ry = 1000, float fL = 1)
-        : PhysicalObject(pos), dir(glm::normalize(dir)), sizeX(sx), sizeY(sy), resX(rx), resY(ry), focalLength(fL) 
-    {
-        if (dir[2]) std::cout << "Erreur, rotation suivant l'axe vertical interdite"<<std::endl;
+    explicit Camera(glm::vec3 pos = glm::vec3(), glm::vec3 dir = glm::vec3(1, 0, 0), float sx = 1,
+                    float sy = 1, unsigned rx = 1000, unsigned ry = 1000, float fL = 1)
+        : PhysicalObject(pos),
+          dir(glm::normalize(dir)),
+          sizeX(sx),
+          sizeY(sy),
+          resX(rx),
+          resY(ry),
+          focalLength(fL) {
+        if (dir[2]) std::cout << "Erreur, rotation suivant l'axe vertical interdite" << std::endl;
         vv = glm::vec3(0, 0, -1);
         if (!dir[0]) {
-            if (dir[1]>0) {
+            if (dir[1] > 0) {
                 hv = glm::vec3(-1, 0, 0);
             }
-            if (dir[1]<0) {
+            if (dir[1] < 0) {
                 hv = glm::vec3(1, 0, 0);
             }
-        }
-        else if (!dir[1]) {
-            if (dir[0]>0) {
+        } else if (!dir[1]) {
+            if (dir[0] > 0) {
                 hv = glm::vec3(0, 1, 0);
             }
-            if (dir[0]<0) {
+            if (dir[0] < 0) {
                 hv = glm::vec3(0, -1, 0);
             }
+        } else {
+            float y = std::sqrt(1 / (1 + dir[2] * dir[2] / (dir[1] * dir[1])));
+            hv = glm::vec3(-dir[2] / dir[1] * y, y, 0);
         }
-        else {
-            float y = std::sqrt(1/(1+dir[2]*dir[2]/(dir[1]*dir[1])));
-            hv = glm::vec3(-dir[2]/dir[1]*y, y, 0);
-        }
-        //std::cout <<"pos : "<<pos <<std::endl<< vv << std::endl << dir << std::endl << hv << std::endl;
+        // std::cout <<"pos : "<<pos <<std::endl<< vv << std::endl << dir << std::endl << hv <<
+        // std::endl;
     }
 
 protected:
@@ -285,8 +290,7 @@ protected:
     */
     std::ostream &printInfo(std::ostream &os) const override;
 
-class pixel_out_of_range {
-};
+    class pixel_out_of_range {};
 };
 
 //!  The Plane class.
