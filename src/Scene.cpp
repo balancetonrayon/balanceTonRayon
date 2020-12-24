@@ -5,15 +5,18 @@
 #include <glm/gtc/constants.hpp>
 #include <opencv2/opencv.hpp>
 
-#define MAX_DEPTH 30
+#define MAX_DEPTH 10
 
 /* Fresnel function as explained here : https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel 
 ior is the refraction index of the material of the physical object the ray has either hit or is about to leave (glass, water, etc.)
 A EXPLIQUER*/
-void fresnel(const Ray &iRay, const glm::vec3 &normal, const float &refractionIndex, float &kr)
+float fresnel(const Ray &iRay, const glm::vec3 &normal, const float &refractionIndex)
 {
+    float kr; // quantity of reflexion to be computed
+
     float cosi = std::clamp(glm::dot(iRay.dir, normal), -1.0f,1.0f);
-    float etai = 1, etat = refractionIndex;
+    float etai = 1; // air 
+    float etat = refractionIndex; // medium
     if (cosi > 0)
     {
         std::swap(etai, etat);
@@ -33,6 +36,8 @@ void fresnel(const Ray &iRay, const glm::vec3 &normal, const float &refractionIn
         float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
         kr = (Rs * Rs + Rp * Rp) / 2;
     }
+
+    return kr;
     // As a consequence of the conservation of energy, transmittance is given by:
     // kt = 1 - kr;
 }
@@ -41,20 +46,24 @@ void fresnel(const Ray &iRay, const glm::vec3 &normal, const float &refractionIn
 glm::vec3 refract(const Ray &iRay, const glm::vec3 &normal, const float &refractionIndex)
 {
     float cosi = std::clamp(glm::dot(iRay.dir, normal), -1.0f, 1.0f);
-    float etai = 1, etat = refractionIndex;
+    float etai = 1; //air
+    float etat = refractionIndex; //medium
     glm::vec3 n = normal;
     if (cosi < 0)
     {
+        // outside the surface, so we want cos(theta) to be positive
         cosi = -cosi;
     }
     else
     {
+        // inside: oppose the normal and swap the indices
         std::swap(etai, etat);
         n = -normal;
     }
     float eta = etai / etat;
     float k = 1 - eta * eta * (1 - cosi * cosi);
-    return k < 0 ? glm::vec3() : eta * iRay.dir + (eta * cosi - sqrtf(k)) * n;
+    // if k < 0: total internal reflection
+    return k < 0 ? glm::vec3() : iRay.dir*eta + n*(eta * cosi - sqrtf(k));
 }
 
 glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource, std::vector<std::shared_ptr<ObjectBase>> const &objects, const int &depth = 0)
@@ -118,9 +127,8 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource, std
             color = detail::mult(rColor, hitObject->color) * (1 - hitObject->reflexionIndex) * (float)(!blocked) * hitObject->albedo /
                     glm::pi<float>() * std::max(0.f, glm::dot(hitNormal, shadowRays[0].dir));
 
-            // Calcul des rayons de diffusion
             // std::cout << *hitObject/*->reflexionIndex*/ << std::endl;
-            if (hitObject->reflexionIndex) {
+            if (hitObject->reflexionIndex && !hitObject->transparency) {
                 // std::cout << "reflexion\n";
 
                 Ray reflectedRay(shadowRays[0].initPt,
@@ -140,29 +148,27 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource, std
 
             if (hitObject->transparency)
             {
-                /*Vec3f refractionColor = 0;
+                glm::vec3 refractionColor;
                 // compute fresnel
-                float kr;
-                fresnel(dir, hitNormal, isect.hitObject->ior, kr);
-                bool outside = dir.dotProduct(hitNormal) < 0;
-                Vec3f bias = options.bias * hitNormal;
+                float kr = fresnel(ray, hitNormal, hitObject->refractiveIndex);
+                bool outside = glm::dot(ray.dir,hitNormal) < 0;
                 // compute refraction if it is not a case of total internal reflection
                 if (kr < 1)
                 {
-                    Vec3f refractionDirection = refract(dir, hitNormal, isect.hitObject->ior).normalize();
-                    Vec3f refractionRayOrig = outside ? hitPoint - bias : hitPoint + bias;
-                    refractionColor = castRay(refractionRayOrig, refractionDirection, objects, lights, options, depth + 1);
+                    Ray refractedRay= Ray(shadowRays[0].initPt, refract(ray, hitNormal, hitObject->refractiveIndex));
+                    outside ? refractedRay.biais(-hitNormal, 0.001f) : refractedRay.biais(+hitNormal, 0.001f);
+                    refractionColor = castRay(refractedRay, lightSource, objects, depth + 1);
                 }
 
-                Vec3f reflectionDirection = reflect(dir, hitNormal).normalize();
-                Vec3f reflectionRayOrig = outside ? hitPoint + bias : hitPoint - bias;
-                Vec3f reflectionColor = castRay(reflectionRayOrig, reflectionDirection, objects, lights, options, depth + 1);
+                Ray reflectedRay = Ray(shadowRays[0].initPt, ray.dir - 2 * glm::dot(ray.dir, hitNormal) * hitNormal);
+                outside ? reflectedRay.biais(+hitNormal, 0.001f) : reflectedRay.biais(-hitNormal, 0.001f);
+                glm::vec3 reflectionColor = castRay(reflectedRay, lightSource, objects, depth + 1);
 
                 // mix the two
-                hitColor += reflectionColor * kr + refractionColor * (1 - kr);*/
+                color += reflectionColor * kr + refractionColor * (1 - kr) * hitObject->transparency;
             }
         }
-        if (color[0]>255 || color[1]>255 || color[2]>255) std::cout << color << std::endl;
+        if (color[0]>255 || color[1]>255 || color[2]>255) std::cout << "Color overflow ! "<< color << std::endl;
         return color;
     }
 }

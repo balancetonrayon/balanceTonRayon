@@ -51,7 +51,7 @@
             <radius> 0.20 </radius>
             <reflexion> 0.1 </reflexion>
             <refractive></refractive>
-            <albedo> 0.8 </albedo>
+            <albedo> 0.2 </albedo>
         </sphere>
     </objects>
 </scene>
