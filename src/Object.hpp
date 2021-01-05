@@ -152,6 +152,26 @@ public:
         : Light(pos, color, i), numberOfRays(n) {}
 };
 
+//!  The Inter class.
+/*!
+  This class contains all the information of an intersection.
+*/
+class Inter {
+public:
+    float id;
+    float ld;
+    glm::vec3 normal;
+    glm::vec3 rColor;
+    Inter(): id(0), ld(0), normal(glm::vec3()), rColor(glm::vec3()) {};
+    explicit Inter(float i, float l, glm::vec3 n, glm::vec3 c)
+        : id(i), ld(l), normal(n), rColor(c){};
+};
+
+//!  The ObjectBase class.
+/*!
+  Every object which has a physical meaning is deriving from this class.
+  \sa PhysicalObject
+*/
 class ObjectBase : public PhysicalObject {
 public:
     //! A public variable.
@@ -185,9 +205,8 @@ public:
     */
     float albedo;
 
-    virtual std::vector<Ray> intersect(const Ray ray, const std::shared_ptr<Light> ltSrc,
-                                       float &iDistance, float &lDistance, glm::vec3 &normal,
-                                       glm::vec3 &rColor) const = 0;
+    virtual std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> ltSrc,
+                                       Inter &inter) const = 0;
 
     explicit ObjectBase(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
                         float t = 0, float r = 1, float R = 1, float a = 0.18)
@@ -305,9 +324,8 @@ public:
     */
     glm::vec3 normal;  //
 
-    std::vector<Ray> intersect(const Ray ray, const std::shared_ptr<Light> ltSrc, float &iDistance,
-                               float &lDistance, glm::vec3 &normal,
-                               glm::vec3 &rColor) const override;
+    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> ltSrc,
+                               Inter &inter) const override;
 
     //! The default constructor.
     /*Creates a Plan of normal (0, 0, 1) and containing (0, 0, 0) by default.
@@ -339,9 +357,8 @@ public:
     */
     float radius;
 
-    std::vector<Ray> intersect(const Ray ray, const std::shared_ptr<Light> ltSrc, float &iDistance,
-                               float &lDistance, glm::vec3 &normal,
-                               glm::vec3 &rColor) const override;
+    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> ltSrc,
+                               Inter &inter) const override;
 
     //! The default constructor.
     /*!
