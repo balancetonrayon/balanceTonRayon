@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [Linux]
 
     steps:
     - uses: actions/checkout@v2
@@ -38,11 +38,23 @@ jobs:
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
           sudo apt-get update
+          sudo apt-get -y install curl zip unzip tar pkg-config
+          
           sudo apt-get install libglm-dev
+          
+          if [ ! -d opencv/.git ]; then
+            git clone https://github.com/Microsoft/vcpkg.git
+          fi
+          cd vcpkg
+          ./bootstrap-vcpkg.sh
+          ./vcpkg integrate install
+          ./vcpkg install tinyxml2
         elif [ "$RUNNER_OS" == "macOS" ]; then
           brew install glm
+          brew install tinyxml2
         elif [ "$RUNNER_OS" == "Windows" ]; then
           vcpkg install glm
+          vcpkg install tinyxml2
         fi
 
         # opencv
