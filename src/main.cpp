@@ -1,6 +1,6 @@
 #include <opencv2/opencv.hpp>
 
-#include "Scene.hpp"
+#include "RayTracer.hpp"
 
 Scene daltons() {
     Scene scene;
@@ -34,12 +34,13 @@ Scene daltons() {
 
 void test() {
     Scene scene = daltons();
+    StdRayTracer stdrt;
 
     for (auto object : scene.getObjects()) {
         std::cout << *object << std::endl;
     }
 
-    scene.render();
+    stdrt.render(scene);
 
     cv::waitKey(0);
 }

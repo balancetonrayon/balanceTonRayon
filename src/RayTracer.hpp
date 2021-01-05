@@ -1,3 +1,7 @@
 #pragma once
+#include "Scene.hpp"
 
-class RayTracer {};
+class StdRayTracer {
+public:
+    void render(Scene scene);
+};

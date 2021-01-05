@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "Object.hpp"
-#include "RayTracer.hpp"
 
 class Scene {
     std::vector<std::shared_ptr<ObjectBase>> objects;
@@ -12,8 +11,6 @@ class Scene {
     std::vector<std::shared_ptr<Light>> sources;
 
     std::shared_ptr<Camera> camera;
-
-    RayTracer rt;
 
 public:
     auto getObjects() const { return objects; }
@@ -26,5 +23,4 @@ public:
 
     void setCamera(std::shared_ptr<Camera> camera) { this->camera = camera; }
 
-    void render();
 };
