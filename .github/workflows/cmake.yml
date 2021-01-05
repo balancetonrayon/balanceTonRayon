@@ -49,7 +49,6 @@ jobs:
           ./bootstrap-vcpkg.sh
           ./vcpkg integrate install
           ./vcpkg install tinyxml2
-          sudo vcpkg install tinyxml2
         elif [ "$RUNNER_OS" == "macOS" ]; then
           brew install glm
           brew install tinyxml2
