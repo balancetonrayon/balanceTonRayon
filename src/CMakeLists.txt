@@ -37,7 +37,7 @@ target_link_libraries(RayTracing ${OpenCV_LIBS})
 # XML Parser
 find_package(tinyxml2 CONFIG REQUIRED)
 target_include_directories(RayTracing PUBLIC ${tinyxml2_INCLUDE_DIRS})
-target_link_libraries(RayTracing ${OpenCV_LIBS})
+target_link_libraries(RayTracing ${tinyxml2_LIBS})
 
 
 # Adding include path by default to temporarily fix glm bug
