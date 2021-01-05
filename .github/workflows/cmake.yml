@@ -42,19 +42,10 @@ jobs:
           
           sudo apt-get install libglm-dev
           
-          if [ ! -d opencv/.git ]; then
-            git clone https://github.com/Microsoft/vcpkg.git
-          fi
-          cd vcpkg
-          ./bootstrap-vcpkg.sh
-          ./vcpkg integrate install
-          ./vcpkg install tinyxml2
         elif [ "$RUNNER_OS" == "macOS" ]; then
           brew install glm
-          brew install tinyxml2
         elif [ "$RUNNER_OS" == "Windows" ]; then
           vcpkg install glm
-          vcpkg install tinyxml2
         fi
 
         # opencv
@@ -73,6 +64,14 @@ jobs:
         else
             sudo make install
         fi
+        
+        # tinyxml2
+        git clone https://github.com/leethomason/tinyxml2.git
+        cd tinyxml2
+        mkdir -p build && cd build
+        cmake ../
+        cmake --build .
+        sudo make install
       shell: bash
 
     - name: Create Build Environment
