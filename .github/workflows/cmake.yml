@@ -42,7 +42,9 @@ jobs:
           
           sudo apt-get install libglm-dev
           
-          git clone https://github.com/Microsoft/vcpkg.git
+          if [ ! -d opencv/.git ]; then
+            git clone https://github.com/Microsoft/vcpkg.git
+          fi
           cd vcpkg
           ./bootstrap-vcpkg.sh
           ./vcpkg integrate install
