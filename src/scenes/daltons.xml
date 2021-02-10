@@ -2,56 +2,117 @@
 
 <scene>
     <meta>
-        <name> Les Daltons </name>
-        <size> 1000 1000 </size>
-        <max_depth> 30 </max_depth>
+        <name>Les Daltons</name>
+        <size>
+            <x>1000</x>
+            <y>1000 </y>
+        </size>
+        <max_depth>30</max_depth>
     </meta>
     <camera>
-        <pos> 0 0 0.66 </pos>
-        <dir> 0 0 1 </dir>
+        <pos>
+            <x>0</x>
+            <y>0</y>
+            <z>0.66</z>
+        </pos>
+        <dir>
+            <x>0</x>
+            <y>0</y>
+            <z>1</z>
+        </dir>
         <foc> 0.05 </foc>
-        <size> 0.1 0.1 </size>
-        <pix> 2000 2000 </pix>
+        <size>
+            <x>0.1</x>
+            <y>0.1</y>
+        </size>
+        <pix>
+            <x>2000</x>
+            <y>2000</y>
+        </pix>
     </camera>
     <lighsources>
         <directLight>
-            <pos> 5 2.5 3 </pos>
-            <color> 1 1 1 </color>
-            <intensity> 400 </intensity>
+            <pos>
+                <x>5</x>
+                <y>2.5</y>
+                <z>3</z>
+            </pos>
+            <color>
+                <r>1</r>
+                <g>1</g>
+                <b>1</b>
+            </color>
+            <intensity>400</intensity>
         </directLight>
     </lighsources>
     <objects>
         <plane>
-            <pos> 0 0 0 </pos>
-            <normal> 0 0 1</normal>
-            <color> 1 1 1 </color>
-            <reflexion> 0.2 </reflexion>
+            <pos>
+                <x>0</x>
+                <y>0</y>
+                <z>0</z>
+            </pos>
+            <normal>
+                <x>0</x>
+                <y>0</y>
+                <z>1</z>
+            </normal>
+            <color>
+                <r>1</r>
+                <g>1</g>
+                <b>1</b>
+            </color>
+            <reflexion>0.2</reflexion>
             <refractive></refractive>
-            <albedo> 0.25 </albedo>
+            <albedo>0.25</albedo>
         </plane>
         <sphere>
-            <pos> 6.16 0.66 1 </pos>
-            <color> 1 1 1 </color>
-            <radius> 1 </radius>
-            <reflexion> 0.8 </reflexion>
+            <pos>
+                <x>6.16</x>
+                <y>0.66</y>
+                <z>1</z>
+            </pos>
+            <color>
+                <r>1</r>
+                <g>1</g>
+                <b>1</b>
+            </color>
+            <radius>1</radius>
+            <reflexion>0.8</reflexion>
             <refractive></refractive>
-            <albedo> 0.22 </albedo>
+            <albedo>0.22</albedo>
         </sphere>
         <sphere>
-            <pos> 5 0 0.66 </pos>
-            <color> 0 1 1 </color>
-            <radius> 0.66 </radius>
+            <pos>
+                <x>5</x>
+                <y>0</y>
+                <z>0.66</z>
+            </pos>
+            <color>
+                <r>0</r>
+                <g>1</g>
+                <b>1</b>
+            </color>
+            <radius>0.66</radius>
             <reflexion>0.2</reflexion>
             <refractive></refractive>
             <albedo> 0.35 </albedo>
         </sphere>
         <sphere>
-            <pos> 4.16 0.44 0.20 </pos>
-            <color> 0 0 1</color>
-            <radius> 0.20 </radius>
-            <reflexion> 0.1 </reflexion>
+            <pos>
+                <x>4.16</x>
+                <y>0.44</y>
+                <z>0.20</z>
+            </pos>
+            <color>
+                <r>0</r>
+                <g>0</g>
+                <b>1</b>
+            </color>
+            <radius>0.20</radius>
+            <reflexion>0.1</reflexion>
             <refractive></refractive>
-            <albedo> 0.2 </albedo>
+            <albedo>0.2</albedo>
         </sphere>
     </objects>
 </scene>
