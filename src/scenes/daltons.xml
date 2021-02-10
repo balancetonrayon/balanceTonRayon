@@ -20,7 +20,7 @@
             <y>0</y>
             <z>1</z>
         </dir>
-        <foc> 0.05 </foc>
+        <foc>0.05</foc>
         <size>
             <x>0.1</x>
             <y>0.1</y>
@@ -96,7 +96,7 @@
             <radius>0.66</radius>
             <reflexion>0.2</reflexion>
             <refractive></refractive>
-            <albedo> 0.35 </albedo>
+            <albedo>0.35</albedo>
         </sphere>
         <sphere>
             <pos>
