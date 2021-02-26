@@ -67,11 +67,13 @@ public:
             std::vector<int> c1Vect;
             std::vector<int> c3Vect;
             std::vector<int> c5Vect;
-            
+
             while (type == "f") {
                 c1Vect.clear();
                 c3Vect.clear();
                 c5Vect.clear();
+
+                // Tant que l'on est pas au bout de la ligne on ajoute des sommets
                 while (objFile.peek() != '\n' && !objFile.eof()) {
                     objFile >> c1;
                     objFile >> c2;
@@ -88,10 +90,12 @@ public:
                 }
                 Polygon poly;
                 for (int k = 0; k < c1Vect.size(); ++k) {
-                    poly.addVertice(v[c1Vect[k]]);
-                    poly.addTexture(vt[c3Vect[k]]);
+                    poly.addVertice(v[c1Vect[k]-1]); // Les indices de l'obj commencent à 1
+                    poly.addTexture(vt[c3Vect[k]-1]);
                 }
-                poly.setNormal(vn[c1Vect[0]]);
+                std::cout << vn[c5Vect[0]] << std::endl;
+                poly.setNormal(vn[c5Vect[0]]);
+                std::cout << poly.normal << std::endl;
                 mesh.addPolygon(poly);
 
                 if (objFile.eof()) break;
