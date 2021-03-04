@@ -9,6 +9,7 @@
   The object ray is caracterized by an initial point and a direction
 */
 struct Ray {
+protected:
     //! A public variable.
     /*!
       pos is the 3D initial point.
@@ -27,6 +28,14 @@ struct Ray {
      */
     glm::vec3 color;
 
+public:
+    glm::vec3 getInitPt() const { return this->initPt; }
+    glm::vec3 getDir() const { return this->dir; }
+    glm::vec3 getColor() const { return this->color; }
+
+    glm::vec3 setInitPt(glm::vec3 initPt) { this->initPt = initPt; }
+    glm::vec3 setDir(glm::vec3 dir) { this->dir = dir; }
+    glm::vec3 setColor(glm::vec3 color) { this->color = color; }
     //! The default constructor.
     /*!
       It creates a ray starting at 0,0,0 and going towards increasing x.

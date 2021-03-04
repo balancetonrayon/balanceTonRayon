@@ -16,9 +16,9 @@ std::ostream &Light::printInfo(std::ostream &os) const {
 std::vector<Ray> DirectLight::outboundRays(glm::vec3 hitPt) const {
     std::vector<Ray> rays;
     Ray ray;
-    ray.initPt = hitPt;
-    ray.dir = glm::normalize(pos - hitPt);
-    ray.color = color * intensity;
+    ray.setInitPt(hitPt);
+    ray.setDir(glm::normalize(pos - hitPt));
+    ray.setColor(color * intensity);
     rays.push_back(ray);
     return rays;
 }
@@ -26,11 +26,10 @@ std::vector<Ray> DirectLight::outboundRays(glm::vec3 hitPt) const {
 std::vector<Ray> SpotLight::outboundRays(const glm::vec3 hitPt) const {
     std::vector<Ray> rays;
     Ray ray;
-    ray.initPt = hitPt;
-    ray.dir = glm::normalize(pos - hitPt);
-    ray.color =
-        color *
-        static_cast<float>(intensity / (4 * glm::pi<float>() * glm::dot(pos - hitPt, pos - hitPt)));
+    ray.setInitPt(hitPt);
+    ray.setDir(glm::normalize(pos - hitPt));
+    ray.setColor(color * static_cast<float>(intensity / (4 * glm::pi<float>() *
+                                                         glm::dot(pos - hitPt, pos - hitPt))));
     rays.push_back(ray);
     return rays;
 }
@@ -38,12 +37,11 @@ std::vector<Ray> SpotLight::outboundRays(const glm::vec3 hitPt) const {
 std::vector<Ray> AreaLight::outboundRays(const glm::vec3 hitPt) const {
     std::vector<Ray> rays;
     Ray ray;
-    ray.initPt = hitPt;
-    ray.dir = glm::normalize(pos - hitPt);
-    ray.color =
-        color *
-        std::min(255.0f, static_cast<float>(intensity / (4 * glm::pi<float>() *
-                                                         glm::dot(pos - hitPt, pos - hitPt))));
+    ray.setInitPt(hitPt);
+    ray.setDir(glm::normalize(pos - hitPt));
+    ray.setColor(color * std::min(255.0f, static_cast<float>(
+                                              intensity / (4 * glm::pi<float>() *
+                                                           glm::dot(pos - hitPt, pos - hitPt)))));
     rays.push_back(ray);
     return rays;
 }
@@ -66,22 +64,22 @@ std::ostream &Camera::printInfo(std::ostream &os) const {
     return os << "Camera: in " << pos << ", of size: " << sizeX;
 }
 
-std::vector<Ray> Plane::intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+std::vector<Ray> Plane::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                   Inter &inter) const {
     std::vector<Ray> rays;
     /*if (glm::dot(iRay.dir, normal) > 0)
         normal = -normal;*/
 
     // true if there is an intersection, false if there is none
-    bool intersect = glm::intersectRayPlane(iRay.initPt, iRay.dir, pos, normal, inter.id);
+    bool intersect = glm::intersectRayPlane(iRay.getInitPt(), iRay.getDir(), pos, normal, inter.id);
     if (intersect) {
-        glm::vec3 intersectPt = iRay.initPt + inter.id * iRay.dir;
+        glm::vec3 intersectPt = iRay.getInitPt() + inter.id * iRay.getDir();
         inter.normal = normal;
 
         Ray oRay = ltSrc->outboundRays(intersectPt)[0];
 
         inter.ld = glm::distance(intersectPt, ltSrc->pos);
-        inter.rColor = oRay.color;
+        inter.rColor = oRay.getColor();
         rays.push_back(oRay);
         inter.objAlbedo = this->albedo;
         inter.objColor = this->color;
@@ -99,19 +97,19 @@ std::ostream &Plane::printInfo(std::ostream &os) const {
               << "reflexion: " << reflexionIndex;
 }
 
-std::vector<Ray> Sphere::intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+std::vector<Ray> Sphere::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                    Inter &inter) const {
     std::vector<Ray> rays;
 
     glm::vec3 intersectPt;
-    bool intersect =
-        glm::intersectRaySphere(iRay.initPt, iRay.dir, pos, radius, intersectPt, inter.normal);
+    bool intersect = glm::intersectRaySphere(iRay.getInitPt(), iRay.getDir(), pos, radius,
+                                             intersectPt, inter.normal);
     if (intersect) {
-        inter.id = glm::distance(iRay.initPt, intersectPt);
+        inter.id = glm::distance(iRay.getInitPt(), intersectPt);
         // std::cout << "sphere distance: " << iDistance;
         Ray oRay = ltSrc->outboundRays(intersectPt)[0];
         inter.ld = glm::distance(intersectPt, ltSrc->pos);
-        inter.rColor = oRay.color;
+        inter.rColor = oRay.getColor();
         /*std::vector<Ray> rays;
         std::cout << ray << std::endl
                   << *this << std::endl
@@ -135,7 +133,7 @@ std::ostream &Sphere::printInfo(std::ostream &os) const {
               << "albedo: " << albedo;
 }
 
-std::vector<Ray> Triangle::intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+std::vector<Ray> Triangle::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                      Inter &inter) const {
     std::vector<Ray> rays;
 
@@ -144,19 +142,19 @@ std::vector<Ray> Triangle::intersect(const Ray iRay, const std::shared_ptr<Light
     // Intersect or not ? Müller Trumbore algorithm
     glm::vec3 v0v1 = pos1 - pos;
     glm::vec3 v0v2 = pos2 - pos;
-    glm::vec3 pvec = glm::cross(iRay.dir, v0v2);
+    glm::vec3 pvec = glm::cross(iRay.getDir(), v0v2);
     float det = glm::dot(v0v1, pvec);
 
     // ray and triangle are parallel if det is close to 0
     if (fabs(det) < KEPSILON) return rays;
     float invDet = 1 / det;
 
-    glm::vec3 tvec = iRay.initPt - pos;
+    glm::vec3 tvec = iRay.getInitPt() - pos;
     float u = glm::dot(tvec, pvec) * invDet;
     if (u < 0 || u > 1) return rays;
 
     glm::vec3 qvec = glm::cross(tvec, v0v1);
-    float v = glm::dot(iRay.dir, qvec) * invDet;
+    float v = glm::dot(iRay.getDir(), qvec) * invDet;
     if (v < 0 || u + v > 1) return rays;
 
     // distance to intersection
@@ -166,11 +164,11 @@ std::vector<Ray> Triangle::intersect(const Ray iRay, const std::shared_ptr<Light
     if (intersect) {
         // std::cout << "in";
         inter.id = t;
-        glm::vec3 intersectPt = iRay.initPt + inter.id * iRay.dir;
+        glm::vec3 intersectPt = iRay.getInitPt() + inter.id * iRay.getDir();
         inter.normal = normal;
         Ray oRay = ltSrc->outboundRays(intersectPt)[0];
         inter.ld = glm::distance(intersectPt, ltSrc->pos);
-        inter.rColor = oRay.color;
+        inter.rColor = oRay.getColor();
         // std::cout << oRay.color<<std::endl;
         inter.objAlbedo = this->albedo;
         inter.objColor = this->color;
@@ -191,7 +189,7 @@ std::ostream &Triangle::printInfo(std::ostream &os) const {
 }
 
 // A CHANGER
-std::vector<Ray> Box::intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+std::vector<Ray> Box::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                 Inter &inter) const {
     /*float tmin = (min.x - r.orig.x) / r.dir.x;
     float tmax = (max.x - r.orig.x) / r.dir.x;
@@ -257,7 +255,7 @@ std::ostream &PolygonMesh::printInfo(std::ostream &os) const {
     return os << stream;
 }
 
-std::vector<Ray> TriangleMesh::intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+std::vector<Ray> TriangleMesh::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                          Inter &inter) const {
     float minDistance = INFINITY;
     Inter interTemp;

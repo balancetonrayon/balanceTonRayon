@@ -242,7 +242,7 @@ public:
     */
     float albedo;
 
-    virtual std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+    virtual std::vector<Ray> intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                        Inter &inter) const = 0;
 
     explicit BasicObject(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
@@ -361,7 +361,7 @@ public:
     */
     glm::vec3 normal;  //
 
-    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+    std::vector<Ray> intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                Inter &inter) const override;
 
     //! The default constructor.
@@ -394,7 +394,7 @@ public:
     */
     float radius;
 
-    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+    std::vector<Ray> intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                Inter &inter) const override;
 
     //! A specialized constructor.
@@ -421,7 +421,7 @@ public:
     glm::vec3 pos2;
     glm::vec3 pos3;
 
-    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+    std::vector<Ray> intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                Inter &inter) const override;
 
     explicit Box(glm::vec3 v0 = glm::vec3(), glm::vec3 v1 = glm::vec3(), glm::vec3 v2 = glm::vec3(),
@@ -462,7 +462,7 @@ public:
     */
     glm::vec3 normal;
 
-    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+    std::vector<Ray> intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                Inter &inter) const override;
 
     void offset(glm::vec3 position) {
@@ -543,15 +543,13 @@ protected:
     std::vector<Triangle> triangles;
 
 public:
-    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+    std::vector<Ray> intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                Inter &inter) const override;
 
-    std::vector<Triangle> getTriangles() {
-        return this->triangles;
-    }
+    std::vector<Triangle> getTriangles() { return this->triangles; }
 
     //! Public method
-    /*! 
+    /*!
         Move the center of the mesh to the position
         @param position new position of the center of the Triangle mesh
     */
