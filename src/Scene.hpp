@@ -6,7 +6,7 @@
 #include "Object.hpp"
 
 class Scene {
-    std::vector<std::shared_ptr<ObjectBase>> objects;
+    std::vector<std::shared_ptr<BasicObject>> objects;
 
     std::vector<std::shared_ptr<Light>> sources;
 
@@ -17,7 +17,7 @@ public:
     auto getSources() const { return sources; }
     auto getCamera() const { return camera; }
 
-    void addObject(std::shared_ptr<ObjectBase> object) { objects.push_back(object); }
+    void addObject(std::shared_ptr<BasicObject> object) { objects.push_back(object); }
 
     void addSource(std::shared_ptr<Light> source) { sources.push_back(source); }
 

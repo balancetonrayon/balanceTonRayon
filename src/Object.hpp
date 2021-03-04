@@ -158,21 +158,58 @@ public:
 */
 class Inter {
 public:
+    //! A public variable.
+    /*!
+      if is the distance between the intersection and the object.
+    */
     float id;
+
+    //! A public variable.
+    /*!
+      ld is the distance between the intersection and the light.
+    */
     float ld;
+
+    //! A public variable.
+    /*!
+      normal is the normal at the intersection.
+    */
     glm::vec3 normal;
+
+    //! A public variable.
+    /*!
+      color is the color of the ray at the intersection
+    */
     glm::vec3 rColor;
-    Inter(): id(0), ld(0), normal(glm::vec3()), rColor(glm::vec3()) {};
+
+    glm::vec3 objColor;
+
+    //! A public variable
+    /*!
+      the reflexion Index of the intersection
+    */
+    float objReflexionIndex;
+
+    //! A public variable
+    /*!
+
+    */
+    float objTransparency;
+
+    float objAlbedo;
+
+    Inter() : id(-1), ld(-1), normal(glm::vec3()), rColor(glm::vec3()){};
+
     explicit Inter(float i, float l, glm::vec3 n, glm::vec3 c)
         : id(i), ld(l), normal(n), rColor(c){};
 };
 
-//!  The ObjectBase class.
+//!  The BasicObject class.
 /*!
   Every object which has a physical meaning is deriving from this class.
   \sa PhysicalObject
 */
-class ObjectBase : public PhysicalObject {
+class BasicObject : public PhysicalObject {
 public:
     //! A public variable.
     /*!
@@ -205,11 +242,11 @@ public:
     */
     float albedo;
 
-    virtual std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> ltSrc,
+    virtual std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
                                        Inter &inter) const = 0;
 
-    explicit ObjectBase(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
-                        float t = 0, float r = 1, float R = 1, float a = 0.18)
+    explicit BasicObject(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
+                         float t = 0, float r = 1, float R = 1, float a = 0.18)
         : PhysicalObject(pos),
           color(color),
           transparency(t),
@@ -316,7 +353,7 @@ protected:
 /*!
   It represents a solid plane.
 */
-class Plane : public ObjectBase {
+class Plane : public BasicObject {
 public:
     //! A public variable.
     /*!
@@ -324,7 +361,7 @@ public:
     */
     glm::vec3 normal;  //
 
-    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> ltSrc,
+    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
                                Inter &inter) const override;
 
     //! The default constructor.
@@ -333,7 +370,7 @@ public:
     explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
                    glm::vec3 normal = glm::vec3(0, 0, 1), float t = 0, float r = 1, float R = 1,
                    float a = 0.18)
-        : ObjectBase(pos, color, t, r, R, a), normal(glm::normalize(normal)) {}
+        : BasicObject(pos, color, t, r, R, a), normal(glm::normalize(normal)) {}
 
 protected:
     //! A normal member taking one argument and returning the information about
@@ -349,7 +386,7 @@ protected:
 /*!
   It represents a solid sphere.
 */
-class Sphere : public ObjectBase {
+class Sphere : public BasicObject {
 public:
     //! A public variable.
     /*!
@@ -357,19 +394,194 @@ public:
     */
     float radius;
 
-    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> ltSrc,
+    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
                                Inter &inter) const override;
 
-    //! The default constructor.
+    //! A specialized constructor.
     /*!
       Creates a Sphere in (0, 0, 0) of radius 1 by default.
     */
     explicit Sphere(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
                     float radius = 1, float t = 0, float r = 1, float R = 1, float a = 0.18)
-        : ObjectBase(pos, color, t, r, R, a), radius(radius) {}
+        : BasicObject(pos, color, t, r, R, a), radius(radius) {}
 
 protected:
     //! A normal member taking one argument and returning the information about
+    //! an object. It replaces the pure virtual member of PhysicalObject
+    /*!
+      \param os the current ostream
+      \return The information of the object as an ostream
+    */
+    std::ostream &printInfo(std::ostream &os) const override;
+};
+
+class Box : public BasicObject {
+public:
+    glm::vec3 pos1;
+    glm::vec3 pos2;
+    glm::vec3 pos3;
+
+    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+                               Inter &inter) const override;
+
+    explicit Box(glm::vec3 v0 = glm::vec3(), glm::vec3 v1 = glm::vec3(), glm::vec3 v2 = glm::vec3(),
+                 glm::vec3 v3 = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1), float t = 0,
+                 float r = 1, float R = 1, float a = 0.18)
+        : BasicObject(pos, color, t, r, R, a), pos1(pos1), pos2(pos2), pos3(pos3) {}
+
+protected:
+    //! A normal member taking one argument and returning the information about
+    //! an object. It replaces the pure virtual member of PhysicalObject
+    /*!
+      \param os the current ostream
+      \return The information of the object as an ostream
+    */
+    std::ostream &printInfo(std::ostream &os) const override;
+};
+//!  The Triangle class.
+/*!
+  It represents a solid triangle.
+*/
+class Triangle : public BasicObject {
+public:
+    //! A public variable.
+    /*!
+      The second vertice of the triangle.
+    */
+    glm::vec3 pos1;
+
+    //! A public variable.
+    /*!
+      The third vertice of the triangle.
+    */
+    glm::vec3 pos2;
+
+    //! A public variable.
+    /*!
+      The normal of the triangle.
+    */
+    glm::vec3 normal;
+
+    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+                               Inter &inter) const override;
+
+    void offset(glm::vec3 position) {
+        pos = pos + position;
+        pos1 = pos1 + position;
+        pos2 = pos2 + position;
+    }
+
+    //! A specialized constructor.
+    /*!
+      Creates a Triangle
+    */
+    explicit Triangle(glm::vec3 v0 = glm::vec3(), glm::vec3 v1 = glm::vec3(),
+                      glm::vec3 v2 = glm::vec3(), glm::vec3 n = glm::vec3(1, 1, 1),
+                      glm::vec3 color = glm::vec3(1, 1, 1), float t = 0, float r = 0, float R = 0,
+                      float a = 0.18)
+        : BasicObject(v0, color, t, r, R, a), pos1(v1), pos2(v2), normal(glm::normalize(n)) {
+        if (n.x == 1 && n.y == 1 && n.z == 1) normal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
+    }
+
+protected:
+    //! A normal member taking one argument and returning the information about
+    //! an object. It replaces the pure virtual member of PhysicalObject
+    /*!
+      \param os the current ostream
+      \return The information of the object as an ostream
+    */
+    std::ostream &printInfo(std::ostream &os) const override;
+};
+
+// class AccelerationStructure : public Box {};
+
+class Polygon : public PhysicalObject {
+public:
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec2> textureCoordinates;
+    glm::vec3 normal;
+
+    void addVertice(glm::vec3 vertice) { vertices.push_back(vertice); }
+    void addTexture(glm::vec2 texture) { textureCoordinates.push_back(texture); }
+    void setNormal(glm::vec3 n) { normal = n; }
+
+    void polygon2Triangle(std::vector<Triangle> triangles) {}
+
+protected:
+    //! A normal member taking one argument and returning the information about
+    //! an object. It replaces the pure virtual member of PhysicalObject
+    /*!
+      \param os the current ostream
+      \return The information of the object as an ostream
+    */
+    std::ostream &printInfo(std::ostream &os) const override;
+};
+
+class PolygonMesh : public PhysicalObject {
+protected:
+    std::vector<Polygon> polygons;
+
+public:
+    std::vector<Polygon>::iterator begin() { return polygons.begin(); }
+
+    std::vector<Polygon>::iterator end() { return polygons.end(); }
+
+    void addPolygon(Polygon poly) { polygons.push_back(poly); }
+
+protected:
+    //! A normal member taking one argument and returning the information about
+    //! an object. It replaces the pure virtual member of PhysicalObject
+    /*!
+      \param os the current ostream
+      \return The information of the object as an ostream
+    */
+    std::ostream &printInfo(std::ostream &os) const override;
+};
+
+class TriangleMesh : public BasicObject {
+protected:
+    std::vector<Triangle> triangles;
+
+public:
+    std::vector<Ray> intersect(const Ray iRay, const std::shared_ptr<Light> &ltSrc,
+                               Inter &inter) const override;
+
+    std::vector<Triangle> getTriangles() {
+        return this->triangles;
+    }
+
+    //! Public method
+    /*! 
+        Move the center of the mesh to the position
+        @param position new position of the center of the Triangle mesh
+    */
+    void offset(glm::vec3 position) {
+        for (Triangle triangle : triangles) {
+            triangle.offset(position);
+        }
+    }
+    //! A specialized constructor.
+    /*!
+      Creates a Mesh made of triangles from a mesh made of polygons
+    */
+    explicit TriangleMesh(PolygonMesh polyMesh) {
+        reflexionIndex = 0;
+        refractiveIndex = 0;
+        transparency = 0;
+        albedo = 0.18;
+        for (Polygon poly : polyMesh) {
+            std::vector<Triangle> polygonTriangles;
+            int verticeNb = poly.vertices.size();
+            for (int id = 1; id < verticeNb - 1; ++id) {
+                polygonTriangles.push_back(Triangle(poly.vertices[0], poly.vertices[id],
+                                                    poly.vertices[id + 1], poly.normal));
+            }
+            triangles.insert(triangles.end(), polygonTriangles.begin(), polygonTriangles.end());
+        }
+    }
+
+protected:
+    //! A normal membser taking one argument and returning the information about
     //! an object. It replaces the pure virtual member of PhysicalObject
     /*!
       \param os the current ostream
