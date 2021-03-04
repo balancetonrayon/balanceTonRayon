@@ -83,6 +83,7 @@ std::vector<Ray> Plane::intersect(const Ray iRay, const std::shared_ptr<Light> &
         inter.ld = glm::distance(intersectPt, ltSrc->pos);
         inter.rColor = oRay.color;
         rays.push_back(oRay);
+        inter.objAlbedo = this->albedo;
         inter.objColor = this->color;
         inter.objReflexionIndex = this->reflexionIndex;
         inter.objTransparency = this->transparency;

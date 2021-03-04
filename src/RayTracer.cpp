@@ -58,7 +58,8 @@ glm::vec3 refract(const Ray &iRay, const glm::vec3 &normal, const float &refract
 }
 
 glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
-                  std::vector<std::shared_ptr<BasicObject>> const &objects, const int &depth = 0) {
+                  std::vector<std::shared_ptr<BasicObject>> const &objects,
+                  const glm::vec3 &backgroundColor, const int &depth = 0) {
     glm::vec3 color(0, 0, 0);
     if (depth > MAX_DEPTH) {
         return color;
@@ -133,8 +134,8 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                 //    "\nOutbound: " << reflectedRay.dir[2] << std::endl;
 
                 // std::cout << ref << std::endl;
-                color += detail::mult(hitObject->color,
-                                      castRay(reflectedRay, lightSource, objects, depth + 1)) *
+                color += detail::mult(hitObject->color, castRay(reflectedRay, lightSource, objects,
+                                                                backgroundColor, depth + 1)) *
                          hitObject->reflexionIndex;
                 // std::cout << color << std::endl;
             }
@@ -150,7 +151,8 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                                            refract(ray, inter.normal, hitObject->refractiveIndex));
                     outside ? refractedRay.biais(-inter.normal, 0.001f)
                             : refractedRay.biais(+inter.normal, 0.001f);
-                    refractionColor = castRay(refractedRay, lightSource, objects, depth + 1);
+                    refractionColor =
+                        castRay(refractedRay, lightSource, objects, backgroundColor, depth + 1);
                 }
 
                 Ray reflectedRay =
@@ -158,12 +160,15 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                         ray.dir - 2 * glm::dot(ray.dir, inter.normal) * inter.normal);
                 outside ? reflectedRay.biais(+inter.normal, 0.001f)
                         : reflectedRay.biais(-inter.normal, 0.001f);
-                glm::vec3 reflectionColor = castRay(reflectedRay, lightSource, objects, depth + 1);
+                glm::vec3 reflectionColor =
+                    castRay(reflectedRay, lightSource, objects, backgroundColor, depth + 1);
 
                 // mix the two
                 color +=
                     reflectionColor * kr + refractionColor * (1 - kr) * hitObject->transparency;
             }
+        }  else {  // If no intersection, set the color to the background color
+           color = backgroundColor;
         }
         if (color[0] > 255 || color[1] > 255 || color[2] > 255)
             std::cout << "Color overflow ! " << color << std::endl;
@@ -184,7 +189,8 @@ void StdRayTracer::render(Scene scene) {
             int depth = 0;
             Ray primRay = camera->genRay(x, y);
 
-            color = detail::glm2cv(castRay(primRay, lightSources, objects, depth));
+            color =
+                detail::glm2cv(castRay(primRay, lightSources, objects, scene.getColor(), depth));
             image.at<cv::Vec3b>(x, y) = color;
         }
     }
