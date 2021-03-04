@@ -1,9 +1,6 @@
 #pragma once
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include <algorithm>
-#include <cmath>
-#include <exception>
 #include <iostream>
 #include <memory>
 #include <vector>

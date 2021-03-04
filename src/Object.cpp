@@ -244,7 +244,6 @@ std::ostream &Polygon::printInfo(std::ostream &os) const {
     return os;
 }
 
-// TODO: à compléter
 std::ostream &PolygonMesh::printInfo(std::ostream &os) const {
     std::string stream;
     os << "  - PolygonMesh - \n"
