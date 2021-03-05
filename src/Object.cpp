@@ -46,15 +46,11 @@ std::vector<Ray> AreaLight::outboundRays(const glm::vec3 hitPt) const {
     return rays;
 }
 
-Ray Camera::genRay(unsigned x, unsigned y) noexcept {
-    try {
-        if (x > resX || y > resY || x < 0 || y < 0) throw Camera::pixel_out_of_range();
-    } catch (Camera::pixel_out_of_range exception) {
-        std::cout << "Pixel out of range" << std::endl;
-    }
+Ray Camera::genRay(const float &x, const float &y) {
+    if (x > resX || y > resY || x < 0 || y < 0) throw Camera::pixel_out_of_range();
 
-    glm::vec3 rDir = dir * focalLength + hv * (float)((float)y / resY - 0.5) * sizeY +
-                     vv * (float)((float)x / resX - 0.5) * sizeX;
+    glm::vec3 rDir = dir * focalLength + hv * (float)(y / resY - 0.5) * sizeY +
+                     vv * (float)(x / resX - 0.5) * sizeX;
 
     // std::cout << Ray(pos, dir) << std::endl;
     return Ray(pos, rDir);
