@@ -13,29 +13,24 @@ std::ostream &Light::printInfo(std::ostream &os) const {
     return os << "Light: in " << pos << ", of color: " << color;
 }
 
-std::vector<Ray> DirectLight::outboundRays(glm::vec3 hitPt) const {
-    std::vector<Ray> rays;
+void DirectLight::outboundRays(const glm::vec3 &hitPt, std::vector<Ray> &rays) const {
     Ray ray;
     ray.setInitPt(hitPt);
     ray.setDir(glm::normalize(pos - hitPt));
     ray.setColor(color * intensity);
     rays.push_back(ray);
-    return rays;
 }
-// problème de performances : passer le vecteur en référence - à finir
-std::vector<Ray> SpotLight::outboundRays(const glm::vec3 hitPt) const {
-    std::vector<Ray> rays;
+
+void SpotLight::outboundRays(const glm::vec3 &hitPt, std::vector<Ray> &rays) const {
     Ray ray;
     ray.setInitPt(hitPt);
     ray.setDir(glm::normalize(pos - hitPt));
     ray.setColor(color * static_cast<float>(intensity / (4 * glm::pi<float>() *
                                                          glm::dot(pos - hitPt, pos - hitPt))));
     rays.push_back(ray);
-    return rays;
 }
 
-std::vector<Ray> AreaLight::outboundRays(const glm::vec3 hitPt) const {
-    std::vector<Ray> rays;
+void AreaLight::outboundRays(const glm::vec3 &hitPt, std::vector<Ray> &rays) const {
     Ray ray;
     ray.setInitPt(hitPt);
     ray.setDir(glm::normalize(pos - hitPt));
@@ -43,7 +38,6 @@ std::vector<Ray> AreaLight::outboundRays(const glm::vec3 hitPt) const {
                                               intensity / (4 * glm::pi<float>() *
                                                            glm::dot(pos - hitPt, pos - hitPt)))));
     rays.push_back(ray);
-    return rays;
 }
 
 Ray Camera::genRay(const float &x, const float &y) {
@@ -62,21 +56,20 @@ std::ostream &Camera::printInfo(std::ostream &os) const {
 
 std::vector<Ray> Plane::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                   Inter &inter) const {
-    std::vector<Ray> rays;
     /*if (glm::dot(iRay.dir, normal) > 0)
         normal = -normal;*/
-
+    std::vector<Ray> rays;
     // true if there is an intersection, false if there is none
     bool intersect = glm::intersectRayPlane(iRay.getInitPt(), iRay.getDir(), pos, normal, inter.id);
     if (intersect) {
         glm::vec3 intersectPt = iRay.getInitPt() + inter.id * iRay.getDir();
         inter.normal = normal;
 
-        Ray oRay = ltSrc->outboundRays(intersectPt)[0];
+        ltSrc->outboundRays(intersectPt, rays);
 
         inter.ld = glm::distance(intersectPt, ltSrc->pos);
-        inter.rColor = oRay.getColor();
-        rays.push_back(oRay);
+        inter.rColor = rays[0].getColor();
+
         inter.objAlbedo = this->albedo;
         inter.objColor = this->color;
         inter.objReflexionIndex = this->reflexionIndex;
@@ -103,9 +96,9 @@ std::vector<Ray> Sphere::intersect(const Ray &iRay, const std::shared_ptr<Light>
     if (intersect) {
         inter.id = glm::distance(iRay.getInitPt(), intersectPt);
         // std::cout << "sphere distance: " << iDistance;
-        Ray oRay = ltSrc->outboundRays(intersectPt)[0];
+        ltSrc->outboundRays(intersectPt, rays);
         inter.ld = glm::distance(intersectPt, ltSrc->pos);
-        inter.rColor = oRay.getColor();
+        inter.rColor = rays[0].getColor();
         /*std::vector<Ray> rays;
         std::cout << ray << std::endl
                   << *this << std::endl
@@ -117,7 +110,6 @@ std::vector<Ray> Sphere::intersect(const Ray &iRay, const std::shared_ptr<Light>
         inter.objReflexionIndex = this->reflexionIndex;
         inter.objTransparency = this->transparency;
         inter.objAlbedo = this->albedo;
-        rays.push_back(oRay);
     }
     return rays;
 }
@@ -162,15 +154,14 @@ std::vector<Ray> Triangle::intersect(const Ray &iRay, const std::shared_ptr<Ligh
         inter.id = t;
         glm::vec3 intersectPt = iRay.getInitPt() + inter.id * iRay.getDir();
         inter.normal = normal;
-        Ray oRay = ltSrc->outboundRays(intersectPt)[0];
+        ltSrc->outboundRays(intersectPt, rays);
         inter.ld = glm::distance(intersectPt, ltSrc->pos);
-        inter.rColor = oRay.getColor();
+        inter.rColor = rays[0].getColor();
         // std::cout << oRay.color<<std::endl;
         inter.objAlbedo = this->albedo;
         inter.objColor = this->color;
         inter.objReflexionIndex = this->reflexionIndex;
         inter.objTransparency = this->transparency;
-        rays.push_back(oRay);
     }
     return rays;
 }
@@ -258,6 +249,7 @@ std::vector<Ray> TriangleMesh::intersect(const Ray &iRay, const std::shared_ptr<
     for (Triangle triangle : triangles) {
         // std::cout << "test";
         std::vector<Ray> raysTemp = triangle.intersect(iRay, ltSrc, interTemp);
+
         // check that intersection is non void and look for minimum value
         if (interTemp.id != -1 && interTemp.id < minDistance) {
             // std::cout << interTemp.id << " ";
