@@ -14,11 +14,17 @@ set(SRC
     Scene.cpp
     RayTracer.cpp
     Object.cpp
+    lodepng.cpp
+    Texture.cpp
     
     Scene.hpp
     RayTracer.hpp
     Ray.hpp
     Object.hpp
+    ObjParser.hpp
+    Texture.hpp
+    lodepng.h
+#    ImgReader.hpp
     
     utils.hpp
 )
@@ -39,6 +45,10 @@ find_package(tinyxml2 CONFIG REQUIRED)
 target_include_directories(RayTracing PUBLIC ${tinyxml2_INCLUDE_DIRS})
 target_link_libraries(RayTracing ${tinyxml2_LIBS})
 
+# LibPNG
+#find_package(PNG REQUIRED)
+#include_directories(${PNG_INCLUDE_DIR})
+#target_link_libraries(${MY_EXEC} ${PNG_LIBRARY})
 
 # Adding include path by default to temporarily fix glm bug
 target_include_directories(RayTracing PUBLIC "/usr/local/include")
