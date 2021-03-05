@@ -19,14 +19,7 @@ public:
     void render(Scene scene);
 
     explicit FixedAntiAliasingRayTracer() : sqrtAAPower(4) {}
-    explicit FixedAntiAliasingRayTracer(int power) {
-        int x = std::sqrt(power);
-        if (x * x != power) {
-            throw std::runtime_error("Error, the Anti Aliasing power should be a perfect square");
-        } else {
-            this->sqrtAAPower = x;
-        }
-    }
+    explicit FixedAntiAliasingRayTracer(int pow) { this->sqrtAAPower = pow; }
 };
 
 /*class StochasticAntiAliasingRayTracer {

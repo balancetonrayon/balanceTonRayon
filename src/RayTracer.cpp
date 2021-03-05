@@ -202,7 +202,7 @@ void StdRayTracer::render(Scene scene) {
 
 void FixedAntiAliasingRayTracer::render(Scene scene) {
     int sqrtAAPower = this->getAAPower();
-    float d = 1/sqrtAAPower;
+    float d = 1.0 / sqrtAAPower;
 
     auto lightSources = scene.getSources()[0];
     auto objects = scene.getObjects();
@@ -215,15 +215,20 @@ void FixedAntiAliasingRayTracer::render(Scene scene) {
         std::cout << x << std::endl;
         for (float y = 0; y < camera->resY; ++y) {
             color = glm::vec3(0, 0, 0);
-            for (int idRayV = 1; idRayV < sqrtAAPower+1; ++idRayV) {
-                for (int idRayH = 1; idRayH < sqrtAAPower+1; ++idRayH) {
+            glm::vec3 tmp = glm::vec3(0, 0, 0);
+            for (int idRayV = 1; idRayV < sqrtAAPower + 1; ++idRayV) {
+                for (int idRayH = 1; idRayH < sqrtAAPower + 1; ++idRayH) {
                     int depth = 0;
-                    Ray primRay = camera->genRay(x+d*idRayH, y+d*idRayV);
-
-                    color += castRay(primRay, lightSources, objects, scene.getColor(), depth);
+                    Ray primRay = camera->genRay(x + d * idRayH, y + d * idRayV);
+                    tmp = castRay(primRay, lightSources, objects, scene.getColor(), depth);
+                    color = color + tmp;
+                    //std::cout << d << " " << x + d * (float)idRayH << primRay << " " << tmp << " ";
                 }
             }
-            image.at<cv::Vec3b>(x, y) = detail::glm2cv(color/((float)(sqrtAAPower*sqrtAAPower)));
+
+            image.at<cv::Vec3b>(x, y) =
+                detail::glm2cv(color / ((float)(sqrtAAPower * sqrtAAPower)));
+            //std::cout << detail::glm2cv(color / ((float)(sqrtAAPower * sqrtAAPower))) << std::endl;
         }
     }
     cv::resize(image, image, cv::Size(1000, 1000));
