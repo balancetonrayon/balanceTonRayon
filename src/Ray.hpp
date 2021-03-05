@@ -36,6 +36,11 @@ public:
     glm::vec3 setInitPt(glm::vec3 initPt) { this->initPt = initPt; }
     glm::vec3 setDir(glm::vec3 dir) { this->dir = dir; }
     glm::vec3 setColor(glm::vec3 color) { this->color = color; }
+
+    void biais(glm::vec3 hitNormal, float biaisCoeff) { initPt = initPt + hitNormal * biaisCoeff; }
+    
+    // Constructors
+
     //! The default constructor.
     /*!
       It creates a ray starting at 0,0,0 and going towards increasing x.
@@ -47,8 +52,6 @@ public:
       It creates a Ray with specified initial point and direction.
     */
     Ray(glm::vec3 initPt, glm::vec3 dir) : initPt(initPt), dir(glm::normalize(dir)) {}
-
-    void biais(glm::vec3 hitNormal, float biaisCoeff) { initPt = initPt + hitNormal * biaisCoeff; }
 
     //! An overload of the operator << to print rays for debug.
     /*!
