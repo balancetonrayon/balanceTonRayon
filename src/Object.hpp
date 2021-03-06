@@ -13,27 +13,27 @@
 #include "Ray.hpp"
 #include "Texture.hpp"
 
-//!
 /**
  * @brief The core Object class.
  * @class PhysicalObject
  */
 class PhysicalObject {
 public:
-    //! A public variable.
     /**
-      @brief pos is the 3D location of the object.
-    */
+     * @brief pos is the 3D location of the object.
+     *
+     */
     glm::vec3 pos;
 
-    //! The default constructor.
     /**
-      It puts the object in (0,0,0).
-    */
+     * @brief Construct a new Physical Object object at (0,0,0) by default.
+     *
+     * @param pos
+     */
     explicit PhysicalObject(glm::vec3 pos = glm::vec3()) : pos(pos) {}
 
     /**
-     * @brief
+     * @brief An operator overload to print information for debug
      *
      * @param stream
      * @param obj
@@ -52,10 +52,11 @@ protected:
     virtual std::ostream &printInfo(std::ostream &os) const = 0;
 };
 
-//!  The Light Object class.
 /**
-  The object represents a light-source, which is located at pos.
-*/
+ * \brief The object represents a light-source, which is located at pos.
+ * @class Light
+ *
+ */
 class Light : public PhysicalObject {
 public:
     //! A public variable.
@@ -199,71 +200,80 @@ public:
 };
 
 /**
-    \class Inter
-  @brief This class contains all the information of an intersection.
-*/
+ * @class Inter
+ * @brief This class contains all the information of an intersection.
+ *
+ */
 class Inter {
 public:
-    //! A public variable.
     /**
-
-        @brief if is the distance between the intersection and the object.
-    */
+     * @brief the distance between the intersection and the object.
+     *
+     */
     float id;
 
     //! A public variable.
     /**
-      @brief ld is the distance between the intersection and the light.
-    */
+     * @brief ld is the distance between the intersection and the light.
+     * 
+     */
     float ld;
 
     //! A public variable.
     /**
-      @brief normal is the normal at the intersection.
-    */
+     * @brief normal is the normal at the intersection.
+     * 
+     */
     glm::vec3 normal;
 
     //! A public variable.
     /**
-      @brief rColor is the color of the ray at the intersection
-    */
+     * @brief rColor is the color of the ray at the intersection
+     * 
+     */
     glm::vec3 rColor;
 
     //! A public variable.
     /**
-      @brief objColor is the color of the object responsible for the intersection
-    */
+     * @brief objColor is the color of the object responsible for the intersection
+     * 
+     */
     glm::vec3 objColor;
 
     //! A public variable
     /**
-      @brief The reflexion index of the object responsible for intersection
-    */
+     * @brief The reflexion index of the object responsible for intersection
+     * 
+     */
     float objReflexionIndex;
 
     //! A public variable
     /**
-      @brief The transparency of the object responsible for intersection
-    */
+     * @brief The transparency of the object responsible for intersection
+     * 
+     */
     float objTransparency;
 
     //! A public variable
     /**
-      @brief The albedo of the object responsible for intersection
-    */
+     * @brief The albedo of the object responsible for intersection
+     * 
+     */
     float objAlbedo;
 
     //! The default constructor.
     /**
-      @brief The intersection distances are chosen negative and the normal and the color are (0,0,0)
-      vectors
-    */
+     * @brief The intersection distances are chosen negative and the normal and the color are
+     * (0,0,0) vectors
+     * 
+     */
     Inter() : id(-1), ld(-1), normal(glm::vec3()), rColor(glm::vec3()){};
 
     //! The specialized constructor.
     /**
-      @brief Creates an intersection with the desired parameters
-    */
+     s* @brief Creates an intersection with the desired parameters
+
+     */
     explicit Inter(float i, float l, glm::vec3 n, glm::vec3 c)
         : id(i), ld(l), normal(n), rColor(c){};
 };
@@ -306,165 +316,6 @@ public:
     */
     float albedo;
 
-    virtual std::vector<Ray> intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
-                                       Inter &inter) const = 0;
-
-    /**
-     * @brief Construct a new Basic Object object
-     *
-     * @param pos
-     * @param color
-     * @param t
-     * @param r
-     * @param R
-     * @param a
-     */
-    explicit BasicObject(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
-                         float t = 0, float r = 1, float R = 1, float a = 0.18)
-        : PhysicalObject(pos),
-          color(color),
-          transparency(t),
-          refractiveIndex(r),
-          reflexionIndex(R),
-          albedo(a) {}
-};
-
-//!  The Camera class.
-/**
-  \class Camera
-  @brief It represents and contains all the information about the camera.
-*/
-class Camera : public PhysicalObject {
-public:
-    //! A public variable.
-    /**
-      @brief Normal direction of the camera.
-    */
-    glm::vec3 dir;
-
-    //! A public variable.
-    /**
-      @brief Vertical vector of the camera's screen.
-      @sa hv
-    */
-    glm::vec3 vv;
-
-    //! A public variable.
-    /**
-      @brief Vertical vector of the camera's screen.
-      @sa vv
-    */
-    glm::vec3 hv;
-    // Size of the screen
-    /**
-     * @brief
-     *
-     */
-    float sizeX;
-    /**
-     * @brief
-     *
-     */
-    float sizeY;
-
-    // Resolution of the screen
-    /**
-     * @brief
-     *
-     */
-    unsigned resX;
-    /**
-     * @brief
-     *
-     */
-    unsigned resY;
-
-    /**
-     * @brief
-     *
-     */
-    float focalLength;
-
-    /**
-     * @brief A normal member taking two arguments and returning the generated ray
-     *
-     * @param x the number of the x pixel
-     * @param y the number of the y pixel
-     * @return Ray
-     */
-    Ray genRay(const float &x, const float &y);
-
-    /**
-     * @brief Construct a Camera at (0, 0, 0) with screen of size (1, 1) and (1000, 1000)
-      pixels 1 away from the image sensor. The camera is assumed horizontal.
-     *
-     * @param pos
-     * @param dir
-     * @param sx
-     * @param sy
-     * @param rx
-     * @param ry
-     * @param fL
-     */
-    explicit Camera(glm::vec3 pos = glm::vec3(), glm::vec3 dir = glm::vec3(1, 0, 0), float sx = 1,
-                    float sy = 1, unsigned rx = 1000, unsigned ry = 1000, float fL = 1)
-        : PhysicalObject(pos),
-          dir(glm::normalize(dir)),
-          sizeX(sx),
-          sizeY(sy),
-          resX(rx),
-          resY(ry),
-          focalLength(fL) {
-        if (dir[2]) std::cout << "Erreur, rotation suivant l'axe vertical interdite" << std::endl;
-        vv = glm::vec3(0, 0, -1);
-        if (!dir[0]) {
-            if (dir[1] > 0) {
-                hv = glm::vec3(-1, 0, 0);
-            }
-            if (dir[1] < 0) {
-                hv = glm::vec3(1, 0, 0);
-            }
-        } else if (!dir[1]) {
-            if (dir[0] > 0) {
-                hv = glm::vec3(0, 1, 0);
-            }
-            if (dir[0] < 0) {
-                hv = glm::vec3(0, -1, 0);
-            }
-        } else {
-            float y = std::sqrt(1 / (1 + dir[2] * dir[2] / (dir[1] * dir[1])));
-            hv = glm::vec3(-dir[2] / dir[1] * y, y, 0);
-        }
-        // std::cout <<"pos : "<<pos <<std::endl<< vv << std::endl << dir << std::endl << hv <<
-        // std::endl;
-    }
-
-protected:
-    /**
-    * @brief  A normal member taking one argument and returning the information about
-    an object. It replaces the pure virtual member of PhysicalObject
-    * @sa PhysicalObject
-    *  @param os the current ostream
-    *  @return The information of the object as an ostream
-    */
-    std::ostream &printInfo(std::ostream &os) const override;
-
-    class pixel_out_of_range {};
-};
-
-/**
- * @brief Class representing a solid plane
- * @class Plane
- *
- */
-class Plane : public BasicObject {
-public:
-    /**
-     * @brief The normal vector of the plane.
-     *
-     */
-    glm::vec3 normal;
-
 protected:
     /**
      * @brief The texture of the plane. Must have a getColor method defined.
@@ -503,6 +354,175 @@ public:
         this->hasTexture = true;
     }
 
+    /**
+     * @brief
+     *
+     * @param iRay
+     * @param ltSrc
+     * @param inter
+     * @return std::vector<Ray>
+     */
+    virtual std::vector<Ray> intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
+                                       Inter &inter) const = 0;
+
+    /**
+     * @brief Construct a new Basic Object object
+     *
+     * @param pos the coordinates of the object
+     * @param color the color of the object
+     * @param t the transparency of the object
+     * @param r the reflexion index of the object
+     * @param R the refraction index of the object
+     * @param a the albedo of the object
+     */
+    explicit BasicObject(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
+                         float t = 0, float r = 1, float R = 1, float a = 0.18)
+        : PhysicalObject(pos),
+          color(color),
+          transparency(t),
+          refractiveIndex(r),
+          reflexionIndex(R),
+          albedo(a),
+          hasTexture(false) {}
+};
+
+//!  The Camera class.
+/**
+  \class Camera
+  @brief It represents and contains all the information about the camera.
+*/
+class Camera : public PhysicalObject {
+public:
+    /**
+     * @brief Normal direction of the camera.
+     *
+     */
+    glm::vec3 dir;
+
+    /**
+     * @brief Vertical vector of the camera's screen.
+     * @sa hv
+     *
+     */
+    glm::vec3 vv;
+
+    /**
+     * @brief Vertical vector of the camera's screen.
+     * @sa vv
+     *
+     */
+    glm::vec3 hv;
+
+    /**
+     * @brief the size of the screen on the x axis
+     *
+     */
+    float sizeX;
+    /**
+     * @brief the size of the screen on the y axis
+     *
+     */
+    float sizeY;
+
+    /**
+     * @brief the resolution of the screen on the x axis
+     *
+     */
+    unsigned resX;
+    /**
+     * @brief the resolution of the screen on the y axis
+     *
+     */
+    unsigned resY;
+
+    /**
+     * @brief the distance between the source and the screen
+     *
+     */
+    float focalLength;
+
+    /**
+     * @brief A normal member taking two arguments and returning the generated ray
+     *
+     * @param x the number of the x pixel
+     * @param y the number of the y pixel
+     * @return Ray
+     */
+    Ray genRay(const float &x, const float &y);
+
+    /**
+     * @brief Construct a Camera at (0, 0, 0) with screen of size (1, 1) and (1000, 1000)
+      pixels 1 away from the image sensor. The camera is assumed horizontal.
+     *
+     * @param pos the position of the source of the camera rays
+     * @param dir the direction of the camera (normal to the screen)
+     * @param sx the size along the x axis
+     * @param sy the size along the y axis
+     * @param rx the resolution along the x axis
+     * @param ry the resolution alongs the y axis
+     * @param fL the focal length
+     */
+    explicit Camera(glm::vec3 pos = glm::vec3(), glm::vec3 dir = glm::vec3(1, 0, 0), float sx = 1,
+                    float sy = 1, unsigned rx = 1000, unsigned ry = 1000, float fL = 1)
+        : PhysicalObject(pos),
+          dir(glm::normalize(dir)),
+          sizeX(sx),
+          sizeY(sy),
+          resX(rx),
+          resY(ry),
+          focalLength(fL) {
+        if (dir[2]) std::cout << "Erreur, rotation suivant l'axe vertical interdite" << std::endl;
+        vv = glm::vec3(0, 0, -1);
+        if (!dir[0]) {
+            if (dir[1] > 0) {
+                hv = glm::vec3(-1, 0, 0);
+            }
+            if (dir[1] < 0) {
+                hv = glm::vec3(1, 0, 0);
+            }
+        } else if (!dir[1]) {
+            if (dir[0] > 0) {
+                hv = glm::vec3(0, 1, 0);
+            }
+            if (dir[0] < 0) {
+                hv = glm::vec3(0, -1, 0);
+            }
+        } else {
+            float y = std::sqrt(1 / (1 + dir[2] * dir[2] / (dir[1] * dir[1])));
+            hv = glm::vec3(-dir[2] / dir[1] * y, y, 0);
+        }
+        // std::cout <<"pos : "<<pos <<std::endl<< vv << std::endl << dir << std::endl << hv <<
+        // std::endl;
+    }
+
+protected:
+    /**
+     * @brief  A normal member taking one argument and returning the information about an object. It
+     * replaces the pure virtual member of PhysicalObject
+     *
+     * @sa PhysicalObject
+     * @param os the current ostream
+     * @return The information of the object as an ostream
+     */
+    std::ostream &printInfo(std::ostream &os) const override;
+
+    class pixel_out_of_range {};
+};
+
+/**
+ * @brief Class representing a solid plane
+ * @class Plane
+ *
+ */
+class Plane : public BasicObject {
+public:
+    /**
+     * @brief The normal vector of the plane.
+     *
+     */
+    glm::vec3 normal;
+
+public:
     std::vector<Ray> intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                Inter &inter) const override;
 
@@ -545,12 +565,13 @@ public:
     float radius;
 
     /**
-     * @brief
+     * @brief Computes the intersection between a Ray and a Sphere.
      *
-     * @param iRay
-     * @param ltSrc
-     * @param inter
-     * @return std::vector<Ray>
+     * @param iRay the incoming Ray
+     * @param ltSrc the light source of the scene
+     * @param inter the intersection object which contains the intersection information
+     * @sa Inter
+     * @return std::vector<Ray> The rays created by the intersection
      */
     std::vector<Ray> intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                Inter &inter) const override;
@@ -559,16 +580,16 @@ public:
     /**
      * @brief Construct a Sphere at (0, 0, 0) of radius 1 by default.
      *
-     * @param pos
-     * @param color
-     * @param radius
-     * @param t
-     * @param r
-     * @param R
-     * @param a
+     * @param pos the coordinates of the sphere
+     * @param color the color of the sphere
+     * @param radius the radius of the sphere
+     * @param t the transparency of the sphere
+     * @param r the reflexion index of the sphere
+     * @param R the refraction index of the sphere
+     * @param a the albedo of the sphere
      */
     explicit Sphere(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
-                    float radius = 1, float t = 0, float r = 1, float R = 1, float a = 0.18)
+                    float radius = 1, float t = 0, float r = 0, float R = 0, float a = 0.18)
         : BasicObject(pos, color, t, r, R, a), radius(radius) {}
 
 protected:
