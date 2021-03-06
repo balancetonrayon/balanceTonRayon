@@ -1,3 +1,13 @@
+/**
+ * @file Ray.hpp
+ * @author Atoli Huppé & Olivier Laurent
+ * @brief 
+ * @version 0.1
+ * @date 2021-03-06
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #pragma once
 
 #include <glm/vec3.hpp>

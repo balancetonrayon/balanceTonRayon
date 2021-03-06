@@ -1,6 +1,6 @@
 /**
  * @file Texture.cpp
- * @author your name (you@domain.com)
+ * @author Atoli Huppé & Olivier Laurent
  * @brief
  * @version 0.1
  * @date 2021-03-06

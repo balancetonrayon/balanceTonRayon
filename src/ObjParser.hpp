@@ -1,3 +1,12 @@
+/**
+ * @file ObjParser.hpp
+ * @author Atoli Huppé & Olivier Laurent
+ * @brief A simple parser for .obj file. The format must be perfectly respected.
+ * @version 1.0
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
 #pragma once
 
 #include <exception>
@@ -6,14 +15,19 @@
 
 #include "Object.hpp"
 
+/**
+ * @class ObjParser
+ * @brief A parser for .obj files.
+ *
+ */
 class ObjParser {
 public:
-   /**
-    * @brief A normal member taking one argument and returning a mesh.
-    * 
-    * @param filename the name of the .obj file
-    * @return PolygonMesh 
-    */
+    /**
+     * @brief A normal member taking one argument and returning a mesh.
+     *
+     * @param filename the name of the .obj file
+     * @return PolygonMesh
+     */
     PolygonMesh readObj(std::string filename) noexcept(false) {
         std::cout << filename << std::endl;
         std::vector<glm::vec3> v;
@@ -118,7 +132,7 @@ public:
 
     /**
      * @brief Construct a new Obj Parser object (default)
-     * 
+     *
      */
     ObjParser(){};
 };
