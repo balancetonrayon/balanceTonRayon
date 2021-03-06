@@ -77,9 +77,15 @@ std::vector<Ray> Plane::intersect(const Ray &iRay, const std::shared_ptr<Light> 
             inter.objColor = this->color;
             inter.objTransparency = this->transparency;
         } else {
-            glm::vec4 tmp = this->getTexture()->getColor(intersectPt);
-            inter.objColor = glm::vec3(tmp[0], tmp[1], tmp[2]);
-            inter.objTransparency = tmp[3];
+            bool onTexture = false;
+            glm::vec4 tmp = this->getTexture()->getColor(intersectPt, onTexture);
+            if (onTexture) {
+                inter.objColor = glm::vec3(tmp[0], tmp[1], tmp[2]);
+                inter.objTransparency = tmp[3];
+            } else {
+                inter.objColor = this->color;
+                inter.objTransparency = this->transparency;
+            }
         }
     }
     return rays;

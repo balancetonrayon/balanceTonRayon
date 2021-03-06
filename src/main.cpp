@@ -78,7 +78,7 @@ void test() {
 
 void AATest() {
     Scene scene = daltons();
-    FixedAntiAliasingRayTracer AArt(2);
+    FixedAntiAliasingRayTracer AArt(true, 10, 2);
 
     for (auto object : scene.getObjects()) {
         std::cout << *object << std::endl;

@@ -139,7 +139,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
 
                 // std::cout << ref << std::endl;
                 color += detail::mult(hitObject->color, castRay(reflectedRay, lightSource, objects,
-                                                                backgroundColor, depth + 1)) *
+                                                                backgroundColor, depth + 1, maxDepth)) *
                          hitObject->reflexionIndex;
                 // std::cout << color << std::endl;
             }
@@ -156,7 +156,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                     outside ? refractedRay.biais(-inter.normal, 0.001f)
                             : refractedRay.biais(+inter.normal, 0.001f);
                     refractionColor =
-                        castRay(refractedRay, lightSource, objects, backgroundColor, depth + 1);
+                        castRay(refractedRay, lightSource, objects, backgroundColor, depth + 1, maxDepth);
                 }
 
                 Ray reflectedRay =
@@ -165,7 +165,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                 outside ? reflectedRay.biais(+inter.normal, 0.001f)
                         : reflectedRay.biais(-inter.normal, 0.001f);
                 glm::vec3 reflectionColor =
-                    castRay(reflectedRay, lightSource, objects, backgroundColor, depth + 1);
+                    castRay(reflectedRay, lightSource, objects, backgroundColor, depth + 1, maxDepth);
 
                 // mix the two
                 color +=

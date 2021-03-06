@@ -180,4 +180,4 @@ glm::vec3 refract(const Ray &iRay, const glm::vec3 &normal, const float &refract
  */
 glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                   std::vector<std::shared_ptr<BasicObject>> const &objects,
-                  const glm::vec3 &backgroundColor, const int &depth);
+                  const glm::vec3 &backgroundColor, const int &depth, const int& maxDepth);
