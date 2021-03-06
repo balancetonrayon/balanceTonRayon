@@ -6,7 +6,7 @@
 #include <glm/gtc/constants.hpp>
 
 #include "utils.hpp"
-
+#define GLM_ENABLE_EXPERIMENTAL
 #define KEPSILON 0.00001
 
 std::ostream &Light::printInfo(std::ostream &os) const {
@@ -71,9 +71,16 @@ std::vector<Ray> Plane::intersect(const Ray &iRay, const std::shared_ptr<Light> 
         inter.rColor = rays[0].getColor();
 
         inter.objAlbedo = this->albedo;
-        inter.objColor = this->color;
         inter.objReflexionIndex = this->reflexionIndex;
-        inter.objTransparency = this->transparency;
+
+        if (!definedTexture()) {
+            inter.objColor = this->color;
+            inter.objTransparency = this->transparency;
+        } else {
+            glm::vec4 tmp = this->getTexture()->getColor(intersectPt);
+            inter.objColor = glm::vec3(tmp[0], tmp[1], tmp[2]);
+            inter.objTransparency = tmp[3];
+        }
     }
     return rays;
 }

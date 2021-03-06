@@ -464,12 +464,44 @@ public:
      *
      */
     glm::vec3 normal;
-    
+
+protected:
     /**
      * @brief The texture of the plane. Must have a getColor method defined.
-     * 
+     *
      */
-    Texture texture;
+    std::shared_ptr<Texture> texture;
+    /**
+     * @brief Egals to true if the texture is defined.
+     *
+     */
+    bool hasTexture;
+
+public:
+    /**
+     * @brief Getter to know if the texture is defined.
+     *
+     * @return true if the texture is defined
+     * @return false if the texture is null
+     */
+    bool definedTexture() const { return this->hasTexture; }
+
+    /**
+     * @brief Get the Texture of the Plane
+     *
+     * @return std::shared_ptr<Texture>
+     */
+    std::shared_ptr<Texture> getTexture() const { return this->texture; };
+
+    /**
+     * @brief Set the Texture object
+     *
+     * @param text the incoming texture (as a shared_ptr object)
+     */
+    void setTexture(const std::shared_ptr<Texture> &text) {
+        this->texture = text;
+        this->hasTexture = true;
+    }
 
     std::vector<Ray> intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                Inter &inter) const override;
@@ -485,12 +517,11 @@ public:
      * @param R the refractive index of the plan
      * @param a the albedo of the plan
      */
-    explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 color = glm::vec3(1, 1, 1),
-                   glm::vec3 normal = glm::vec3(0, 0, 1), float t = 0, float r = 1, float R = 1,
+    explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 normal = glm::vec3(0, 0, 1),
+                   glm::vec3 color = glm::vec3(1, 1, 1), float t = 0, float r = 1, float R = 1,
                    float a = 0.18)
-        : BasicObject(pos, color, t, r, R, a), normal(glm::normalize(normal)) {}
+        : BasicObject(pos, color, t, r, R, a), normal(glm::normalize(normal)), hasTexture(false) {}
 
-protected:
     //! A normal member taking one argument and returning the information about
     //! an object. It replaces the pure virtual member of PhysicalObject
     /**
