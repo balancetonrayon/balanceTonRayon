@@ -18,15 +18,49 @@ class RayTracer {
 protected:
     /**
      * @brief This boolean memorizes wether the ray tracer should adapt the luminosity at the end of
-     * the day or not
+     * the day or not.
      *
      */
     bool adaptation;
 
+    /**
+     * @brief The recursive maximum depth of the rays.
+     *
+     */
+    int maxDepth;
+
 public:
     /**
-     * @brief Pure virtual method - The main method of the ray tracer. Renders a 3D scene ans saves
-     * the image.
+     * @brief Get the Max Depth object
+     *
+     * @return int
+     */
+    int getMaxDepth() const { return this->maxDepth; }
+
+    /**
+     * @brief Set the Max Depth object
+     *
+     * @param max
+     */
+    void setMaxDepth(const int &max) { this->maxDepth = max; }
+
+    /**
+     * @brief Construct a new Ray Tracer object (default)
+     *
+     */
+    explicit RayTracer() : adaptation(true), maxDepth(10) {}
+
+    /**
+     * @brief Construct a new Ray Tracer object
+     *
+     * @param adapt adaptation or not
+     * @param max maxDepth of the rays
+     */
+    explicit RayTracer(const bool &adapt, const int &max) : adaptation(adapt), maxDepth(max) {}
+
+    /**
+     * @brief Pure virtual method - The main method of the ray tracer. Renders a 3D scene ans
+     * saves the image.
      *
      * @param scene
      */
@@ -92,7 +126,8 @@ public:
      *
      * @param pow
      */
-    explicit FixedAntiAliasingRayTracer(const int &pow) { this->sqrtAAPower = pow; }
+    explicit FixedAntiAliasingRayTracer(const bool &adapt, const int &max, const int &pow)
+        : RayTracer(adapt, max), sqrtAAPower(pow) {}
 };
 
 /*class StochasticAntiAliasingRayTracer {

@@ -1,15 +1,13 @@
 /**
  * @file RayTracer.cpp
  * @author Atoli Huppé & Olivier Laurent
- * @brief
- * @version 0.1
- * @date 2021-03-06
+ * @brief The main part of the project. The ray tracing algorithms in themselves
+ * @version 1.0
  *
- * @copyright Copyright (c) 2021
+ * @copyright The fresnel and refract functions have been refactored from scratchapixels code. The
+ * other functions have been written entirely by the authors with the ideas of scratchapixel
  *
  */
-#define MAX_DEPTH 10
-
 #include "RayTracer.hpp"
 
 #include <algorithm>
@@ -64,9 +62,9 @@ glm::vec3 refract(const Ray &iRay, const glm::vec3 &normal, const float &refract
 
 glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                   std::vector<std::shared_ptr<BasicObject>> const &objects,
-                  const glm::vec3 &backgroundColor, const int &depth) {
-    glm::vec3 color(0, 0, 0);
-    if (depth > MAX_DEPTH) {
+                  const glm::vec3 &backgroundColor, const int &depth, const int &maxDepth) {
+    glm::vec3 color = backgroundColor;
+    if (depth > maxDepth) {
         return color;
     } else {
         // std::cout << std::endl << std::endl;
@@ -113,7 +111,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                               << " - " << glm::distance(lightSource->pos, shadowRays[0].getInitPt())
                               << " " << blockedInter.id << " " << blockedInter.ld << " "
                               << blockedInter.normal << std::endl;*/
-                    // blocked = true;
+                    blocked = true;
                 }
             }
             color = detail::mult(inter.rColor, inter.objColor) * (1 - inter.objReflexionIndex) *
@@ -197,7 +195,7 @@ void StdRayTracer::render(const Scene &scene) const {
             int depth = 0;
             Ray primRay = camera->genRay(x, y);
 
-            color = castRay(primRay, lightSources, objects, scene.getColor(), depth);
+            color = castRay(primRay, lightSources, objects, scene.getColor(), depth, this->getMaxDepth());
             std::vector<unsigned char> colorVec{(unsigned char)color[0], (unsigned char)color[1],
                                                 (unsigned char)color[2], (unsigned char)255};
             image.insert(image.end(), colorVec.begin(), colorVec.end());
@@ -228,7 +226,7 @@ void FixedAntiAliasingRayTracer::render(const Scene &scene) const {
                     int depth = 0;
                     Ray primRay = camera->genRay(x + d * idRayH, y + d * idRayV);
                     color =
-                        color + castRay(primRay, lightSources, objects, scene.getColor(), depth);
+                        color + castRay(primRay, lightSources, objects, scene.getColor(), depth, this->getMaxDepth());
                 }
             }
             color = color / ((float)(sqrtAAPower * sqrtAAPower));
