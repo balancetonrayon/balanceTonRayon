@@ -1,9 +1,8 @@
 /**
  * @file Texture.hpp
  * @author Atoli Huppé & Olivier Laurent
- * @brief
- * @version 0.1
- * @date 2021-03-06
+ * @brief The file defines the texture of the objects
+ * @version 1.0
  *
  * @copyright Copyright (c) 2021
  *
@@ -32,10 +31,11 @@ public:
     /**
      * @brief Get the Color of the texture at certain coordinates
      *
-     * @param pos
+     * @param pos the coordinates of the intersection point.
+     * @
      * @return glm::vec4
      */
-    virtual glm::vec4 getColor(const glm::vec3 &pos) const = 0;
+    virtual glm::vec4 getColor(const glm::vec3 &pos, bool &onTexture) const = 0;
 
     /**
      * @brief
@@ -65,13 +65,11 @@ protected:
  */
 class Image : public Texture {
 protected:
-    //! A protected variable.
     /**
       @brief The origin of the image (top left)
     */
     glm::vec3 origin;
 
-    //! A protected variable.
     /**
       @brief The direction of the vertical axis of the image.
       @sa wVec
@@ -83,12 +81,12 @@ protected:
      */
     float hVecNorm;
 
-    //! A protected variable.
     /**
       @brief The direction of the horizontal axis of the image.
       @sa hVec
     */
     glm::vec3 wVec;
+
     /**
      * @brief The norm of the wVec vector. For faster computing.
      *
@@ -97,20 +95,21 @@ protected:
 
     /**
      * @brief The height of the picture in pixels.
-     *
+     *@sa width
      */
     unsigned height;
 
     /**
      * @brief The width of the picture in pixels.
+     *@sa height
      *
      */
     unsigned width;
 
-    //! A protected variable.
     /**
-      @brief The pixels of the image.
-    */
+     * @brief The pixels of the image.
+     *
+     */
     std::vector<unsigned char> pixels;
 
 public:
@@ -122,21 +121,21 @@ public:
     int getPixHeight() { return this->height; }
 
     /**
-     * @brief Get the width of the picture in pixels.s
+     * @brief Get the width of the picture in pixels.
      *
      * @return int
      */
     int getPixWidth() { return this->height; }
 
     /**
-     * @brief Get the Pixels object
+     * @brief Get the Pixels of the image.
      *
      * @return std::vector<unsigned char>
      */
     std::vector<unsigned char> getPixels() { return this->pixels; }
 
     /**
-     * @brief
+     * @brief Saves the pixels of the image as a PNG.
      *
      * @param filename
      */
@@ -146,14 +145,14 @@ public:
     }
 
     /**
-     * @brief Set the Pixels of the image
+     * @brief Set the Pixels of the image.
      *
      * @param pix the pixels read from an image
      */
     void setPixels(const std::vector<unsigned char> &pix) { this->pixels = pix; }
 
     /**
-     * @brief Get the potential Pixel Ids (vertical and horizontal)
+     * @brief Get the potential Pixel Ids (vertical and horizontal).
      *
      * @param intersectPt the coordinates of the intersect point
      * @param hPix vertical pixel id modified to the right value
@@ -173,7 +172,7 @@ public:
     bool isInPicture(const int &hPix, const int &wPix) const;
 
     /**
-     * @brief Get the Pixel corresponding to a column (hPix) and a row (wPix)
+     * @brief Get the Pixel corresponding to a column (hPix) and a row (wPix).
      *
      * @param hPix id of the column
      * @param wPix id of the row
@@ -182,20 +181,22 @@ public:
     void getPixel(const int &hPix, const int &wPix, std::vector<unsigned char> &color) const;
 
     /**
-     * @brief Get the Color object
+     * @brief Get the Color of the image at some coordinates.
      *
-     * @param pos
+     * @param pos the coordinates
+     * @param onTexture true if the image is defined at these coordinates
      * @return glm::vec4
      */
-    glm::vec4 getColor(const glm::vec3 &pos) const override;
+    glm::vec4 getColor(const glm::vec3 &pos, bool &onTexture) const override;
 
     /**
      * @brief Construct a new Image object. WVEC SHOULD BE NORMALIZED
      *
-     * @param filename
-     * @param origin
-     * @param hVec
-     * @param wVec NORMALIZED
+     * @param filename the name of the file in std::string
+     * @param origin the coordinates of the origin of the image (top-left corner)
+     * @param hVec the vertical vector of the image
+     * @param wVec the horizontal vector of the image. Should be NORMALIZED for the ratios of the
+     * image not to be modified
      */
     explicit Image(const std::string &filename, const glm::vec3 &origin, const glm::vec3 &hVec,
                    const glm::vec3 &wVec)
