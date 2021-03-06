@@ -8,13 +8,11 @@
 
 class ObjParser {
 public:
-    ObjParser(){};
-
-    //! A normal member taking one argument and returning a mesh.
-    /*!
-      \param filename the name of the .obj file
-      \return The information of the object as an ostream
-      Raises runtime error if the obj file is not well formated
+   /**
+    * @brief A normal member taking one argument and returning a mesh.
+    * 
+    * @param filename the name of the .obj file
+    * @return PolygonMesh 
     */
     PolygonMesh readObj(std::string filename) noexcept(false) {
         std::cout << filename << std::endl;
@@ -117,4 +115,10 @@ public:
             return mesh;
         }
     }
+
+    /**
+     * @brief Construct a new Obj Parser object (default)
+     * 
+     */
+    ObjParser(){};
 };
