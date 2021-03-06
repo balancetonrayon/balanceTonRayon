@@ -71,7 +71,7 @@ public:
      * @param scene
      * @param filename name of the PNG file
      */
-    virtual void render(const Scene &scene, std::string filename) const = 0;
+    virtual void render(const Scene &scene, const std::string &filename) const = 0;
 
     /**
      * @brief Construct a new Ray Tracer object (default)
@@ -99,19 +99,19 @@ public:
      *
      * @param scene
      */
-    void render(const Scene &scene, std::string filename) const override;
+    void render(const Scene &scene, const std::string &filename) const override;
 
     /**
      * @brief Construct a new Std Ray Tracer object
-     * 
+     *
      */
     explicit StdRayTracer() : RayTracer() {}
 
     /**
      * @brief Construct a new Ray Tracer object
-     * 
-     * @param adapt 
-     * @param max 
+     *
+     * @param adapt
+     * @param max
      */
     explicit StdRayTracer(const bool &adapt, const int &max) : RayTracer(adapt, max) {}
 };
@@ -148,7 +148,7 @@ public:
      *
      * @param scene
      */
-    void render(const Scene &scene, std::string filename) const override;
+    void render(const Scene &scene, const std::string &filename) const override;
 
     /**
      * @brief Construct a new Fixed Anti Aliasing Ray Tracer and set its power to 4.

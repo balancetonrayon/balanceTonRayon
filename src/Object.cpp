@@ -56,10 +56,8 @@ std::ostream &Camera::printInfo(std::ostream &os) const {
               << "focalLength: " << focalLength << " direction: " << dir << std::endl;
 }
 
-std::vector<Ray> Plane::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
-                                  Inter &inter) const {
-
-    std::vector<Ray> rays;
+void Plane::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc, Inter &inter,
+                      std::vector<Ray> &rays) const {
     // true if there is an intersection, false if there is none
     bool intersect = glm::intersectRayPlane(iRay.getInitPt(), iRay.getDir(), pos, normal, inter.id);
     if (intersect) {
@@ -89,7 +87,6 @@ std::vector<Ray> Plane::intersect(const Ray &iRay, const std::shared_ptr<Light> 
             }
         }
     }
-    return rays;
 }
 
 std::ostream &Plane::printInfo(std::ostream &os) const {
@@ -100,10 +97,8 @@ std::ostream &Plane::printInfo(std::ostream &os) const {
               << "reflexion: " << reflexionIndex;
 }
 
-std::vector<Ray> Sphere::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
-                                   Inter &inter) const {
-    std::vector<Ray> rays;
-
+void Sphere::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc, Inter &inter,
+                       std::vector<Ray> &rays) const {
     glm::vec3 intersectPt;
     bool intersect = glm::intersectRaySphere(iRay.getInitPt(), iRay.getDir(), pos, radius,
                                              intersectPt, inter.normal);
@@ -132,7 +127,6 @@ std::vector<Ray> Sphere::intersect(const Ray &iRay, const std::shared_ptr<Light>
             }
         }
     }
-    return rays;
 }
 
 std::ostream &Sphere::printInfo(std::ostream &os) const {
@@ -142,48 +136,54 @@ std::ostream &Sphere::printInfo(std::ostream &os) const {
               << "albedo: " << albedo;
 }
 
-std::vector<Ray> Triangle::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
-                                     Inter &inter) const {
-    std::vector<Ray> rays;
-
-    bool intersect = true;
-
-    // Intersect or not ? Müller Trumbore algorithm
+void Triangle::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc, Inter &inter,
+                         std::vector<Ray> &rays) const {
+    // Intersect or not ? Moller Trumbore algorithm (from scratchapixels)
     glm::vec3 v0v1 = pos1 - pos;
     glm::vec3 v0v2 = pos2 - pos;
     glm::vec3 pvec = glm::cross(iRay.getDir(), v0v2);
     float det = glm::dot(v0v1, pvec);
 
     // ray and triangle are parallel if det is close to 0
-    if (fabs(det) < KEPSILON) return rays;
+    if (fabs(det) < KEPSILON) return;
     float invDet = 1 / det;
 
     glm::vec3 tvec = iRay.getInitPt() - pos;
     float u = glm::dot(tvec, pvec) * invDet;
-    if (u < 0 || u > 1) return rays;
+    if (u < 0 || u > 1) return;
 
     glm::vec3 qvec = glm::cross(tvec, v0v1);
     float v = glm::dot(iRay.getDir(), qvec) * invDet;
-    if (v < 0 || u + v > 1) return rays;
+    if (v < 0 || u + v > 1) return;
 
     // distance to intersection
     float t = glm::dot(v0v2, qvec) * invDet;
-    if (t < 0) return rays;
+    if (t < 0) return;
 
-    if (intersect) {
-        inter.id = t;
-        glm::vec3 intersectPt = iRay.getInitPt() + inter.id * iRay.getDir();
-        inter.normal = normal;
-        ltSrc->outboundRays(intersectPt, rays);
-        inter.ld = glm::distance(intersectPt, ltSrc->pos);
-        inter.rColor = rays[0].getColor();
+    inter.id = t;
+    glm::vec3 intersectPt = iRay.getInitPt() + inter.id * iRay.getDir();
+    inter.normal = normal;
+    ltSrc->outboundRays(intersectPt, rays);
+    inter.ld = glm::distance(intersectPt, ltSrc->pos);
+    inter.rColor = rays[0].getColor();
 
-        inter.objAlbedo = this->albedo;
+    inter.objAlbedo = this->albedo;
+    inter.objReflexionIndex = this->reflexionIndex;
+
+    if (!definedTexture()) {
         inter.objColor = this->color;
-        inter.objReflexionIndex = this->reflexionIndex;
         inter.objTransparency = this->transparency;
+    } else {
+        bool onTexture = false;
+        glm::vec4 tmp = this->getTexture()->getColor(intersectPt, onTexture);
+        if (onTexture) {
+            inter.objColor = glm::vec3(tmp[0], tmp[1], tmp[2]);
+            inter.objTransparency = tmp[3];
+        } else {
+            inter.objColor = this->color;
+            inter.objTransparency = this->transparency;
+        }
     }
-    return rays;
 }
 
 std::ostream &Triangle::printInfo(std::ostream &os) const {
@@ -195,43 +195,38 @@ std::ostream &Triangle::printInfo(std::ostream &os) const {
               << "reflexion_indx: " << reflexionIndex << std::endl;
 }
 
-// A Compléter - importé et refactoré de scratchapixel, mais manque l'emission des rayons créés (code )
-std::vector<Ray> Box::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
-                                Inter &inter) const {
-    /*float tmin = (min.x - r.orig.x) / r.dir.x;
-    float tmax = (max.x - r.orig.x) / r.dir.x;
+// A Compléter - importé et refactoré de scratchapixel, mais manque l'emission des rayons créés
+// (code )
+/*void Box::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc, Inter &inter,
+                    std::vector<Ray> &rays) const {
+    float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-    if (tmin > tmax) swap(tmin, tmax);
+    tmin = (bounds[r.sign[0]].x - r.orig.x) * r.invdir.x;
+    tmax = (bounds[1 - r.sign[0]].x - r.orig.x) * r.invdir.x;
+    tymin = (bounds[r.sign[1]].y - r.orig.y) * r.invdir.y;
+    tymax = (bounds[1 - r.sign[1]].y - r.orig.y) * r.invdir.y;
 
-    float tymin = (min.y - r.orig.y) / r.dir.y;
-    float tymax = (max.y - r.orig.y) / r.dir.y;
-
-    if (tymin > tymax) std::swap(tymin, tymax);
-
-    if ((tmin > tymax) || (tymin > tmax)) return false;
-
+    if ((tmin > tymax) || (tymin > tmax)) return;
     if (tymin > tmin) tmin = tymin;
-
     if (tymax < tmax) tmax = tymax;
 
-    float tzmin = (min.z - r.orig.z) / r.dir.z;
-    float tzmax = (max.z - r.orig.z) / r.dir.z;
+    tzmin = (bounds[r.sign[2]].z - r.orig.z) * r.invdir.z;
+    tzmax = (bounds[1 - r.sign[2]].z - r.orig.z) * r.invdir.z;
 
-    if (tzmin > tzmax) std::swap(tzmin, tzmax);
-
-    if ((tmin > tzmax) || (tzmin > tmax)) return false;
-
+    if ((tmin > tzmax) || (tzmin > tmax)) return;
     if (tzmin > tmin) tmin = tzmin;
-
     if (tzmax < tmax) tmax = tzmax;
 
-    return true;*/
+    t = tmin;
+    if (t < 0) {
+        t = tmax;
+        if (t < 0) return;
+    }
     inter.objColor = this->color;
     inter.objAlbedo = this->albedo;
     inter.objReflexionIndex = this->reflexionIndex;
     inter.objTransparency = this->transparency;
-    return *(new std::vector<Ray>);
-}
+}*/
 
 std::ostream &Box::printInfo(std::ostream &os) const {
     return os << "  - Box -" << std::endl
@@ -244,8 +239,8 @@ std::ostream &Box::printInfo(std::ostream &os) const {
 std::ostream &Polygon::printInfo(std::ostream &os) const {
     os << "  - Polygon -  " << std::endl;
     int i = 0;
-    for (glm::vec3 vertice : vertices) {
-        os << "v" << i++ << ": " << vertice << std::endl;
+    for (glm::vec3 vertex : vertices) {
+        os << "v" << i++ << ": " << vertex << std::endl;
     }
     os << "normal: " << normal << std::endl;
     return os;
@@ -261,26 +256,22 @@ std::ostream &PolygonMesh::printInfo(std::ostream &os) const {
     return os << stream;
 }
 
-std::vector<Ray> TriangleMesh::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
-                                         Inter &inter) const {
+void TriangleMesh::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc, Inter &inter,
+                             std::vector<Ray> &rays) const {
     float minDistance = INFINITY;
     Inter interTemp;
-    std::vector<Ray> rays;
     for (Triangle triangle : triangles) {
-        // std::cout << "test";
-        std::vector<Ray> raysTemp = triangle.intersect(iRay, ltSrc, interTemp);
+        std::vector<Ray> raysTemp;
+        triangle.intersect(iRay, ltSrc, interTemp, raysTemp);
 
         // check that intersection is non void and look for minimum value
         if (interTemp.id != -1 && interTemp.id < minDistance) {
-            // std::cout << interTemp.id << " ";
+
             minDistance = interTemp.id;
             inter = Inter(interTemp);
             rays = raysTemp;
-            // std::cout << rays.size() << " ";
         }
     }
-
-    return rays;
 }
 std::ostream &TriangleMesh::printInfo(std::ostream &os) const {
     std::string stream;

@@ -112,7 +112,7 @@ public:
                 }
                 Polygon poly;
                 for (int k = 0; k < c1Vect.size(); ++k) {
-                    poly.addVertice(v[c1Vect[k] - 1]);  // Les indices de l'obj commencent à 1
+                    poly.addVertex(v[c1Vect[k] - 1]);  // Les indices de l'obj commencent à 1
                     poly.addTexture(vt[c3Vect[k] - 1]);
                 }
                 std::cout << vn[c5Vect[0]] << std::endl;

@@ -14,7 +14,7 @@ Wikipedia, scratchapixels. Mention spéciale à Scratchapixels qui nous a permis
 
 ## La gestion des mathématiques
 
-GLM, le packages de maths d'OpenGL
+GLM, le package de maths d'OpenGL
 
 ## Le Parser de XML
 

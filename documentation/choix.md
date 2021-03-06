@@ -10,7 +10,7 @@ L'héritage est lui au centre de toutes nos classes. Les 2 moteurs de Ray tracin
 
 Les templates ne nous ont pas été directement très importants. Toutefois, nous les avons utilisés par l'intermédiaire des shared pointers notamment.
 
-Ce polymorphisme permet de ne pas avoir à recopier du code et redéfinir des fonctions à chaque fois que l'on souhaite créer une classe comme un objet par exemple. 
+Ce polymorphisme permet de ne pas avoir à recopier du code et redéfinir des fonctions à chaque fois que l'on souhaite créer une classe comme un objet par exemple.
 
 Le polymorphisme était donc absolument nécessaire pour notre projet.
 

@@ -76,17 +76,18 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
         std::shared_ptr<BasicObject> hitObject = nullptr;
 
         for (auto object : objects) {
-            shadowRays = object->intersect(ray, lightSource, inter);
+            object->intersect(ray, lightSource, inter, shadowRays);
 
             if (shadowRays.size() && inter.id < closestDistance) {
                 hitObject = object;
                 closestDistance = inter.id;
             }
+            shadowRays.clear();
         }
         if (hitObject) {
             // Calcul des rayons de diffusion
-
-            shadowRays = hitObject->intersect(ray, lightSource, inter);
+            shadowRays.clear();
+            hitObject->intersect(ray, lightSource, inter, shadowRays);
 
             shadowRays[0].biais(inter.normal, 0.0001f);
 
@@ -98,7 +99,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
 
             Inter blockedInter;
             for (auto object : objects) {
-                sRays = object->intersect(shadowRays[0], lightSource, blockedInter);
+                object->intersect(shadowRays[0], lightSource, blockedInter, sRays);
 
                 // Si le rayon est obstrué avant la source lumineuse
                 if (sRays.size() && blockedInter.id < blockedInter.ld) {
@@ -111,6 +112,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                               << blockedInter.normal << std::endl;*/
                     blocked = true;
                 }
+                sRays.clear();
             }
             color = detail::mult(inter.rColor, inter.objColor) * (1 - inter.objReflexionIndex) *
                     (float)(!blocked) * inter.objAlbedo / glm::pi<float>() *
@@ -167,7 +169,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
     }
 }
 
-void StdRayTracer::render(const Scene &scene, std::string filename) const {
+void StdRayTracer::render(const Scene &scene, const std::string& filename) const {
     ImgHandler imgHandler;
 
     auto lightSources = scene.getSources()[0];
@@ -193,7 +195,7 @@ void StdRayTracer::render(const Scene &scene, std::string filename) const {
     imgHandler.writePNG(filename, image, camera->resX, camera->resY);
 }
 
-void FixedAntiAliasingRayTracer::render(const Scene &scene, std::string filename) const {
+void FixedAntiAliasingRayTracer::render(const Scene &scene, const std::string& filename) const {
     ImgHandler imgHandler;
 
     int sqrtAAPower = this->getAAPower();
@@ -207,6 +209,7 @@ void FixedAntiAliasingRayTracer::render(const Scene &scene, std::string filename
 
     glm::vec3 color;
     for (float x = 0; x < camera->resX; ++x) {
+        //std::cout << x << std::endl;
         for (float y = 0; y < camera->resY; ++y) {
             color = glm::vec3(0, 0, 0);
 
