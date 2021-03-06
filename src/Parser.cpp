@@ -50,7 +50,7 @@ Parser::Parser(std::string xmlData) {
         bool foundChecked = false;
         std::shared_ptr<Image> image;
         std::shared_ptr<CheckedPattern2D> checked;
-    
+
         try {
             auto objectTexture = objectTag->FirstChildElement("texture");
             if (objectTexture != NULL &&
@@ -98,6 +98,19 @@ Parser::Parser(std::string xmlData) {
                 sphere->setTexture(checked);
             }
             objects.push_back(sphere);
+        } else if (objectName == "triangle") {
+            auto triangleV1 = getXYZ(objectTag->FirstChildElement("v1"));
+            auto triangleV2 = getXYZ(objectTag->FirstChildElement("v2"));
+            auto triangleNormal = getXYZ(objectTag->FirstChildElement("normal"));
+            auto triangle = std::make_shared<Triangle>(
+                objectPos, triangleV1, triangleV2, triangleNormal, objectColor, objectTransmission,
+                objectRefractive, objectReflexion, objectAlbedo);
+            if (foundImage) {
+                triangle->setTexture(image);
+            } else if (foundChecked) {
+                triangle->setTexture(checked);
+            }
+            objects.push_back(triangle);
         }
     }
 }

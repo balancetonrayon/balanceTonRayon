@@ -2,13 +2,17 @@
 
 ## Description of the project
 
-###
+This project, developed by Atoli Huppé and Olivier Laurent, is a small RayTracer engine. The user can define a 3D scene, with several objects, lights and a camera and the algorithm will render this scene in 2D.
 
 ## Dependencies
 
+The developers have tried to reduce the amount of third parties/dependencies.
+
+You will need at least glm and tinyxml2. Lodepng is already included in the code.
+
 ## How to Build the project
 
-First, you need to build the binaries. To do so,
+First, you need to build the binaries. To do so clone the repository. Then type the following commands inside the new folder.
 
 ```shell
 mkdir build
@@ -17,7 +21,7 @@ cmake ../src
 cmake --build .
 ```
 
-on peut ensuite utiliser `make -j`
+On peut utiliser `make -j` pour accélerer la compilation.
 
 Building Xcode Project
 

@@ -14,7 +14,7 @@ Nous pouvons faire le rendu d'une scène par lancé de rayons.
 
 Nous pouvons définir une scène de façon simple avec du XML.
 
-Nous pouvons rendre des plans, des sphères, des triangles, des ensembles de triangles.
+Nous pouvons rendre des plans, des sphères, des triangles, des ensembles de triangles, des ensembles de polygônes.
 
 Nous avons deux moteurs graphiques de ray tracing. Le second permet de faire de l'anticrénelage.
 
@@ -26,17 +26,17 @@ Le code est facile à compléter et les instructions pour le faire sont dans le 
 
 #### Les interactions
 
-La scène est affichée, on peut entrer la scène manuellement ou avec du XML. On ne peut pas encore choisir via le XML le moteur de ray tracing (anti crénelage ou non).
+La scène est affichée, on peut entrer la scène manuellement ou avec du XML. On ne peut pas encore choisir via le XML le moteur de ray tracing (anticrénelage ou non).
 
 Les images ne peuvent être sauvegardées sous forme de png uniquement pour l'instant.
 
-On peut importer des objets sous la forme de .obj mais le fonctionnement n'est pas complètement assuré.
+On peut importer des objets sous la forme de .obj mais pas leur texture.
 
-On ne peut importer que des images directe en temps que textures (mais aussi définir de fonctions comme CheckedPattern2D)
+On ne peut importer que des images directe en tant que textures (mais aussi définir de fonctions comme CheckedPattern2D)
 
 Les classes peuvent presque toutes se mettre sous forme de texte grâce à l'héritage.
 
-L'intéraction avec l'utilisateur est limité à l'utilisation des lignes de commandes.
+L'interaction avec l'utilisateur est limitée à l'utilisation des lignes de commandes.
 
 ### Les fonctionnalités non prévues et implémentées
 
@@ -52,7 +52,7 @@ La pipeline github. Nous avons aussi installé un windows serveur sur les serveu
 
 ### Pistes d'amélioration
 
-Nous souhaiterions tout d'abord améliorer l'optimisation du code. Notre volonté d'implémenter un maximum d'outils pour donner toute sa liberté à l'utilisateur a retardé la réflexion sur l'optimisation.
+Nous souhaiterions tout d'abord améliorer l'optimisation du code. Notre volonté d'implémenter un maximum d'outils pour donner toute sa liberté à l'utilisateur a retardé la réflexion sur l'optimisation. Dans cet objectif, finir d'implémenter l'intersection avec les boîtes, et créer un attribut accelerationStructure dans les maillages. Sa définition est très simple (constructeur qui calcule min, max sur toutes les coordonnées) et peut être utilisé directement dans intersect du maillage.
 
 Les maillages ne permettent pas encore l'utilisation de fichiers de texture.
 
