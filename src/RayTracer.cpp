@@ -5,7 +5,8 @@
  * @version 1.0
  *
  * @copyright The fresnel and refract functions have been refactored from scratchapixels code. The
- * other functions have been written entirely by the authors with the ideas of scratchapixel
+ * other functions have been written entirely by the authors with the ideas of scratchapixel and
+ * other websites.
  *
  */
 #include "RayTracer.hpp"
@@ -203,6 +204,7 @@ void StdRayTracer::render(const Scene &scene, std::string filename) const {
             image.insert(image.end(), colorVec.begin(), colorVec.end());
         }
     }
+    if (this->getAdaptation()) adaptLuminosity(image);
     imgHandler.writePNG(filename, image, camera->resX, camera->resY);
 }
 
@@ -237,9 +239,11 @@ void FixedAntiAliasingRayTracer::render(const Scene &scene, std::string filename
             image.insert(image.end(), colorVec.begin(), colorVec.end());
         }
     }
+    if (this->getAdaptation()) adaptLuminosity(image);
     imgHandler.writePNG(filename, image, camera->resX, camera->resY);
 }
 
+// A finir :( 
 /*void StochasticAntiAliasingRayTracer::render(Scene scene, std::string filename) {
     int sqrtAAPower = this->getAAPower();
     float d = 1.0 / sqrtAAPower;

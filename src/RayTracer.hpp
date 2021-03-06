@@ -31,6 +31,14 @@ protected:
 
 public:
     /**
+     * @brief Get the Adaptation object
+     *
+     * @return true to adapt the sensitivity
+     * @return false to keep overflown colors
+     */
+    bool getAdaptation() const { return this->adaptation; }
+
+    /**
      * @brief Get the Max Depth object
      *
      * @return int
@@ -45,6 +53,25 @@ public:
     void setMaxDepth(const int &max) { this->maxDepth = max; }
 
     /**
+     * @brief Correction of color overflows
+     * 
+     * @param image the pixels of the image
+     */
+    void adaptLuminosity(std::vector<unsigned char> &image) const {
+        for (auto channelPixel : image) {
+            channelPixel = std::min(channelPixel, (unsigned char)255);
+        }
+    }
+    /**
+     * @brief Pure virtual method - The main method of the ray tracer. Renders a 3D scene ans
+     * saves the image.
+     *
+     * @param scene
+     * @param filename name of the PNG file
+     */
+    virtual void render(const Scene &scene, std::string filename) const = 0;
+
+    /**
      * @brief Construct a new Ray Tracer object (default)
      *
      */
@@ -57,15 +84,6 @@ public:
      * @param max maxDepth of the rays
      */
     explicit RayTracer(const bool &adapt, const int &max) : adaptation(adapt), maxDepth(max) {}
-
-    /**
-     * @brief Pure virtual method - The main method of the ray tracer. Renders a 3D scene ans
-     * saves the image.
-     *
-     * @param scene
-     * @param filename name of the PNG file
-     */
-    virtual void render(const Scene &scene, std::string filename) const = 0;
 };
 
 /**
@@ -181,4 +199,4 @@ glm::vec3 refract(const Ray &iRay, const glm::vec3 &normal, const float &refract
  */
 glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                   std::vector<std::shared_ptr<BasicObject>> const &objects,
-                  const glm::vec3 &backgroundColor, const int &depth, const int& maxDepth);
+                  const glm::vec3 &backgroundColor, const int &depth, const int &maxDepth);
