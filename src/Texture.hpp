@@ -176,7 +176,7 @@ public:
      *
      * @param hPix id of the column
      * @param wPix id of the row
-     * @param color glm::vec4: RGBA
+     * @param color glm::vec4: RGBA in [|0, 255|]
      */
     void getPixel(const int &hPix, const int &wPix, std::vector<unsigned char> &color) const;
 
@@ -184,8 +184,8 @@ public:
      * @brief Get the Color of the image at some coordinates.
      *
      * @param pos the coordinates
-     * @param onTexture true if the image is defined at these coordinates
-     * @return glm::vec4
+     * @param onTexture true if the image is defined at these coordinates - False by DEFAULT
+     * @return glm::vec4 - R G B and transparency in [0,1]
      */
     glm::vec4 getColor(const glm::vec3 &pos, bool &onTexture) const override;
 

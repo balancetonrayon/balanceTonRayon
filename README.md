@@ -1,8 +1,14 @@
 # balanceTonRayon
 
-## build
+## Description of the project
 
-Build binary
+### 
+
+## Dependencies
+
+## How to Build the project
+
+First, you need to build the binaries. To do so,
 
 ```shell
 mkdir build
@@ -25,3 +31,9 @@ Lint
 ```shell
 cpplint --recursive src
 ```
+
+## How to use the project
+
+### Enrich the engine
+
+If you want to enrich the engine, please refer to the developmentNotes in the documentation folder.

@@ -93,7 +93,7 @@ void test() {
         std::cout << *object << std::endl;
     }
 
-    stdrt.render(scene);
+    stdrt.render(scene, "text.png");
 }
 
 void AATest() {
@@ -104,7 +104,7 @@ void AATest() {
         std::cout << *object << std::endl;
     }
 
-    AArt.render(scene);
+    AArt.render(scene, "RayTracingAA.png");
 }
 
 void Cesart() {
@@ -112,9 +112,8 @@ void Cesart() {
                                                            glm::vec3(1, 1, 1), 0, 0, 0, 0.5);
     auto sphere1 =
         std::make_shared<Sphere>(glm::vec3(-0.11, 0, 0), glm::vec3(1, 1, 1), 0.1, 0, 0, 0.8, 0.22);
+    
     std::string filename = "../data/cesar2.png";
-    std::string filenameW = "../data/cesar3.png";
-
     glm::vec3 origin(0.0, -0.5, 0.5);
     glm::vec3 hVec(0, 0, -1);
     glm::vec3 wVec(0, 1, 0);
@@ -135,7 +134,7 @@ void Cesart() {
         std::cout << *object << std::endl;
     }
 
-    stdrt.render(scene);
+    stdrt.render(scene, "Cesart.png");
 }
 
 void Cesar() {
@@ -144,12 +143,10 @@ void Cesar() {
     auto sphere1 =
         std::make_shared<Sphere>(glm::vec3(-0.11, 0, 0), glm::vec3(1, 1, 1), 0.05, 0, 0, 0.8, 0.22);
     std::string filename = "../data/cesar2.png";
-    std::string filenameW = "../data/cesar3.png";
 
-    glm::vec3 origin(0.05, -0.5, 0.5);
-    //permettre l'augmentation de la taille de l'image
-    glm::vec3 hVec(0, 0, -1);
-    glm::vec3 wVec(0, 1, 0);
+    glm::vec3 origin(0.05, -1, 1);
+    glm::vec3 hVec(0, 0, -2);
+    glm::vec3 wVec(0, 2, 0);
     plane->setTexture(std::make_shared<Image>(filename, origin, hVec, wVec));
 
     auto camera = std::make_shared<Camera>(glm::vec3(0, 0, 0), glm::vec3(-1, 0, 0), 0.1, 0.1, 1000,
@@ -167,10 +164,10 @@ void Cesar() {
         std::cout << *object << std::endl;
     }
 
-    stdrt.render(scene);
+    stdrt.render(scene, "Cesar.png");
 }
 
 int main(int argc, const char **argv) {
-    test();
+    Cesar();
     return 0;
 }

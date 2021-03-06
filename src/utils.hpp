@@ -1,9 +1,8 @@
 /**
  * @file utils.hpp
  * @author Atoli Huppé & Olivier Laurent
- * @brief
- * @version 0.1
- * @date 2021-03-06
+ * @brief Small file which defines a few utility functions
+ * @version 1.0
  *
  * @copyright Copyright (c) 2021
  *
@@ -12,10 +11,10 @@
 
 #include <glm/vec3.hpp>
 /**
- * @brief
+ * @brief Overload of the operator << for the glm::vec3
  *
  * @param os
- * @param vec
+ * @param vec the vector to print
  * @return std::ostream&
  */
 inline std::ostream &operator<<(std::ostream &os, const glm::vec3 &vec) {
@@ -31,10 +30,10 @@ inline std::ostream &operator<<(std::ostream &os, const glm::vec3 &vec) {
 namespace detail {
 
 /**
- * @brief
+ * @brief Method to multiply vectors element by element
  *
- * @param lhs
- * @param rhs
+ * @param lhs the first vector
+ * @param rhs the second vector
  * @return glm::vec3
  */
 inline glm::vec3 mult(const glm::vec3 &lhs, const glm::vec3 &rhs) {

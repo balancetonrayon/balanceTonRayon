@@ -16,8 +16,8 @@ void Image::getPixelId(const glm::vec3 &intersectPt, int &hPix, int &wPix) const
 
     float posNorm = glm::l2Norm(pos);
     // std::cout << "Norm: " << posNorm << std::endl;
-    float hAxis = glm::dot(pos, hVec);
-    float wAxis = glm::dot(pos, wVec);
+    float hAxis = glm::dot(pos, hVec)/hVecNorm;
+    float wAxis = glm::dot(pos, wVec)/wVecNorm;
     // std::cout << "Haxis: " << hAxis << " Waxis: " << wAxis << std::endl;
     hPix = hAxis * (float)height;
     wPix = wAxis * (float)width;
@@ -48,9 +48,6 @@ glm::vec4 Image::getColor(const glm::vec3 &pos, bool& onTexture) const {
         getPixel(hPix, wPix, color);
         /*std::cout << (int)(color[0]) << " " << (int)color[1] << " " << (int)color[2] << " "
                   << (int)color[3] << std::endl;*/
-    }
-    else {
-        onTexture = false;
     }
     return glm::vec4(color[2] / 255.0f, color[1] / 255.0f, color[0] / 255.0f,
                      1.0f - color[3] / 255.0f);
