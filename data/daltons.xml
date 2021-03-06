@@ -8,6 +8,11 @@
             <y>1000 </y>
         </size>
         <max_depth>30</max_depth>
+        <background-color> 
+            <r>0</r>
+            <g>0</g>
+            <b>0</b>
+        </background-color>
     </meta>
     <camera>
         <pos>

@@ -1,20 +1,23 @@
+/**
+ * @file RayTracer.cpp
+ * @author Atoli Huppé & Olivier Laurent
+ * @brief The main part of the project. The ray tracing algorithms in themselves
+ * @version 1.0
+ *
+ * @copyright The fresnel and refract functions have been refactored from scratchapixels code. The
+ * other functions have been written entirely by the authors with the ideas of scratchapixel
+ *
+ */
 #include "RayTracer.hpp"
 
 #include <algorithm>
 
 #include <glm/gtc/constants.hpp>
-#include <opencv2/opencv.hpp>
 
-#define MAX_DEPTH 10
-
-/* Fresnel function as explained here :
-https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
-ior is the refraction index of the material of the physical object the ray has either hit or is
-about to leave (glass, water, etc.) */
-float fresnel(const Ray &iRay, const glm::vec3 &normal, const float &refractionIndex) {
+float fresnel(Ray iRay, const glm::vec3 &normal, const float &refractionIndex) {
     float kr;  // quantity of reflexion to be computed
 
-    float cosi = std::clamp(glm::dot(iRay.dir, normal), -1.0f, 1.0f);
+    float cosi = std::clamp(glm::dot(iRay.getDir(), normal), -1.0f, 1.0f);
     float etai = 1;                // air
     float etat = refractionIndex;  // medium
     if (cosi > 0) {
@@ -38,9 +41,8 @@ float fresnel(const Ray &iRay, const glm::vec3 &normal, const float &refractionI
     // kt = 1 - kr;
 }
 
-/* A EXPLIQUER et comprendre */
 glm::vec3 refract(const Ray &iRay, const glm::vec3 &normal, const float &refractionIndex) {
-    float cosi = std::clamp(glm::dot(iRay.dir, normal), -1.0f, 1.0f);
+    float cosi = std::clamp(glm::dot(iRay.getDir(), normal), -1.0f, 1.0f);
     float etai = 1;                // air
     float etat = refractionIndex;  // medium
     glm::vec3 n = normal;
@@ -55,13 +57,14 @@ glm::vec3 refract(const Ray &iRay, const glm::vec3 &normal, const float &refract
     float eta = etai / etat;
     float k = 1 - eta * eta * (1 - cosi * cosi);
     // if k < 0: total internal reflection
-    return k < 0 ? glm::vec3() : iRay.dir * eta + n * (eta * cosi - sqrtf(k));
+    return k < 0 ? glm::vec3() : iRay.getDir() * eta + n * (eta * cosi - sqrtf(k));
 }
 
 glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
-                  std::vector<std::shared_ptr<ObjectBase>> const &objects, const int &depth = 0) {
-    glm::vec3 color(0, 0, 0);
-    if (depth > MAX_DEPTH) {
+                  std::vector<std::shared_ptr<BasicObject>> const &objects,
+                  const glm::vec3 &backgroundColor, const int &depth, const int &maxDepth) {
+    glm::vec3 color = backgroundColor;
+    if (depth > maxDepth) {
         return color;
     } else {
         // std::cout << std::endl << std::endl;
@@ -69,11 +72,10 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
         Inter inter;
         float closestDistance = INFINITY;
 
-        std::shared_ptr<ObjectBase> hitObject = nullptr;
-    
+        std::shared_ptr<BasicObject> hitObject = nullptr;
+
         for (auto object : objects) {
-            shadowRays =
-                object->intersect(ray, lightSource, inter);
+            shadowRays = object->intersect(ray, lightSource, inter);
             // std::cout << iDistance << std::endl;
             if (shadowRays.size() && inter.id < closestDistance) {
                 hitObject = object;
@@ -83,10 +85,8 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
         if (hitObject) {
             // Calcul des rayons de diffusion
 
-            shadowRays =
-                hitObject->intersect(ray, lightSource, inter);
-            // std::cout << ray << std::endl
-            //          << shadowRays[0] << std::endl;
+            shadowRays = hitObject->intersect(ray, lightSource, inter);
+            // std::cout << ray << std::endl << shadowRays[0] << std::endl;
 
             // Delete acne
             // std::cout << hitNormal << std::endl;
@@ -98,7 +98,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
             std::vector<Ray> sRays;
             glm::vec3 norm;
 
-            Inter blockedInter;  // unsaved
+            Inter blockedInter;
             for (auto object : objects) {
                 sRays = object->intersect(shadowRays[0], lightSource, blockedInter);
 
@@ -108,22 +108,27 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                     std::cout << ray << std::endl
                               << shadowRays[0] << std::endl
                               << sRays[0] << std::endl
-                              << cDistance << " - "
-                    <<glm::distance(lightSource->pos,
-                    shadowRays[0].initPt)<<std::endl;*/
+                              << " - " << glm::distance(lightSource->pos, shadowRays[0].getInitPt())
+                              << " " << blockedInter.id << " " << blockedInter.ld << " "
+                              << blockedInter.normal << std::endl;*/
                     blocked = true;
                 }
             }
-            color = detail::mult(inter.rColor, hitObject->color) * (1 - hitObject->reflexionIndex) *
-                    (float)(!blocked) * hitObject->albedo / glm::pi<float>() *
-                    std::max(0.f, glm::dot(inter.normal, shadowRays[0].dir));
-
+            color = detail::mult(inter.rColor, inter.objColor) * (1 - inter.objReflexionIndex) *
+                    (float)(!blocked) * inter.objAlbedo / glm::pi<float>() *
+                    std::max(0.f, glm::dot(inter.normal, shadowRays[0].getDir()));
+            /*std::cout << *hitObject << hitObject->reflexionIndex<< std::endl;
+            std::cout << inter.rColor << " " << hitObject->color << " " << (float)(!blocked) << " "
+                      << hitObject->albedo << " " << (1 - hitObject->reflexionIndex) << " "
+                      << std::max(0.f, glm::dot(inter.normal, shadowRays[0].dir)) << " " << color
+                      << std::endl;*/
             // std::cout << *hitObject/*->reflexionIndex*/ << std::endl;
-            if (hitObject->reflexionIndex && !hitObject->transparency) {
+            if (inter.objReflexionIndex && !inter.objTransparency) {
                 // std::cout << "reflexion\n";
 
-                Ray reflectedRay(shadowRays[0].initPt,
-                                 ray.dir - 2 * glm::dot(ray.dir, inter.normal) * inter.normal);
+                Ray reflectedRay(
+                    shadowRays[0].getInitPt(),
+                    ray.getDir() - 2 * glm::dot(ray.getDir(), inter.normal) * inter.normal);
                 // std::cout << "\nInbound: " << ray << std::endl
                 //          << hitNormal << "\nOutbound: " << reflectedRay <<
                 //          std::endl;
@@ -133,36 +138,41 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                 //    "\nOutbound: " << reflectedRay.dir[2] << std::endl;
 
                 // std::cout << ref << std::endl;
-                color += detail::mult(hitObject->color,
-                                      castRay(reflectedRay, lightSource, objects, depth + 1)) *
+                color += detail::mult(hitObject->color, castRay(reflectedRay, lightSource, objects,
+                                                                backgroundColor, depth + 1, maxDepth)) *
                          hitObject->reflexionIndex;
                 // std::cout << color << std::endl;
             }
 
-            if (hitObject->transparency) {
+            if (inter.objTransparency) {
                 glm::vec3 refractionColor;
                 // compute fresnel
                 float kr = fresnel(ray, inter.normal, hitObject->refractiveIndex);
-                bool outside = glm::dot(ray.dir, inter.normal) < 0;
+                bool outside = glm::dot(ray.getDir(), inter.normal) < 0;
                 // compute refraction if it is not a case of total internal reflection
                 if (kr < 1) {
-                    Ray refractedRay = Ray(shadowRays[0].initPt,
+                    Ray refractedRay = Ray(shadowRays[0].getInitPt(),
                                            refract(ray, inter.normal, hitObject->refractiveIndex));
                     outside ? refractedRay.biais(-inter.normal, 0.001f)
                             : refractedRay.biais(+inter.normal, 0.001f);
-                    refractionColor = castRay(refractedRay, lightSource, objects, depth + 1);
+                    refractionColor =
+                        castRay(refractedRay, lightSource, objects, backgroundColor, depth + 1, maxDepth);
                 }
 
-                Ray reflectedRay = Ray(shadowRays[0].initPt,
-                                       ray.dir - 2 * glm::dot(ray.dir, inter.normal) * inter.normal);
+                Ray reflectedRay =
+                    Ray(shadowRays[0].getInitPt(),
+                        ray.getDir() - 2 * glm::dot(ray.getDir(), inter.normal) * inter.normal);
                 outside ? reflectedRay.biais(+inter.normal, 0.001f)
                         : reflectedRay.biais(-inter.normal, 0.001f);
-                glm::vec3 reflectionColor = castRay(reflectedRay, lightSource, objects, depth + 1);
+                glm::vec3 reflectionColor =
+                    castRay(reflectedRay, lightSource, objects, backgroundColor, depth + 1, maxDepth);
 
                 // mix the two
                 color +=
                     reflectionColor * kr + refractionColor * (1 - kr) * hitObject->transparency;
             }
+        } else {  // If no intersection, set the color to the background color
+            color = backgroundColor;
         }
         if (color[0] > 255 || color[1] > 255 || color[2] > 255)
             std::cout << "Color overflow ! " << color << std::endl;
@@ -170,24 +180,98 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
     }
 }
 
-void StdRayTracer::render(Scene scene) {
+void StdRayTracer::render(const Scene &scene) const {
+    ImgHandler imgHandler;
+
     auto lightSources = scene.getSources()[0];
     auto objects = scene.getObjects();
     auto camera = scene.getCamera();
-    cv::Mat image(cv::Size(camera->resX, camera->resY), CV_8UC3);
 
-    cv::Vec3b color;
+    std::vector<unsigned char> image;
+    glm::vec3 color;
+
     for (unsigned x = 0; x < camera->resX; ++x) {
-        // std::cout << x << std::endl;u
         for (unsigned y = 0; y < camera->resY; ++y) {
             int depth = 0;
             Ray primRay = camera->genRay(x, y);
 
-            color = detail::glm2cv(castRay(primRay, lightSources, objects, depth));
-            image.at<cv::Vec3b>(x, y) = color;
+            color = castRay(primRay, lightSources, objects, scene.getColor(), depth, this->getMaxDepth());
+            std::vector<unsigned char> colorVec{(unsigned char)color[0], (unsigned char)color[1],
+                                                (unsigned char)color[2], (unsigned char)255};
+            image.insert(image.end(), colorVec.begin(), colorVec.end());
+        }
+    }
+    imgHandler.writePNG("RayTracing.png", image, camera->resX, camera->resY);
+}
+
+void FixedAntiAliasingRayTracer::render(const Scene &scene) const {
+    ImgHandler imgHandler;
+
+    int sqrtAAPower = this->getAAPower();
+    float d = 1.0 / sqrtAAPower;
+
+    auto lightSources = scene.getSources()[0];
+    auto objects = scene.getObjects();
+    auto camera = scene.getCamera();
+
+    std::vector<unsigned char> image;
+
+    glm::vec3 color;
+    for (float x = 0; x < camera->resX; ++x) {
+        for (float y = 0; y < camera->resY; ++y) {
+            color = glm::vec3(0, 0, 0);
+
+            for (int idRayV = 1; idRayV < sqrtAAPower + 1; ++idRayV) {
+                for (int idRayH = 1; idRayH < sqrtAAPower + 1; ++idRayH) {
+                    int depth = 0;
+                    Ray primRay = camera->genRay(x + d * idRayH, y + d * idRayV);
+                    color =
+                        color + castRay(primRay, lightSources, objects, scene.getColor(), depth, this->getMaxDepth());
+                }
+            }
+            color = color / ((float)(sqrtAAPower * sqrtAAPower));
+            std::vector<unsigned char> colorVec{(unsigned char)color[0], (unsigned char)color[1],
+                                                (unsigned char)color[2], (unsigned char)255};
+            image.insert(image.end(), colorVec.begin(), colorVec.end());
+        }
+    }
+    imgHandler.writePNG("RayTracing.png", image, camera->resX, camera->resY);
+}
+
+/*void StochasticAntiAliasingRayTracer::render(Scene scene) {
+    int sqrtAAPower = this->getAAPower();
+    float d = 1.0 / sqrtAAPower;
+
+    auto lightSources = scene.getSources()[0];
+    auto objects = scene.getObjects();
+    auto camera = scene.getCamera();
+
+    cv::Mat image(cv::Size(camera->resX, camera->resY), CV_8UC3);
+
+    glm::vec3 color;
+    for (float x = 0; x < camera->resX; ++x) {
+        std::cout << x << std::endl;
+        for (float y = 0; y < camera->resY; ++y) {
+            color = glm::vec3(0, 0, 0);
+            glm::vec3 tmp = glm::vec3(0, 0, 0);
+            for (int idRayV = 1; idRayV < sqrtAAPower + 1; ++idRayV) {
+                for (int idRayH = 1; idRayH < sqrtAAPower + 1; ++idRayH) {
+                    int depth = 0;
+                    Ray primRay = camera->genRay(x + d * idRayH, y + d * idRayV);
+                    tmp = castRay(primRay, lightSources, objects, scene.getColor(), depth);
+                    color = color + tmp;
+                    //std::cout << d << " " << x + d * (float)idRayH << primRay << " " << tmp << "
+";
+                }
+            }
+
+            image.at<cv::Vec3b>(x, y) =
+                detail::glm2cv(color / ((float)(sqrtAAPower * sqrtAAPower)));
+            //std::cout << detail::glm2cv(color / ((float)(sqrtAAPower * sqrtAAPower))) <<
+std::endl;
         }
     }
     cv::resize(image, image, cv::Size(1000, 1000));
     cv::imwrite("RayTracing.png", image);
     cv::imshow("RayTracing", image);
-}
+}*/

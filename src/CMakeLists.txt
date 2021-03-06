@@ -18,12 +18,18 @@ set(SRC
     RayTracer.cpp
     Object.cpp
     Parser.cpp
+    lodepng.cpp
+    Texture.cpp
     
     Scene.hpp
     RayTracer.hpp
     Ray.hpp
     Object.hpp
     Parser.hpp
+    ObjParser.hpp
+    Texture.hpp
+    lodepng.h
+#    ImgHandler.hpp
     
     utils.hpp
 )
@@ -34,16 +40,11 @@ target_sources(RayTracing PRIVATE "${SRC}")
 find_package(glm CONFIG REQUIRED)
 target_include_directories(RayTracing PUBLIC "${GLM_INCLUDE_DIRS}")
 
-# OpenCV
-find_package(OpenCV CONFIG REQUIRED)
-target_include_directories(RayTracing PUBLIC ${OpenCV_INCLUDE_DIRS})
-target_link_libraries(RayTracing ${OpenCV_LIBS})
 
 # XML Parser
 find_package(tinyxml2 CONFIG REQUIRED)
 target_include_directories(RayTracing PUBLIC ${tinyxml2})
 target_link_libraries(RayTracing tinyxml2::tinyxml2)
-
 
 # Adding include path by default to temporarily fix glm bug
 target_include_directories(RayTracing PUBLIC "/usr/local/include")

@@ -1,19 +1,33 @@
+/**
+ * @file ObjParser.hpp
+ * @author Atoli Huppé & Olivier Laurent
+ * @brief A simple parser for .obj file. The format must be perfectly respected.
+ * @version 1.0
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
+#pragma once
+
 #include <exception>
 #include <fstream>
 #include <iostream>
 
 #include "Object.hpp"
 
+/**
+ * @class ObjParser
+ * @brief A parser for .obj files.
+ *
+ */
 class ObjParser {
 public:
-    ObjParser(){};
-
-    //! A normal member taking one argument and returning a mesh.
-    /*!
-      \param filename the name of the .obj file
-      \return The information of the object as an ostream
-      Raises runtime error if the obj file is not well formated
-    */
+    /**
+     * @brief A normal member taking one argument and returning a mesh.
+     *
+     * @param filename the name of the .obj file
+     * @return PolygonMesh
+     */
     PolygonMesh readObj(std::string filename) noexcept(false) {
         std::cout << filename << std::endl;
         std::vector<glm::vec3> v;
@@ -39,15 +53,23 @@ public:
                 objFile >> type;
                 v.push_back(glm::vec3(v1, v2, v3));
             }
+            std::cout << v.size() << std::endl;
 
+            bool texture3D = false;
             // Get the texture
             while (type == "vt") {
                 objFile >> v1;
                 objFile >> v2;
-                vt.push_back(glm::vec2(v1, v2));
+                if (texture3D || objFile.peek() != '\n') {
+                    texture3D = true;
+                    objFile >> v3;
+                } else {
+                    v3 = 0;
+                }
+                vt.push_back(glm::vec3(v1, v2, v3));
                 objFile >> type;
             }
-
+            std::cout << vt.size() << std::endl;
             // Get the normals
             while (type == "vn") {
                 objFile >> v1;
@@ -56,7 +78,7 @@ public:
                 vn.push_back(glm::vec3(v1, v2, v3));
                 objFile >> type;
             }
-
+            std::cout << vn.size() << std::endl;
             // Faces
             int c1;
             char c2;
@@ -80,18 +102,18 @@ public:
                     objFile >> c3;
                     objFile >> c4;
                     objFile >> c5;
-
                     if (c2 != '/' || c4 != '/')
                         throw std::runtime_error("Error in the obj file format");
 
                     c1Vect.push_back(c1);
                     c3Vect.push_back(c3);
                     c5Vect.push_back(c5);
+                    std::cout << c1 << " " << c3 << " " << c5 << std::endl;
                 }
                 Polygon poly;
                 for (int k = 0; k < c1Vect.size(); ++k) {
-                    poly.addVertice(v[c1Vect[k]-1]); // Les indices de l'obj commencent à 1
-                    poly.addTexture(vt[c3Vect[k]-1]);
+                    poly.addVertice(v[c1Vect[k] - 1]);  // Les indices de l'obj commencent à 1
+                    poly.addTexture(vt[c3Vect[k] - 1]);
                 }
                 std::cout << vn[c5Vect[0]] << std::endl;
                 poly.setNormal(vn[c5Vect[0]]);
@@ -107,4 +129,10 @@ public:
             return mesh;
         }
     }
+
+    /**
+     * @brief Construct a new Obj Parser object (default)
+     *
+     */
+    ObjParser(){};
 };

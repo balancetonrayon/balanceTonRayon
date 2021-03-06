@@ -14,7 +14,7 @@ class Parser {
     glm::vec2 size;
     int maxDepth;
     
-    std::vector<std::shared_ptr<ObjectBase>> objects;
+    std::vector<std::shared_ptr<BasicObject>> objects;
     
     std::vector<std::shared_ptr<Light>> sources;
     
@@ -28,7 +28,7 @@ public:
     glm::vec2 getSize() const { return size; }
     int getMaxDepth() const { return maxDepth; }
     
-    const std::vector<std::shared_ptr<ObjectBase>> & getObjects() const { return objects; }
+    const std::vector<std::shared_ptr<BasicObject>> & getObjects() const { return objects; }
     const std::vector<std::shared_ptr<Light>> & getSources() const { return sources; }
     const std::shared_ptr<Camera> & getCamera() const { return camera; }
     

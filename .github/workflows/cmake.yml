@@ -20,19 +20,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Cache opencv
-      uses: actions/cache@v2
-      env:
-        cache-name: cache-opencv
-      with:
-        path: ${{runner.workspace}}/opencv
-        key: ${{ runner.os }}-build-${{ env.cache-name }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
-
-    
     - name: Install dependencies
       working-directory: ${{runner.workspace}}
       run: |
@@ -47,31 +34,7 @@ jobs:
         elif [ "$RUNNER_OS" == "Windows" ]; then
           vcpkg install glm
         fi
-
-        # opencv
-        if [ ! -d opencv/.git ]; then
-          git clone https://github.com/opencv/opencv.git
-        fi
-        git -C opencv checkout master
-        cd opencv
-        git pull
-        mkdir -p build && cd build
-        cmake ../
-        cmake --build .
         
-        if [ "$RUNNER_OS" == "Windows" ]; then
-          make install
-        else
-            sudo make install
-        fi
-        
-        # tinyxml2
-        git clone https://github.com/leethomason/tinyxml2.git
-        cd tinyxml2
-        mkdir -p build && cd build
-        cmake ../
-        cmake --build .
-        sudo make install
       shell: bash
 
     - name: Create Build Environment

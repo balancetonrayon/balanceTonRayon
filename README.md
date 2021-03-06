@@ -11,6 +11,8 @@ cmake ../src
 cmake --build .
 ```
 
+on peut ensuite utiliser `make -j`
+
 Building Xcode Project
 
 ```shell
@@ -19,6 +21,7 @@ cmake -G Xcode ../src
 ```
 
 Lint
+
 ```shell
 cpplint --recursive src
 ```
