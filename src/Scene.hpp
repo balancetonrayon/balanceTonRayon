@@ -39,14 +39,43 @@ class Scene {
      *
      */
     std::shared_ptr<Camera> camera;
-    
+
     /**
      * @brief The background color of the scene
      *
      */
     glm::vec3 backgroundColor;
 
+    /**
+     * @brief max recursive depth
+     *
+     */
+    int maxDepth;
+
 public:
+    /**
+     * @brief Get the Background Color of the scene
+     *
+     * @return glm::vec3
+     */
+    glm::vec3 getBackgroundColor() const { return this->backgroundColor; }
+
+    /**
+     * @brief Get the Max recursive Depth
+     *
+     * @return int
+     */
+    int getMaxDepth() const { return maxDepth; }
+
+    /**
+     * @brief Set the Background Color of the image
+     *
+     * @param color
+     */
+    void setBackgroundColor(glm::vec3 color) { this->backgroundColor = color; }
+
+    void setMaxDepth(int depth) { this->maxDepth = depth; }
+
     /**
      * @brief Get the pointers of the objects of the scene
      *
