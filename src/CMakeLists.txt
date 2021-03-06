@@ -2,8 +2,11 @@ cmake_minimum_required(VERSION 3.10)
 
 project(RayTracing VERSION 1.0)
 
+SET(CUSTOM_COMPILE_FLAGS "")
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${CUSTOM_COMPILE_FLAGS}")
 
 configure_file(Config.h.in Config.h)
 
@@ -14,11 +17,13 @@ set(SRC
     Scene.cpp
     RayTracer.cpp
     Object.cpp
+    Parser.cpp
     
     Scene.hpp
     RayTracer.hpp
     Ray.hpp
     Object.hpp
+    Parser.hpp
     
     utils.hpp
 )
@@ -36,8 +41,8 @@ target_link_libraries(RayTracing ${OpenCV_LIBS})
 
 # XML Parser
 find_package(tinyxml2 CONFIG REQUIRED)
-target_include_directories(RayTracing PUBLIC ${tinyxml2_INCLUDE_DIRS})
-target_link_libraries(RayTracing ${tinyxml2_LIBS})
+target_include_directories(RayTracing PUBLIC ${tinyxml2})
+target_link_libraries(RayTracing tinyxml2::tinyxml2)
 
 
 # Adding include path by default to temporarily fix glm bug

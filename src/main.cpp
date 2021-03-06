@@ -1,11 +1,22 @@
 #include <opencv2/opencv.hpp>
 
 #include "RayTracer.hpp"
+#include "Parser.hpp"
+
+#include <fstream>
+#include <string>
 
 Scene daltons() {
     Scene scene;
+    
+    std::ifstream ifs("chemin vers le fichier");
+    std::string xmlData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+    
+    Parser parser(xmlData);
+    
+    std::cout << parser.getName() << std::endl;
 
-    auto plane = std::make_shared<Plane>(glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), glm::vec3(0, 0, 1),
+    /*auto plane = std::make_shared<Plane>(glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), glm::vec3(0, 0, 1),
                                          0, 0, 0.2, 0.25);
 
     auto sphere1 =
@@ -27,7 +38,15 @@ Scene daltons() {
     scene.addObject(sphere3);
     scene.addObject(sphere4);
     scene.setCamera(camera);
-    scene.addSource(lightSource);
+    scene.addSource(lightSource);*/
+    
+    for (auto object : parser.getObjects())
+        scene.addObject(object);
+    
+    for (auto source : parser.getSources())
+        scene.addSource(source);
+    
+    scene.setCamera(parser.getCamera());
 
     return scene;
 }
