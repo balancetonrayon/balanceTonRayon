@@ -8,153 +8,106 @@
  *
  */
 
+#include <chrono>
 #include <fstream>
+#include <random>
 #include <string>
 
 #include "ObjParser.hpp"
 #include "Parser.hpp"
 #include "RayTracer.hpp"
-//#include "ImgHandler.hpp"
 
-/**
- * @brief
- *
- * @return Scene
- */
-Scene daltons() {
+Scene loadScene(std::string filename) {
     Scene scene;
 
-    std::ifstream ifs("../data/daltons.xml");
-    std::string xmlData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+    std::ifstream ifs(filename);
 
-    Parser xmlParser(xmlData);
+    if (!ifs.is_open()) {
+        throw std::runtime_error(
+            "The file representing your scene does not exist. Please check the path to your file ");
+    } else {
+        std::string xmlData((std::istreambuf_iterator<char>(ifs)),
+                            (std::istreambuf_iterator<char>()));
 
-    std::cout << xmlParser.getName() << std::endl;
+        Parser xmlParser(xmlData);
 
-    for (auto object : xmlParser.getObjects()) scene.addObject(object);
+        std::cout << " --- Rendering : " << xmlParser.getName() << " ---" << std::endl;
 
-    for (auto source : xmlParser.getSources()) scene.addSource(source);
+        scene.setBackgroundColor(xmlParser.getBackgroundColor());
+        scene.setMaxDepth(xmlParser.getMaxDepth());
 
-    scene.setCamera(xmlParser.getCamera());
+        for (auto object : xmlParser.getObjects()) scene.addObject(object);
 
-    return scene;
-}
+        for (auto source : xmlParser.getSources()) scene.addSource(source);
 
-Scene ataporte(std::string filename) {
-    Scene scene(glm::vec3(235, 206, 135));
-    /*ImgHandler ImgHandler;
-    ImgHandler.readFile("image.png");*/
-    return scene;
-}
+        scene.setCamera(xmlParser.getCamera());
 
-void AATest() {
-    Scene scene = daltons();
-    FixedAntiAliasingRayTracer AArt(true, 10, 2);
-
-    for (auto object : scene.getObjects()) {
-        std::cout << *object << std::endl;
+        return scene;
     }
-
-    AArt.render(scene, "RayTracingAA.png");
-}
-
-void Cesart() {
-    std::shared_ptr<Plane> plane = std::make_shared<Plane>(
-        glm::vec3(0.0, 0, 0), glm::vec3(-1, 0, 0), glm::vec3(1, 1, 1), 0, 0, 0, 0.5);
-    auto sphere1 =
-        std::make_shared<Sphere>(glm::vec3(-0.11, 0, 0), glm::vec3(1, 1, 1), 0.1, 0, 0, 0.8, 0.22);
-
-    std::string filename = "../data/cesar2.png";
-    glm::vec3 origin(0.0, -0.5, 0.5);
-    glm::vec3 hVec(0, 0, -1);
-    glm::vec3 wVec(0, 1, 0);
-    plane->setTexture(std::make_shared<Image>(filename, origin, hVec, wVec));
-
-    auto camera = std::make_shared<Camera>(glm::vec3(0, 0, 0), glm::vec3(-1, 0, 0), 0.1, 0.1, 1000,
-                                           1000, 0.05);
-    auto lightSource =
-        std::make_shared<DirectLight>(glm::vec3(-5, 0, 10), glm::vec3(1, 1, 1), 2000);
-
-    Scene scene;
-    StdRayTracer stdrt;
-    scene.addObject(plane);
-    scene.addObject(sphere1);
-    scene.addSource(lightSource);
-    scene.setCamera(camera);
-
-    for (auto object : scene.getObjects()) {
-        std::cout << *object << std::endl;
-    }
-
-    stdrt.render(scene, "Cesart.png");
-}
-
-void Cesar() {
-    std::shared_ptr<Plane> plane = std::make_shared<Plane>(
-        glm::vec3(0.11, 0, 0), glm::vec3(-1, 0, 0), glm::vec3(1, 1, 1), 0, 0, 0, 0.5);
-    auto sphere1 =
-        std::make_shared<Sphere>(glm::vec3(-0.11, 0, 0), glm::vec3(1, 1, 1), 0.05, 0, 0, 0.8, 0.22);
-    std::string filename = "../data/crepon.png";
-
-    glm::vec3 origin(0.05, -1, 1);
-    glm::vec3 hVec(0, 0, -2);
-    glm::vec3 wVec(0, 1, 0);
-    plane->setTexture(std::make_shared<Image>(filename, origin, hVec, wVec));
-
-    auto camera = std::make_shared<Camera>(glm::vec3(0, 0, 0), glm::vec3(-1, 0, 0), 0.1, 0.1, 1000,
-                                           1000, 0.1);
-    auto lightSource =
-        std::make_shared<DirectLight>(glm::vec3(-5, 0, 10), glm::vec3(1, 1, 1), 2000);
-
-    Scene scene;
-    StdRayTracer stdrt;
-    scene.addObject(plane);
-    scene.addObject(sphere1);
-    scene.addSource(lightSource);
-    scene.setCamera(camera);
-
-    for (auto object : scene.getObjects()) {
-        std::cout << *object << std::endl;
-    }
-
-    stdrt.render(scene, "Crepon.png");
-}
-
-Scene testTexture() {
-    Scene scene;
-
-    std::ifstream ifs("../data/daltons.xml");
-    std::string xmlData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
-
-    Parser xmlParser(xmlData);
-
-    std::cout << xmlParser.getName() << std::endl;
-
-    for (auto object : xmlParser.getObjects()) {
-        object->setTexture(std::make_shared<CheckedPattern2D>(glm::vec3(0, 0, 1)));
-        scene.addObject(object);
-    }
-
-    for (auto source : xmlParser.getSources()) scene.addSource(source);
-
-    scene.setCamera(xmlParser.getCamera());
-
-    return scene;
-}
-
-void test() {
-    Scene scene = testTexture();
-    StdRayTracer stdrt;
-
-    for (auto object : scene.getObjects()) {
-        std::cout << *object << std::endl;
-    }
-    std::cout << *scene.getCamera() << std::endl;
-
-    stdrt.render(scene, "Texture.png");
 }
 
 int main(int argc, const char **argv) {
-    test();
+    std::cout << "Starting the ray-Tracing Software by Atoli Huppé and Olivier Laurent" << std::endl
+              << std::endl;
+    if (argc == 1) {
+        unsigned seed = (std::chrono::duration_cast<std::chrono::nanoseconds>(
+                             std::chrono::system_clock::now().time_since_epoch()))
+                            .count();
+        std::uniform_real_distribution<float> distribution(0.0, 1.0);
+        std::mt19937_64 rng(seed);
+
+        float rdm = distribution(rng);
+
+        if (rdm < 0.333) {
+            std::cout
+                << "Since no arguments have been given, generating 'A walk through the trees'. "
+                   "Please find the output file in the data folder."
+                << std::endl;
+
+            Scene scene = loadScene("../data/walkTrees.xml");
+            FixedAntiAliasingRayTracer AArt(true, scene.getMaxDepth(), 2);
+
+            AArt.render(scene, "../data/AWalkThroughTheTrees.png");
+        } else if (rdm < 0.666) {
+            std::cout << "Since no arguments have been given, generating 'The Dalton Family'. "
+                         "Please find the output file in the data folder."
+                      << std::endl;
+
+            Scene scene = loadScene("../data/daltons.xml");
+            FixedAntiAliasingRayTracer AArt(true, scene.getMaxDepth(), 2);
+
+            AArt.render(scene, "../data/daltons.png");
+        } else {
+            std::cout
+                << "Since no arguments have been given, generating 'The White and Blue Billiard'. "
+                   "Please find the output file in the data folder."
+                << std::endl;
+
+            Scene scene = loadScene("../data/billiard.xml");
+            FixedAntiAliasingRayTracer AArt(true, scene.getMaxDepth(), 3);
+
+            AArt.render(scene, "../data/billiard.png");
+        }
+    } else if (argc == 2) {
+        std::cout << "Your file is going to be loaded. If you want, you may specify n - with "
+                     "(n<5) - if you want some anti-anliasing."
+                  << std::endl;
+        Scene scene = loadScene(argv[1]);
+        std::cout << scene.getColor();
+        StdRayTracer srt(true, scene.getMaxDepth());
+
+        srt.render(scene, argv[1]);
+    } else if (argc >= 3) {
+        std::cout << "Your file is going to be loaded." << std::endl;
+        std::string filename = argv[1];
+        Scene scene = loadScene(argv[1]);
+
+        FixedAntiAliasingRayTracer AArt(true, scene.getMaxDepth(), std::stoi(argv[2]));
+
+        size_t lastindex = filename.find_last_of(".");
+        std::string rawname = filename.substr(0, lastindex);
+
+        AArt.render(scene, "../data/" + rawname + ".png");
+    }
     return 0;
 }
