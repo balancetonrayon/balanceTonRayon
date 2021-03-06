@@ -10,6 +10,10 @@
 
 #include "ObjParser.hpp"
 #include "RayTracer.hpp"
+#include "Parser.hpp"
+
+#include <fstream>
+#include <string>
 //#include "ImgHandler.hpp"
 
 /**
@@ -19,11 +23,19 @@
  */
 Scene daltons() {
     ObjParser parser;
-    PolygonMesh mesh = parser.readObj("../data/cube.obj");
+    PolygonMesh mesh = parser.readObj("cube.obj");
 
     // Scene scene(glm::vec3(235, 206, 135));
     Scene scene;
+    
+    std::ifstream ifs("daltons.xml");
+    std::string xmlData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+    
+    Parser xmlParser(xmlData);
+    
+    std::cout << xmlParser.getName() << std::endl;
 
+    /*
     auto plane = std::make_shared<Plane>(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1), glm::vec3(1, 1, 1),
                                          0, 0, 0.2, 0.25);
 
@@ -53,7 +65,15 @@ Scene daltons() {
     // scene.addObject(std::make_shared<TriangleMesh>(tMesh));
     // scene.addObject(triangle1);
     scene.setCamera(camera);
-    scene.addSource(lightSource);
+    scene.addSource(lightSource);*/
+    
+    for (auto object : xmlParser.getObjects())
+        scene.addObject(object);
+    
+    for (auto source : xmlParser.getSources())
+        scene.addSource(source);
+    
+    scene.setCamera(xmlParser.getCamera());
 
     return scene;
 }
