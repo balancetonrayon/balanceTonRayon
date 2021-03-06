@@ -7,8 +7,8 @@
             <x>1000</x>
             <y>1000 </y>
         </size>
-        <max_depth>30</max_depth>
-        <background-color> 
+        <max_depth>10</max_depth>
+        <background-color>
             <r>0</r>
             <g>0</g>
             <b>0</b>
@@ -136,8 +136,8 @@
             </color>
             <radius>0.25</radius>
             <transmission>0.95</transmission>
-            <reflexion>1.5</reflexion>
-            <refractive>0</refractive>
+            <reflexion>0</reflexion>
+            <refractive>1.5</refractive>
             <albedo>0.05</albedo>
         </sphere>
     </objects>

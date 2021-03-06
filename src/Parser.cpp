@@ -16,7 +16,7 @@ Parser::Parser(std::string xmlData) {
     auto cameraTag = scene->FirstChildElement("camera");
     auto cameraPos = getXYZ(cameraTag->FirstChildElement("pos"));
     auto cameraDir = getXYZ(cameraTag->FirstChildElement("dir"));
-    auto cameraFoc = std::stoi(cameraTag->FirstChildElement("foc")->GetText());
+    auto cameraFoc = std::stof(cameraTag->FirstChildElement("foc")->GetText());
     auto cameraSize = getXY(cameraTag->FirstChildElement("size"));
     auto cameraPix = getXY(cameraTag->FirstChildElement("pix"));
     camera = std::make_shared<Camera>(cameraPos, cameraDir, cameraSize.x, cameraSize.y, cameraPix.x, cameraPix.y, cameraFoc);
