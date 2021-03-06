@@ -2,12 +2,12 @@
 
 <scene>
     <meta>
-        <name>Les Daltons</name>
+        <name>The White and Blue Billiard</name>
         <size>
-            <x>1000</x>
-            <y>1000 </y>
+            <x>1200</x>
+            <y>1200</y>
         </size>
-        <max_depth>10</max_depth>
+        <max_depth>15</max_depth>
         <background-color>
             <r>0</r>
             <g>0</g>
@@ -68,77 +68,69 @@
                 <b>1</b>
             </color>
             <transmission>0</transmission>
-            <reflexion>0.2</reflexion>
+            <reflexion>0.3</reflexion>
             <refractive>0</refractive>
             <albedo>0.25</albedo>
+            <texture>
+                <checked-pattern-2d>
+                    <color>
+                        <r>0.1</r>
+                        <g>0.3</g>
+                        <b>0.8</b>
+                    </color>
+                </checked-pattern-2d>
+            </texture>
         </plane>
         <sphere>
             <pos>
                 <x>6.16</x>
                 <y>0.66</y>
-                <z>1</z>
+                <z>0.5</z>
             </pos>
             <color>
-                <r>1</r>
+                <r>0.8</r>
                 <g>1</g>
                 <b>1</b>
             </color>
-            <radius>1</radius>
+            <radius>0.5</radius>
             <transmission>0</transmission>
-            <reflexion>0.8</reflexion>
+            <reflexion>0.7</reflexion>
             <refractive>0</refractive>
             <albedo>0.22</albedo>
         </sphere>
         <sphere>
             <pos>
                 <x>5</x>
-                <y>0</y>
-                <z>0.66</z>
-            </pos>
-            <color>
-                <r>0</r>
-                <g>1</g>
-                <b>1</b>
-            </color>
-            <radius>0.66</radius>
-            <transmission>0</transmission>
-            <reflexion>0.2</reflexion>
-            <refractive>0</refractive>
-            <albedo>0.35</albedo>
-        </sphere>
-        <sphere>
-            <pos>
-                <x>4.16</x>
-                <y>0.44</y>
-                <z>0.20</z>
-            </pos>
-            <color>
-                <r>0</r>
-                <g>0</g>
-                <b>1</b>
-            </color>
-            <radius>0.20</radius>
-            <transmission>0</transmission>
-            <reflexion>0.1</reflexion>
-            <refractive>0</refractive>
-            <albedo>0.2</albedo>
-        </sphere>
-        <sphere>
-            <pos>
-                <x>5.25</x>
-                <y>3</y>
-                <z>0.66</z>
+                <y>-1</y>
+                <z>0.8</z>
             </pos>
             <color>
                 <r>1</r>
                 <g>1</g>
+                <b>0.8</b>
+            </color>
+            <radius>0.8</radius>
+            <transmission>0</transmission>
+            <reflexion>0.7</reflexion>
+            <refractive>0</refractive>
+            <albedo>0.22</albedo>
+        </sphere>
+        <sphere>
+            <pos>
+                <x>3.16</x>
+                <y>0.8</y>
+                <z>0.70</z>
+            </pos>
+            <color>
+                <r>1</r>
+                <g>0.8</g>
                 <b>1</b>
             </color>
-            <radius>0.25</radius>
-            <transmission>0.95</transmission>
-            <reflexion>0</reflexion>
-            <refractive>1.5</refractive>
-            <albedo>0.05</albedo>
+            <radius>0.70</radius>
+            <transmission>0</transmission>
+            <reflexion>0.7</reflexion>
+            <refractive>0</refractive>
+            <albedo>0.22</albedo>
         </sphere>
     </objects>
 </scene>
