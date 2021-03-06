@@ -1,5 +1,5 @@
 /**
- * @file ImgReader.hpp
+ * @file ImgHandler.hpp
  * @author Atoli Huppé & Olivier Laurent
  * @brief A wrapper for the lodepng library. The code below is a slightly modifed version of the
  * code contained in lodepng's documentation
@@ -19,10 +19,10 @@
 #include "lodepng.h"
 
 /**
- * @brief A class to read PNGs
- * @class ImgReader
+ * @brief A class to read and write PNGs
+ * @class ImgHandler
  */
-class ImgReader {
+class ImgHandler {
 public:
     /**
      * @brief A method to read a file with its name.
@@ -32,7 +32,9 @@ public:
      * @param width the height of the image (in pixels)
      * @return std::vector<unsigned char> the pixels of the image
      */
-    std::vector<unsigned char> readPNG(const char* filename, unsigned& height, unsigned& width) {
+    std::vector<unsigned char> readPNG(const std::string& filename, unsigned& height,
+                                       unsigned& width) {
+
         std::vector<unsigned char> image;  // the raw pixels
 
         // decode
@@ -55,8 +57,9 @@ public:
      * @param height the height of the image (in pixels)
      * @param width the
      */
-    void writePNG(const char* filename, std::vector<unsigned char> image, unsigned& height,
+    void writePNG(const std::string& filename, std::vector<unsigned char> image, unsigned& height,
                   unsigned& width) {
+
         // Encode the image
         unsigned error = lodepng::encode(filename, image, width, height);
 

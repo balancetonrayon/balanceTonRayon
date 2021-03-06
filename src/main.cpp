@@ -1,9 +1,22 @@
-#include <opencv2/opencv.hpp>
+/**
+ * @file main.cpp
+ * @author Atoli Huppé & Olivier Laurent
+ * @brief 
+ * @version 1
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 
 #include "ObjParser.hpp"
 #include "RayTracer.hpp"
-//#include "ImgReader.hpp"
+//#include "ImgHandler.hpp"
 
+/**
+ * @brief 
+ * 
+ * @return Scene 
+ */
 Scene daltons() {
     ObjParser parser;
     PolygonMesh mesh = parser.readObj("../data/cube.obj");
@@ -11,7 +24,7 @@ Scene daltons() {
     // Scene scene(glm::vec3(235, 206, 135));
     Scene scene;
 
-    auto plane = std::make_shared<Plane>(glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), glm::vec3(0, 0, 1),
+    auto plane = std::make_shared<Plane>(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1), glm::vec3(1, 1, 1),
                                          0, 0, 0.2, 0.25);
 
     auto sphere1 =
@@ -47,8 +60,8 @@ Scene daltons() {
 
 Scene ataporte(std::string filename) {
     Scene scene(glm::vec3(235, 206, 135));
-    /*ImgReader imgReader;
-    imgReader.readFile("image.png");*/
+    /*ImgHandler ImgHandler;
+    ImgHandler.readFile("image.png");*/
 }
 
 void test() {
@@ -60,23 +73,85 @@ void test() {
     }
 
     stdrt.render(scene);
-
-    cv::waitKey(0);
 }
 
 void AATest() {
     Scene scene = daltons();
-    FixedAntiAliasingRayTracer AArt(16);
+    FixedAntiAliasingRayTracer AArt(2);
 
     for (auto object : scene.getObjects()) {
         std::cout << *object << std::endl;
     }
 
     AArt.render(scene);
-
-    cv::waitKey(0);
 }
+
+void Cesart() {
+    std::shared_ptr<Plane> plane = std::make_shared<Plane>(glm::vec3(0.0, 0, 0), glm::vec3(-1, 0, 0),
+                                                           glm::vec3(1, 1, 1), 0, 0, 0, 0.5);
+    auto sphere1 =
+        std::make_shared<Sphere>(glm::vec3(-0.11, 0, 0), glm::vec3(1, 1, 1), 0.1, 0, 0, 0.8, 0.22);
+    std::string filename = "../data/cesar2.png";
+    std::string filenameW = "../data/cesar3.png";
+
+    glm::vec3 origin(0.0, -0.5, 0.5);
+    glm::vec3 hVec(0, 0, -1);
+    glm::vec3 wVec(0, 1, 0);
+    plane->setTexture(std::make_shared<Image>(filename, origin, hVec, wVec));
+
+    auto camera = std::make_shared<Camera>(glm::vec3(0, 0, 0), glm::vec3(-1, 0, 0), 0.1, 0.1, 1000,
+                                           1000, 0.05);
+    auto lightSource = std::make_shared<DirectLight>(glm::vec3(-5, 0, 10), glm::vec3(1, 1, 1), 2000);
+
+    Scene scene;
+    StdRayTracer stdrt;
+    scene.addObject(plane);
+    scene.addObject(sphere1);
+    scene.addSource(lightSource);
+    scene.setCamera(camera);
+
+    for (auto object : scene.getObjects()) {
+        std::cout << *object << std::endl;
+    }
+    //std::cout << *(plane->getTexture()) << std::endl;
+    
+    //plane->getTexture()->savePixels(file_nameW);
+    stdrt.render(scene);
+}
+
+void Cesar() {
+    std::shared_ptr<Plane> plane = std::make_shared<Plane>(glm::vec3(0.11, 0, 0), glm::vec3(-1, 0, 0),
+                                                           glm::vec3(1, 1, 1), 0, 0, 0, 0.5);
+    auto sphere1 =
+        std::make_shared<Sphere>(glm::vec3(-0.11, 0, 0), glm::vec3(1, 1, 1), 0.05, 0, 0, 0.8, 0.22);
+    std::string filename = "../data/cesar2.png";
+    std::string filenameW = "../data/cesar3.png";
+
+    glm::vec3 origin(0.05, -0.5, 0.5);
+    //permettre l'augmentation de la taille de l'image
+    glm::vec3 hVec(0, 0, -1);
+    glm::vec3 wVec(0, 1, 0);
+    plane->setTexture(std::make_shared<Image>(filename, origin, hVec, wVec));
+
+    auto camera = std::make_shared<Camera>(glm::vec3(0, 0, 0), glm::vec3(-1, 0, 0), 0.1, 0.1, 1000,
+                                           1000, 0.1);
+    auto lightSource = std::make_shared<DirectLight>(glm::vec3(-5, 0, 10), glm::vec3(1, 1, 1), 2000);
+
+    Scene scene;
+    StdRayTracer stdrt;
+    scene.addObject(plane);
+    scene.addObject(sphere1);
+    scene.addSource(lightSource);
+    scene.setCamera(camera);
+
+    for (auto object : scene.getObjects()) {
+        std::cout << *object << std::endl;
+    }
+
+    stdrt.render(scene);
+}
+
 int main(int argc, const char **argv) {
-    AATest();
+    test();
     return 0;
 }

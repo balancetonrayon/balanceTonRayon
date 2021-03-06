@@ -19,7 +19,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-#include "ImgReader.hpp"
+#include "ImgHandler.hpp"
 #include "utils.hpp"
 
 /**
@@ -141,8 +141,8 @@ public:
      * @param filename
      */
     void savePixels(char *filename) {
-        ImgReader imgReader;
-        imgReader.writePNG(filename, this->pixels, this->height, this->width);
+        ImgHandler ImgHandler;
+        ImgHandler.writePNG(filename, this->pixels, this->height, this->width);
     }
 
     /**
@@ -197,17 +197,12 @@ public:
      * @param hVec
      * @param wVec NORMALIZED
      */
-    explicit Image(const char *filename, const glm::vec3 &origin, const glm::vec3 &hVec,
+    explicit Image(const std::string &filename, const glm::vec3 &origin, const glm::vec3 &hVec,
                    const glm::vec3 &wVec)
         : origin(origin), hVec(hVec), hVecNorm(glm::l2Norm(hVec)) {
-        ImgReader imgReader;
-        this->setPixels(imgReader.readPNG(filename, this->height, this->width));
+        ImgHandler ImgHandler;
+        this->setPixels(ImgHandler.readPNG(filename, this->height, this->width));
 
-        /*std::string filenameW = "../data/cesar3.png";
-
-        char file_nameW[filenameW.size()];
-        strcpy(file_nameW, filenameW.c_str());
-        imgReader.writePNG(file_nameW, this->pixels, this->height, this->width);*/
         this->wVec = wVec * glm::l2Norm(hVec) * (float)this->width / (float)this->height;
         this->wVecNorm = glm::l2Norm(wVec);
         std::cout << *this << std::endl;
