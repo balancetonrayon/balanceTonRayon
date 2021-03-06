@@ -1,3 +1,15 @@
+/**
+ * @file RayTracer.cpp
+ * @author Atoli Huppé & Olivier Laurent
+ * @brief
+ * @version 0.1
+ * @date 2021-03-06
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
+#define MAX_DEPTH 10
+
 #include "RayTracer.hpp"
 
 #include <algorithm>
@@ -5,12 +17,6 @@
 #include <glm/gtc/constants.hpp>
 #include <opencv2/opencv.hpp>
 
-#define MAX_DEPTH 10
-
-/* Fresnel function as explained here :
-https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
-ior is the refraction index of the material of the physical object the ray has either hit or is
-about to leave (glass, water, etc.) */
 float fresnel(Ray iRay, const glm::vec3 &normal, const float &refractionIndex) {
     float kr;  // quantity of reflexion to be computed
 
@@ -59,7 +65,7 @@ glm::vec3 refract(const Ray &iRay, const glm::vec3 &normal, const float &refract
 
 glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                   std::vector<std::shared_ptr<BasicObject>> const &objects,
-                  const glm::vec3 &backgroundColor, const int &depth = 0) {
+                  const glm::vec3 &backgroundColor, const int &depth) {
     glm::vec3 color(0, 0, 0);
     if (depth > MAX_DEPTH) {
         return color;
@@ -108,7 +114,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                               << " - " << glm::distance(lightSource->pos, shadowRays[0].getInitPt())
                               << " " << blockedInter.id << " " << blockedInter.ld << " "
                               << blockedInter.normal << std::endl;*/
-                    blocked = true;
+                    // blocked = true;
                 }
             }
             color = detail::mult(inter.rColor, inter.objColor) * (1 - inter.objReflexionIndex) *
@@ -178,29 +184,64 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
 }
 
 void StdRayTracer::render(Scene scene) {
+    ImgHandler imgHandler;
+
     auto lightSources = scene.getSources()[0];
     auto objects = scene.getObjects();
     auto camera = scene.getCamera();
-    cv::Mat image(cv::Size(camera->resX, camera->resY), CV_8UC3);
 
-    cv::Vec3b color;
+    std::vector<unsigned char> image;
+    glm::vec3 color;
+
     for (unsigned x = 0; x < camera->resX; ++x) {
-        std::cout << x << std::endl;
         for (unsigned y = 0; y < camera->resY; ++y) {
             int depth = 0;
             Ray primRay = camera->genRay(x, y);
 
-            color =
-                detail::glm2cv(castRay(primRay, lightSources, objects, scene.getColor(), depth));
-            image.at<cv::Vec3b>(x, y) = color;
+            color = castRay(primRay, lightSources, objects, scene.getColor(), depth);
+            std::vector<unsigned char> colorVec{(unsigned char)color[0], (unsigned char)color[1],
+                                                (unsigned char)color[2], (unsigned char)255};
+            image.insert(image.end(), colorVec.begin(), colorVec.end());
         }
     }
-    cv::resize(image, image, cv::Size(1000, 1000));
-    cv::imwrite("RayTracing.png", image);
-    cv::imshow("RayTracing", image);
+    imgHandler.writePNG("RayTracing.png", image, camera->resX, camera->resY);
 }
 
 void FixedAntiAliasingRayTracer::render(Scene scene) {
+    ImgHandler imgHandler;
+
+    int sqrtAAPower = this->getAAPower();
+    float d = 1.0 / sqrtAAPower;
+
+    auto lightSources = scene.getSources()[0];
+    auto objects = scene.getObjects();
+    auto camera = scene.getCamera();
+
+    std::vector<unsigned char> image;
+
+    glm::vec3 color;
+    for (float x = 0; x < camera->resX; ++x) {
+        for (float y = 0; y < camera->resY; ++y) {
+            color = glm::vec3(0, 0, 0);
+
+            for (int idRayV = 1; idRayV < sqrtAAPower + 1; ++idRayV) {
+                for (int idRayH = 1; idRayH < sqrtAAPower + 1; ++idRayH) {
+                    int depth = 0;
+                    Ray primRay = camera->genRay(x + d * idRayH, y + d * idRayV);
+                    color =
+                        color + castRay(primRay, lightSources, objects, scene.getColor(), depth);
+                }
+            }
+            color = color / ((float)(sqrtAAPower * sqrtAAPower));
+            std::vector<unsigned char> colorVec{(unsigned char)color[0], (unsigned char)color[1],
+                                                (unsigned char)color[2], (unsigned char)255};
+            image.insert(image.end(), colorVec.begin(), colorVec.end());
+        }
+    }
+    imgHandler.writePNG("RayTracing.png", image, camera->resX, camera->resY);
+}
+
+/*void StochasticAntiAliasingRayTracer::render(Scene scene) {
     int sqrtAAPower = this->getAAPower();
     float d = 1.0 / sqrtAAPower;
 
@@ -222,16 +263,18 @@ void FixedAntiAliasingRayTracer::render(Scene scene) {
                     Ray primRay = camera->genRay(x + d * idRayH, y + d * idRayV);
                     tmp = castRay(primRay, lightSources, objects, scene.getColor(), depth);
                     color = color + tmp;
-                    //std::cout << d << " " << x + d * (float)idRayH << primRay << " " << tmp << " ";
+                    //std::cout << d << " " << x + d * (float)idRayH << primRay << " " << tmp << "
+";
                 }
             }
 
             image.at<cv::Vec3b>(x, y) =
                 detail::glm2cv(color / ((float)(sqrtAAPower * sqrtAAPower)));
-            //std::cout << detail::glm2cv(color / ((float)(sqrtAAPower * sqrtAAPower))) << std::endl;
+            //std::cout << detail::glm2cv(color / ((float)(sqrtAAPower * sqrtAAPower))) <<
+std::endl;
         }
     }
     cv::resize(image, image, cv::Size(1000, 1000));
     cv::imwrite("RayTracing.png", image);
     cv::imshow("RayTracing", image);
-}
+}*/

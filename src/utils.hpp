@@ -11,8 +11,6 @@
 #pragma once
 
 #include <glm/vec3.hpp>
-#include <opencv2/opencv.hpp>
-
 /**
  * @brief
  *
@@ -31,22 +29,6 @@ inline std::ostream &operator<<(std::ostream &os, const glm::vec3 &vec) {
  *
  */
 namespace detail {
-
-/**
- * @brief
- *
- * @param in
- * @return cv::Vec3b
- */
-inline cv::Vec3b glm2cv(const glm::vec3 &in) { return cv::Vec3b(in.x, in.y, in.z); }
-
-/**
- * @brief
- *
- * @param in
- * @return glm::vec3
- */
-inline glm::vec3 cv2glm(const cv::Vec3b &in) { return glm::vec3(in[0], in[1], in[2]); }
 
 /**
  * @brief

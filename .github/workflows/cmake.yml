@@ -49,15 +49,15 @@ jobs:
         fi
 
         # opencv
-        if [ ! -d opencv/.git ]; then
-          git clone https://github.com/opencv/opencv.git
-        fi
-        git -C opencv checkout master
-        cd opencv
-        git pull
-        mkdir -p build && cd build
-        cmake ../
-        cmake --build .
+        #if [ ! -d opencv/.git ]; then
+        #  git clone https://github.com/opencv/opencv.git
+        #fi
+        #git -C opencv checkout master
+        #cd opencv
+        #git pull
+        #mkdir -p build && cd build
+        #cmake ../
+        #cmake --build .
         
         if [ "$RUNNER_OS" == "Windows" ]; then
           make install
