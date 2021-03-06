@@ -14,7 +14,6 @@ configure_file(Config.h.in Config.h)
 add_executable(RayTracing main.cpp)
 
 set(SRC
-    Scene.cpp
     RayTracer.cpp
     Object.cpp
     Parser.cpp

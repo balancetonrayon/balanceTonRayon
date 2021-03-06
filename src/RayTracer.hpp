@@ -54,14 +54,16 @@ public:
 
     /**
      * @brief Correction of color overflows
-     * 
+     *
      * @param image the pixels of the image
      */
-    void adaptLuminosity(std::vector<unsigned char> &image) const {
+
+    /*void adaptLuminosity(std::vector<unsigned char> &image) const {
         for (auto channelPixel : image) {
             channelPixel = std::min(channelPixel, (unsigned char)255);
         }
-    }
+    }*/
+
     /**
      * @brief Pure virtual method - The main method of the ray tracer. Renders a 3D scene ans
      * saves the image.
@@ -75,7 +77,7 @@ public:
      * @brief Construct a new Ray Tracer object (default)
      *
      */
-    explicit RayTracer() : adaptation(true), maxDepth(10) {}
+    explicit RayTracer() : adaptation(true), maxDepth(3) {}
 
     /**
      * @brief Construct a new Ray Tracer object
@@ -98,6 +100,20 @@ public:
      * @param scene
      */
     void render(const Scene &scene, std::string filename) const override;
+
+    /**
+     * @brief Construct a new Std Ray Tracer object
+     * 
+     */
+    explicit StdRayTracer() : RayTracer() {}
+
+    /**
+     * @brief Construct a new Ray Tracer object
+     * 
+     * @param adapt 
+     * @param max 
+     */
+    explicit StdRayTracer(const bool &adapt, const int &max) : RayTracer(adapt, max) {}
 };
 
 /**

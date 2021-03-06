@@ -64,7 +64,7 @@ glm::vec3 refract(const Ray &iRay, const glm::vec3 &normal, const float &refract
 glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                   std::vector<std::shared_ptr<BasicObject>> const &objects,
                   const glm::vec3 &backgroundColor, const int &depth, const int &maxDepth) {
-    glm::vec3 color = backgroundColor;
+    glm::vec3 color = backgroundColor * 255.0f;
     if (depth > maxDepth) {
         return color;
     } else {
@@ -87,10 +87,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
             // Calcul des rayons de diffusion
 
             shadowRays = hitObject->intersect(ray, lightSource, inter);
-            // std::cout << ray << std::endl << shadowRays[0] << std::endl;
 
-            // Delete acne
-            // std::cout << hitNormal << std::endl;
             shadowRays[0].biais(inter.normal, 0.0001f);
 
             bool blocked = false;
@@ -130,20 +127,11 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                 Ray reflectedRay(
                     shadowRays[0].getInitPt(),
                     ray.getDir() - 2 * glm::dot(ray.getDir(), inter.normal) * inter.normal);
-                // std::cout << "\nInbound: " << ray << std::endl
-                //          << hitNormal << "\nOutbound: " << reflectedRay <<
-                //          std::endl;
-                // if (shadowRays[0].dir[2] > -reflectedRay.dir[2] + 1e4 ||
-                // shadowRays[0].dir[2] < -reflectedRay.dir[2] - 1e4)
-                //    std::cout << "\nInbound: " << shadowRays[0].dir[2] <<
-                //    "\nOutbound: " << reflectedRay.dir[2] << std::endl;
-
-                // std::cout << ref << std::endl;
+             
                 color +=
                     detail::mult(hitObject->color, castRay(reflectedRay, lightSource, objects,
                                                            backgroundColor, depth + 1, maxDepth)) *
                     hitObject->reflexionIndex;
-                // std::cout << color << std::endl;
             }
 
             if (inter.objTransparency) {
@@ -174,10 +162,9 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                     reflectionColor * kr + refractionColor * (1 - kr) * hitObject->transparency;
             }
         } else {  // If no intersection, set the color to the background color
-            color = backgroundColor;
+            color = backgroundColor * 255.0f;
         }
-        if (color[0] > 255 || color[1] > 255 || color[2] > 255)
-            std::cout << "Color overflow ! " << color << std::endl;
+
         return color;
     }
 }
@@ -204,7 +191,7 @@ void StdRayTracer::render(const Scene &scene, std::string filename) const {
             image.insert(image.end(), colorVec.begin(), colorVec.end());
         }
     }
-    if (this->getAdaptation()) adaptLuminosity(image);
+
     imgHandler.writePNG(filename, image, camera->resX, camera->resY);
 }
 
@@ -239,11 +226,11 @@ void FixedAntiAliasingRayTracer::render(const Scene &scene, std::string filename
             image.insert(image.end(), colorVec.begin(), colorVec.end());
         }
     }
-    if (this->getAdaptation()) adaptLuminosity(image);
+
     imgHandler.writePNG(filename, image, camera->resX, camera->resY);
 }
 
-// A finir :( 
+// A finir :(
 /*void StochasticAntiAliasingRayTracer::render(Scene scene, std::string filename) {
     int sqrtAAPower = this->getAAPower();
     float d = 1.0 / sqrtAAPower;
