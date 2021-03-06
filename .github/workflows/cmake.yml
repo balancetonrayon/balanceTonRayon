@@ -35,13 +35,6 @@ jobs:
           vcpkg install glm
         fi
         
-        # tinyxml2
-        git clone https://github.com/leethomason/tinyxml2.git
-        cd tinyxml2
-        mkdir -p build && cd build
-        cmake ../
-        cmake --build .
-        sudo make install
       shell: bash
 
     - name: Create Build Environment
