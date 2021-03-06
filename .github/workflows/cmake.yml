@@ -59,11 +59,11 @@ jobs:
         #cmake ../
         #cmake --build .
         
-        if [ "$RUNNER_OS" == "Windows" ]; then
-          make install
-        else
-            sudo make install
-        fi
+        #if [ "$RUNNER_OS" == "Windows" ]; then
+        #  make install
+        #else
+        #  sudo make install
+        #fi
         
         # tinyxml2
         git clone https://github.com/leethomason/tinyxml2.git
