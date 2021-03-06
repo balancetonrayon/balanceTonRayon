@@ -62,6 +62,7 @@ Scene ataporte(std::string filename) {
     Scene scene(glm::vec3(235, 206, 135));
     /*ImgHandler ImgHandler;
     ImgHandler.readFile("image.png");*/
+    return scene;
 }
 
 void test() {

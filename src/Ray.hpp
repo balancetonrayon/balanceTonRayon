@@ -1,12 +1,12 @@
 /**
  * @file Ray.hpp
  * @author Atoli Huppé & Olivier Laurent
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2021-03-06
- * 
+ *
  * @copyright Copyright (c) 2021
- * 
+ *
  */
 #pragma once
 
@@ -40,54 +40,52 @@ protected:
 
 public:
     /**
-     * @brief Get the Init Pt object
+     * @brief Get the origin of the Ray
      *
-     * @return glm::vec3
+     * @return glm::vec3 the coordinates of the origin
      */
     glm::vec3 getInitPt() const { return this->initPt; }
 
     /**
-     * @brief Get the Dir object
+     * @brief Get the direction of the ray
      *
-     * @return glm::vec3
+     * @return glm::vec3 the direction of the ray as a vector
      */
     glm::vec3 getDir() const { return this->dir; }
+
     /**
-     * @brief Get the Color object
+     * @brief Get the color of the ray (mainly of the source)
      *
-     * @return glm::vec3
+     * @return glm::vec3 the color of the ray as a vector
      */
     glm::vec3 getColor() const { return this->color; }
 
     /**
-     * @brief Set the Init Pt object
+     * @brief Set the origin of the Ray
      *
-     * @param initPt
-     * @return glm::vec3
+     * @param initPt the coordinates of the origin
      */
-    glm::vec3 setInitPt(glm::vec3 initPt) { this->initPt = initPt; }
+    void setInitPt(glm::vec3 initPt) { this->initPt = initPt; }
 
     /**
-     * @brief Set the Dir object
+     * @brief Set the direction of the ray
      *
-     * @param dir
-     * @return glm::vec3
+     * @param dir the vector of the direction
      */
-    glm::vec3 setDir(glm::vec3 dir) { this->dir = dir; }
+    void setDir(glm::vec3 dir) { this->dir = dir; }
 
     /**
-     * @brief Set the Color object
+     * @brief Set the color of the ray
      *
-     * @param color
-     * @return glm::vec3
+     * @param color the vector containing the color
      */
-    glm::vec3 setColor(glm::vec3 color) { this->color = color; }
+    void setColor(glm::vec3 color) { this->color = color; }
 
     /**
-     * @brief
+     * @brief Move slightly the origin of the ray in the direction of the normal to avoid acne
      *
-     * @param hitNormal
-     * @param biaisCoeff
+     * @param hitNormal the normal of the object
+     * @param biaisCoeff the distance of the movement
      */
     void biais(glm::vec3 hitNormal, float biaisCoeff) { initPt = initPt + hitNormal * biaisCoeff; }
 
@@ -103,14 +101,13 @@ public:
     /**
     * @brief Construct a Ray with specified initial point and direction.
     *
-    * @param initPt
-    * @param dir
+    * @param initPt the origin of the ray
+    * @param dir the direction of the ray
     */
     Ray(glm::vec3 initPt, glm::vec3 dir) : initPt(initPt), dir(glm::normalize(dir)) {}
 
     /**
-     //! An overload of the operator << to print rays for debug.
-     * @brief
+     * @brief An overload of the operator << to print rays for debug.
      *
      * @param stream the current ostream
      * @param ray the current ray which needs to be printed.
