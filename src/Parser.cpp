@@ -45,7 +45,7 @@ Parser::Parser(std::string xmlData) {
         // object specific
         if (objectName == "plane") {
             auto planeNormal = getXYZ(objectTag->FirstChildElement("normal"));
-            objects.push_back(std::make_shared<Plane>(objectPos, objectColor, planeNormal, objectTransmission, objectRefractive, objectReflexion, objectAlbedo));
+            objects.push_back(std::make_shared<Plane>(objectPos, planeNormal, objectColor, objectTransmission, objectRefractive, objectReflexion, objectAlbedo));
         } else if (objectName == "sphere") {
             auto sphereRadius = std::stof(objectTag->FirstChildElement("radius")->GetText());
             objects.push_back(std::make_shared<Sphere>(objectPos, objectColor, sphereRadius, objectTransmission, objectRefractive, objectReflexion, objectAlbedo));
