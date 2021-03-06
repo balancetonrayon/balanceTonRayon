@@ -1,10 +1,26 @@
+/**
+ * @file Texture.hpp
+ * @author your name (you@domain.com)
+ * @brief
+ * @version 0.1
+ * @date 2021-03-06
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
 #pragma once
+
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <vector>
 
 #include <glm/geometric.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+
+#include "ImgReader.hpp"
+#include "utils.hpp"
 
 /**
  * @class Texture
@@ -13,7 +29,33 @@
  */
 class Texture {
 public:
+    /**
+     * @brief Get the Color of the texture at certain coordinates
+     *
+     * @param pos
+     * @return glm::vec4
+     */
     virtual glm::vec4 getColor(const glm::vec3 &pos) const = 0;
+
+    /**
+     * @brief
+     *
+     * @param stream
+     * @param obj
+     * @return std::ostream&
+     */
+    friend std::ostream &operator<<(std::ostream &stream, Texture const &tex) {
+        return tex.printInfo(stream);
+    }
+
+protected:
+    /**
+     * @brief A pure virtual member returning the information about an object.
+     *
+     * @param os
+     * @return std::ostream&
+     */
+    virtual std::ostream &printInfo(std::ostream &os) const = 0;
 };
 
 /**
@@ -57,13 +99,13 @@ protected:
      * @brief The height of the picture in pixels.
      *
      */
-    int height;
+    unsigned height;
 
     /**
      * @brief The width of the picture in pixels.
      *
      */
-    int width;
+    unsigned width;
 
     //! A protected variable.
     /**
@@ -87,8 +129,25 @@ public:
     int getPixWidth() { return this->height; }
 
     /**
+     * @brief Get the Pixels object
+     *
+     * @return std::vector<unsigned char>
+     */
+    std::vector<unsigned char> getPixels() { return this->pixels; }
+
+    /**
+     * @brief
+     *
+     * @param filename
+     */
+    void savePixels(char *filename) {
+        ImgReader imgReader;
+        imgReader.writePNG(filename, this->pixels, this->height, this->width);
+    }
+
+    /**
      * @brief Set the Pixels of the image
-     * 
+     *
      * @param pix the pixels read from an image
      */
     void setPixels(const std::vector<unsigned char> &pix) { this->pixels = pix; }
@@ -120,7 +179,7 @@ public:
      * @param wPix id of the row
      * @param color glm::vec4: RGBA
      */
-    void getPixel(const int &hPix, const int &wPix, std::vector<unsigned char> color) const;
+    void getPixel(const int &hPix, const int &wPix, std::vector<unsigned char> &color) const;
 
     /**
      * @brief Get the Color object
@@ -130,13 +189,37 @@ public:
      */
     glm::vec4 getColor(const glm::vec3 &pos) const override;
 
-protected:
-    //! A normal member taking one argument and returning the information about
-    //! an object. It replaces the pure virtual member of PhysicalObject
     /**
-    @brief
-      @param os the current ostream
-      @return The information of the object as an ostream
-    */
-    // std::ostream &printInfo(std::ostream &os) const override;
+     * @brief Construct a new Image object. WVEC SHOULD BE NORMALIZED
+     *
+     * @param filename
+     * @param origin
+     * @param hVec
+     * @param wVec NORMALIZED
+     */
+    explicit Image(const char *filename, const glm::vec3 &origin, const glm::vec3 &hVec,
+                   const glm::vec3 &wVec)
+        : origin(origin), hVec(hVec), hVecNorm(glm::l2Norm(hVec)) {
+        ImgReader imgReader;
+        this->setPixels(imgReader.readPNG(filename, this->height, this->width));
+
+        /*std::string filenameW = "../data/cesar3.png";
+
+        char file_nameW[filenameW.size()];
+        strcpy(file_nameW, filenameW.c_str());
+        imgReader.writePNG(file_nameW, this->pixels, this->height, this->width);*/
+        this->wVec = wVec * glm::l2Norm(hVec) * (float)this->width / (float)this->height;
+        this->wVecNorm = glm::l2Norm(wVec);
+        std::cout << *this << std::endl;
+    }
+
+protected:
+    /**
+     * @brief A normal member returning the information about an object. It replaces the pure
+     * virtual member of Texture
+     *
+     * @param os
+     * @return std::ostream&
+     */
+    std::ostream &printInfo(std::ostream &os) const override;
 };
