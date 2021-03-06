@@ -22,13 +22,13 @@
  * @return Scene 
  */
 Scene daltons() {
-    ObjParser parser;
-    PolygonMesh mesh = parser.readObj("cube.obj");
+    //ObjParser parser;
+    //PolygonMesh mesh = parser.readObj("cube.obj");
 
     // Scene scene(glm::vec3(235, 206, 135));
     Scene scene;
     
-    std::ifstream ifs("daltons.xml");
+    std::ifstream ifs("../data/daltons.xml");
     std::string xmlData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
     
     Parser xmlParser(xmlData);
@@ -93,7 +93,7 @@ void test() {
         std::cout << *object << std::endl;
     }
 
-    stdrt.render(scene, "text.png");
+    stdrt.render(scene, "Daltons.png");
 }
 
 void AATest() {
@@ -142,11 +142,11 @@ void Cesar() {
                                                            glm::vec3(1, 1, 1), 0, 0, 0, 0.5);
     auto sphere1 =
         std::make_shared<Sphere>(glm::vec3(-0.11, 0, 0), glm::vec3(1, 1, 1), 0.05, 0, 0, 0.8, 0.22);
-    std::string filename = "../data/cesar2.png";
+    std::string filename = "../data/crepon.png";
 
     glm::vec3 origin(0.05, -1, 1);
     glm::vec3 hVec(0, 0, -2);
-    glm::vec3 wVec(0, 2, 0);
+    glm::vec3 wVec(0, 1, 0);
     plane->setTexture(std::make_shared<Image>(filename, origin, hVec, wVec));
 
     auto camera = std::make_shared<Camera>(glm::vec3(0, 0, 0), glm::vec3(-1, 0, 0), 0.1, 0.1, 1000,
@@ -164,7 +164,7 @@ void Cesar() {
         std::cout << *object << std::endl;
     }
 
-    stdrt.render(scene, "Cesar.png");
+    stdrt.render(scene, "Crepon.png");
 }
 
 int main(int argc, const char **argv) {

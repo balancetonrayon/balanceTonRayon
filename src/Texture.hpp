@@ -76,10 +76,10 @@ protected:
     */
     glm::vec3 hVec;
     /**
-     * @brief The norm of the hVec vector. For faster computing.
+     * @brief The square of the norm of the hVec vector. For faster computing.
      *
      */
-    float hVecNorm;
+    float hVecNorm2;
 
     /**
       @brief The direction of the horizontal axis of the image.
@@ -88,10 +88,10 @@ protected:
     glm::vec3 wVec;
 
     /**
-     * @brief The norm of the wVec vector. For faster computing.
+     * @brief The square of the norm of the wVec vector. For faster computing.
      *
      */
-    float wVecNorm;
+    float wVecNorm2;
 
     /**
      * @brief The height of the picture in pixels.
@@ -200,12 +200,29 @@ public:
      */
     explicit Image(const std::string &filename, const glm::vec3 &origin, const glm::vec3 &hVec,
                    const glm::vec3 &wVec)
-        : origin(origin), hVec(hVec), hVecNorm(glm::l2Norm(hVec)) {
+        : origin(origin), hVec(hVec), hVecNorm2(glm::l2Norm(hVec) * glm::l2Norm(hVec)) {
         ImgHandler ImgHandler;
         this->setPixels(ImgHandler.readPNG(filename, this->height, this->width));
 
-        this->wVec = wVec * glm::l2Norm(hVec) * (float)this->width / (float)this->height;
-        this->wVecNorm = glm::l2Norm(wVec);
+        this->wVec = wVec * glm::l2Norm(this->hVec) * (float)this->width / (float)this->height;
+        this->wVecNorm2 = glm::l2Norm(this->wVec);
+        this->wVecNorm2 *= wVecNorm2;
+
+        // If the image is not a square, change the origin
+        if (this->width != this->height) {
+            if (glm::cross(hVec, wVec)[0] > 0) {
+                std::cout << "Case 3 ";
+                std::cout << glm::l2Norm(this->hVec) << " " << glm::l2Norm(this->wVec) << std::endl;
+                this->origin[1] =
+                    origin[1] + glm::l2Norm(this->hVec) / 2.0f - glm::l2Norm(this->wVec) / 2.0f;
+
+            } else {
+                std::cout << "Case 4 ";
+                this->origin[1] =
+                    origin[1] - glm::l2Norm(this->hVec) / 2.0f + glm::l2Norm(this->wVec) / 2.0f;
+            }
+        }
+        std::cout << this->origin << std::endl;
         std::cout << *this << std::endl;
     }
 
