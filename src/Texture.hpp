@@ -228,8 +228,47 @@ public:
 
 protected:
     /**
-     * @brief A normal member returning the information about an object. It replaces the pure
+     * @brief A normal member returning the information about the Image. It replaces the pure
      * virtual member of Texture
+     *
+     * @param os
+     * @return std::ostream&
+     */
+    std::ostream &printInfo(std::ostream &os) const override;
+};
+
+/**
+ * @brief return the color or white depending on the coordinates
+ * 
+ */
+class CheckedPattern2D : public Texture {
+protected:
+    /**
+     * @brief The color of the checked pattern.
+     *
+     */
+    glm::vec3 color;
+
+public:
+    /**
+     * @brief Gets the Color of the tartan at some coordinates.
+     *
+     * @param pos the coordinates of the intersection point.
+     * @return glm::vec4
+     */
+    glm::vec4 getColor(const glm::vec3 &pos, bool &onTexture) const override;
+
+    /**
+     * @brief Construct a new Checked Pattern 2D object with some color.
+     * 
+     * @param color the color of the checked pattern
+     */
+    explicit CheckedPattern2D(const glm::vec3 &color) : color(color) {}
+
+protected:
+    /**
+     * @brief A normal member returning the information about the Tartan. It replaces the pure
+     * virtual member of Texture.
      *
      * @param os
      * @return std::ostream&

@@ -322,6 +322,7 @@ protected:
      *
      */
     std::shared_ptr<Texture> texture;
+
     /**
      * @brief Egals to true if the texture is defined.
      *
@@ -540,7 +541,7 @@ public:
     explicit Plane(glm::vec3 pos = glm::vec3(), glm::vec3 normal = glm::vec3(0, 0, 1),
                    glm::vec3 color = glm::vec3(1, 1, 1), float t = 0, float r = 1, float R = 1,
                    float a = 0.18)
-        : BasicObject(pos, color, t, r, R, a), normal(glm::normalize(normal)), hasTexture(false) {}
+        : BasicObject(pos, color, t, r, R, a), normal(glm::normalize(normal)) {}
 
     //! A normal member taking one argument and returning the information about
     //! an object. It replaces the pure virtual member of PhysicalObject
@@ -576,7 +577,6 @@ public:
     std::vector<Ray> intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                Inter &inter) const override;
 
-    //! A specialized constructor.
     /**
      * @brief Construct a Sphere at (0, 0, 0) of radius 1 by default.
      *

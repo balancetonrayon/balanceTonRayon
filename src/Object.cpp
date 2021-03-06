@@ -51,7 +51,10 @@ Ray Camera::genRay(const float &x, const float &y) {
 }
 
 std::ostream &Camera::printInfo(std::ostream &os) const {
-    return os << "Camera: in " << pos << ", of size: " << sizeX;
+    return os << "  --  Camera  -- " << std::endl
+              << "at " << pos << ", of size: " << sizeX << std::endl
+              << "vertical: " << vv << " horizontal: " << hv << std::endl
+              << "focalLength: " << focalLength << " direction: " << dir << std::endl;
 }
 
 std::vector<Ray> Plane::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
@@ -108,21 +111,28 @@ std::vector<Ray> Sphere::intersect(const Ray &iRay, const std::shared_ptr<Light>
                                              intersectPt, inter.normal);
     if (intersect) {
         inter.id = glm::distance(iRay.getInitPt(), intersectPt);
-        // std::cout << "sphere distance: " << iDistance;
+
         ltSrc->outboundRays(intersectPt, rays);
         inter.ld = glm::distance(intersectPt, ltSrc->pos);
         inter.rColor = rays[0].getColor();
-        /*std::vector<Ray> rays;
-        std::cout << ray << std::endl
-                  << *this << std::endl
-                  << intersectPt << std::endl
-                  << distance
-                  << std::endl
-                  << std::endl;*/
-        inter.objColor = this->color;
+
         inter.objReflexionIndex = this->reflexionIndex;
-        inter.objTransparency = this->transparency;
         inter.objAlbedo = this->albedo;
+
+        if (!definedTexture()) {
+            inter.objColor = this->color;
+            inter.objTransparency = this->transparency;
+        } else {
+            bool onTexture = false;
+            glm::vec4 tmp = this->getTexture()->getColor(intersectPt, onTexture);
+            if (onTexture) {
+                inter.objColor = glm::vec3(tmp[0], tmp[1], tmp[2]);
+                inter.objTransparency = tmp[3];
+            } else {
+                inter.objColor = this->color;
+                inter.objTransparency = this->transparency;
+            }
+        }
     }
     return rays;
 }
