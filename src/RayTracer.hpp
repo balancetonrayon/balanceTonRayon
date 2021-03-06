@@ -14,55 +14,85 @@
 
 #include "Scene.hpp"
 
-class StdRayTracer {
+class RayTracer {
+protected:
+    /**
+     * @brief This boolean memorizes wether the ray tracer should adapt the luminosity at the end of
+     * the day or not
+     *
+     */
+    bool adaptation;
+
 public:
-    void render(Scene scene);
+    /**
+     * @brief Pure virtual method - The main method of the ray tracer. Renders a 3D scene ans saves
+     * the image.
+     *
+     * @param scene
+     */
+    virtual void render(const Scene &scene) const = 0;
 };
 
 /**
- * @brief
+ * @brief Standard ray tracer engine.
  *
  */
-class FixedAntiAliasingRayTracer {
-protected:
+class StdRayTracer : public RayTracer {
+public:
     /**
      * @brief
+     *
+     * @param scene
+     */
+    void render(const Scene &scene) const override;
+};
+
+/**
+ * @brief Standard ray tracer engine with jitter AntiAliasing.
+ *
+ */
+class FixedAntiAliasingRayTracer : public RayTracer {
+protected:
+    /**
+     * @brief the square root of the number of rays cast by the engine for each pixel.
      *
      */
     int sqrtAAPower;
 
 public:
     /**
-     * @brief
+     * @brief Getter: power
      *
-     * @return int
+     * @return int the power of the AA
      */
-    int getAAPower() { return this->sqrtAAPower; }
-    /**
-     * @brief
-     *
-     * @param pow
-     */
-    void setAAPower(int pow) { this->sqrtAAPower = pow; }
+    int getAAPower() const { return this->sqrtAAPower; }
 
     /**
-     * @brief
+     * @brief Setter: power
+     *
+     * @param pow the power of the AA
+     */
+    void setAAPower(const int &pow) { this->sqrtAAPower = pow; }
+
+    /**
+     * @brief Renders the scene in 2D with Anti-Aliasing.
      *
      * @param scene
      */
-    void render(Scene scene);
+    void render(const Scene &scene) const override;
 
     /**
-     * @brief Construct a new Fixed Anti Aliasing Ray Tracer object
+     * @brief Construct a new Fixed Anti Aliasing Ray Tracer and set its power to 4.
      *
      */
     explicit FixedAntiAliasingRayTracer() : sqrtAAPower(4) {}
+
     /**
-     * @brief Construct a new Fixed Anti Aliasing Ray Tracer object
+     * @brief Construct a new Fixed Anti Aliasing Ray Tracer object ans specify its power.
      *
      * @param pow
      */
-    explicit FixedAntiAliasingRayTracer(int pow) { this->sqrtAAPower = pow; }
+    explicit FixedAntiAliasingRayTracer(const int &pow) { this->sqrtAAPower = pow; }
 };
 
 /*class StochasticAntiAliasingRayTracer {

@@ -182,7 +182,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
     }
 }
 
-void StdRayTracer::render(Scene scene) {
+void StdRayTracer::render(const Scene &scene) const {
     ImgHandler imgHandler;
 
     auto lightSources = scene.getSources()[0];
@@ -206,7 +206,7 @@ void StdRayTracer::render(Scene scene) {
     imgHandler.writePNG("RayTracing.png", image, camera->resX, camera->resY);
 }
 
-void FixedAntiAliasingRayTracer::render(Scene scene) {
+void FixedAntiAliasingRayTracer::render(const Scene &scene) const {
     ImgHandler imgHandler;
 
     int sqrtAAPower = this->getAAPower();

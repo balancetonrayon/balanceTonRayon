@@ -114,9 +114,7 @@ void Cesart() {
     for (auto object : scene.getObjects()) {
         std::cout << *object << std::endl;
     }
-    //std::cout << *(plane->getTexture()) << std::endl;
-    
-    //plane->getTexture()->savePixels(file_nameW);
+
     stdrt.render(scene);
 }
 
