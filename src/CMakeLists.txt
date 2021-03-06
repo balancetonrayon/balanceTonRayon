@@ -17,7 +17,7 @@ set(SRC
     RayTracer.cpp
     Object.cpp
     Parser.cpp
-    lodepng.cpp
+    ./lodepng/lodepng.cpp
     Texture.cpp
     
     Scene.hpp
@@ -27,8 +27,8 @@ set(SRC
     Parser.hpp
     ObjParser.hpp
     Texture.hpp
-    lodepng.h
-#    ImgHandler.hpp
+    ./lodepng/lodepng.h
+    ImgHandler.hpp
     
     utils.hpp
 )

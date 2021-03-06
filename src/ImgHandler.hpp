@@ -16,7 +16,7 @@
 
 #include <glm/vec3.hpp>
 
-#include "lodepng.h"
+#include "lodepng/lodepng.h"
 
 /**
  * @brief A class to read and write PNGs
@@ -34,7 +34,6 @@ public:
      */
     std::vector<unsigned char> readPNG(const std::string& filename, unsigned& height,
                                        unsigned& width) {
-
         std::vector<unsigned char> image;  // the raw pixels
 
         // decode
@@ -59,7 +58,6 @@ public:
      */
     void writePNG(const std::string& filename, std::vector<unsigned char> image, unsigned& height,
                   unsigned& width) {
-
         // Encode the image
         unsigned error = lodepng::encode(filename, image, width, height);
 

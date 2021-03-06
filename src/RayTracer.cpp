@@ -68,7 +68,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
     if (depth > maxDepth) {
         return color;
     } else {
-        // std::cout << std::endl << std::endl;
+
         std::vector<Ray> shadowRays;
         Inter inter;
         float closestDistance = INFINITY;
@@ -77,7 +77,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
 
         for (auto object : objects) {
             shadowRays = object->intersect(ray, lightSource, inter);
-            // std::cout << iDistance << std::endl;
+
             if (shadowRays.size() && inter.id < closestDistance) {
                 hitObject = object;
                 closestDistance = inter.id;
@@ -122,8 +122,6 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                       << std::endl;*/
             // std::cout << *hitObject/*->reflexionIndex*/ << std::endl;
             if (inter.objReflexionIndex && !inter.objTransparency) {
-                // std::cout << "reflexion\n";
-
                 Ray reflectedRay(
                     shadowRays[0].getInitPt(),
                     ray.getDir() - 2 * glm::dot(ray.getDir(), inter.normal) * inter.normal);

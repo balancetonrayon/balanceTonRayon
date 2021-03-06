@@ -6,6 +6,7 @@
 #include <glm/gtc/constants.hpp>
 
 #include "utils.hpp"
+
 #define GLM_ENABLE_EXPERIMENTAL
 #define KEPSILON 0.00001
 
@@ -45,8 +46,6 @@ Ray Camera::genRay(const float &x, const float &y) {
 
     glm::vec3 rDir = dir * focalLength + hv * (float)(y / resY - 0.5) * sizeY +
                      vv * (float)(x / resX - 0.5) * sizeX;
-
-    // std::cout << Ray(pos, dir) << std::endl;
     return Ray(pos, rDir);
 }
 
@@ -59,8 +58,7 @@ std::ostream &Camera::printInfo(std::ostream &os) const {
 
 std::vector<Ray> Plane::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                   Inter &inter) const {
-    /*if (glm::dot(iRay.dir, normal) > 0)
-        normal = -normal;*/
+
     std::vector<Ray> rays;
     // true if there is an intersection, false if there is none
     bool intersect = glm::intersectRayPlane(iRay.getInitPt(), iRay.getDir(), pos, normal, inter.id);
@@ -173,14 +171,13 @@ std::vector<Ray> Triangle::intersect(const Ray &iRay, const std::shared_ptr<Ligh
     if (t < 0) return rays;
 
     if (intersect) {
-        // std::cout << "in";
         inter.id = t;
         glm::vec3 intersectPt = iRay.getInitPt() + inter.id * iRay.getDir();
         inter.normal = normal;
         ltSrc->outboundRays(intersectPt, rays);
         inter.ld = glm::distance(intersectPt, ltSrc->pos);
         inter.rColor = rays[0].getColor();
-        // std::cout << oRay.color<<std::endl;
+
         inter.objAlbedo = this->albedo;
         inter.objColor = this->color;
         inter.objReflexionIndex = this->reflexionIndex;
@@ -198,7 +195,7 @@ std::ostream &Triangle::printInfo(std::ostream &os) const {
               << "reflexion_indx: " << reflexionIndex << std::endl;
 }
 
-// A CHANGER
+// A Compléter - importé et refactoré de scratchapixel, mais manque l'emission des rayons créés (code )
 std::vector<Ray> Box::intersect(const Ray &iRay, const std::shared_ptr<Light> &ltSrc,
                                 Inter &inter) const {
     /*float tmin = (min.x - r.orig.x) / r.dir.x;

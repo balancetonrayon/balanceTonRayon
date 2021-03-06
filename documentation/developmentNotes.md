@@ -30,4 +30,4 @@ To be able to add this class to the scene using XML, you must complete the code 
 
 The class of the new Texture must be an implementation of the Texture class. This means that you need to provide at least the getColor method.
 
-The Parser doesn't read textures yet. You have to add them manually.
+Look at Parser.cpp to see a way of reading textures.
