@@ -138,9 +138,10 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                 //    "\nOutbound: " << reflectedRay.dir[2] << std::endl;
 
                 // std::cout << ref << std::endl;
-                color += detail::mult(hitObject->color, castRay(reflectedRay, lightSource, objects,
-                                                                backgroundColor, depth + 1, maxDepth)) *
-                         hitObject->reflexionIndex;
+                color +=
+                    detail::mult(hitObject->color, castRay(reflectedRay, lightSource, objects,
+                                                           backgroundColor, depth + 1, maxDepth)) *
+                    hitObject->reflexionIndex;
                 // std::cout << color << std::endl;
             }
 
@@ -155,8 +156,8 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                                            refract(ray, inter.normal, hitObject->refractiveIndex));
                     outside ? refractedRay.biais(-inter.normal, 0.001f)
                             : refractedRay.biais(+inter.normal, 0.001f);
-                    refractionColor =
-                        castRay(refractedRay, lightSource, objects, backgroundColor, depth + 1, maxDepth);
+                    refractionColor = castRay(refractedRay, lightSource, objects, backgroundColor,
+                                              depth + 1, maxDepth);
                 }
 
                 Ray reflectedRay =
@@ -164,8 +165,8 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                         ray.getDir() - 2 * glm::dot(ray.getDir(), inter.normal) * inter.normal);
                 outside ? reflectedRay.biais(+inter.normal, 0.001f)
                         : reflectedRay.biais(-inter.normal, 0.001f);
-                glm::vec3 reflectionColor =
-                    castRay(reflectedRay, lightSource, objects, backgroundColor, depth + 1, maxDepth);
+                glm::vec3 reflectionColor = castRay(reflectedRay, lightSource, objects,
+                                                    backgroundColor, depth + 1, maxDepth);
 
                 // mix the two
                 color +=
@@ -180,7 +181,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
     }
 }
 
-void StdRayTracer::render(const Scene &scene) const {
+void StdRayTracer::render(const Scene &scene, std::string filename) const {
     ImgHandler imgHandler;
 
     auto lightSources = scene.getSources()[0];
@@ -195,16 +196,17 @@ void StdRayTracer::render(const Scene &scene) const {
             int depth = 0;
             Ray primRay = camera->genRay(x, y);
 
-            color = castRay(primRay, lightSources, objects, scene.getColor(), depth, this->getMaxDepth());
+            color = castRay(primRay, lightSources, objects, scene.getColor(), depth,
+                            this->getMaxDepth());
             std::vector<unsigned char> colorVec{(unsigned char)color[0], (unsigned char)color[1],
                                                 (unsigned char)color[2], (unsigned char)255};
             image.insert(image.end(), colorVec.begin(), colorVec.end());
         }
     }
-    imgHandler.writePNG("RayTracing.png", image, camera->resX, camera->resY);
+    imgHandler.writePNG(filename, image, camera->resX, camera->resY);
 }
 
-void FixedAntiAliasingRayTracer::render(const Scene &scene) const {
+void FixedAntiAliasingRayTracer::render(const Scene &scene, std::string filename) const {
     ImgHandler imgHandler;
 
     int sqrtAAPower = this->getAAPower();
@@ -225,8 +227,8 @@ void FixedAntiAliasingRayTracer::render(const Scene &scene) const {
                 for (int idRayH = 1; idRayH < sqrtAAPower + 1; ++idRayH) {
                     int depth = 0;
                     Ray primRay = camera->genRay(x + d * idRayH, y + d * idRayV);
-                    color =
-                        color + castRay(primRay, lightSources, objects, scene.getColor(), depth, this->getMaxDepth());
+                    color = color + castRay(primRay, lightSources, objects, scene.getColor(), depth,
+                                            this->getMaxDepth());
                 }
             }
             color = color / ((float)(sqrtAAPower * sqrtAAPower));
@@ -235,10 +237,10 @@ void FixedAntiAliasingRayTracer::render(const Scene &scene) const {
             image.insert(image.end(), colorVec.begin(), colorVec.end());
         }
     }
-    imgHandler.writePNG("RayTracing.png", image, camera->resX, camera->resY);
+    imgHandler.writePNG(filename, image, camera->resX, camera->resY);
 }
 
-/*void StochasticAntiAliasingRayTracer::render(Scene scene) {
+/*void StochasticAntiAliasingRayTracer::render(Scene scene, std::string filename) {
     int sqrtAAPower = this->getAAPower();
     float d = 1.0 / sqrtAAPower;
 

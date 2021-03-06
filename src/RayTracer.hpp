@@ -63,8 +63,9 @@ public:
      * saves the image.
      *
      * @param scene
+     * @param filename name of the PNG file
      */
-    virtual void render(const Scene &scene) const = 0;
+    virtual void render(const Scene &scene, std::string filename) const = 0;
 };
 
 /**
@@ -78,7 +79,7 @@ public:
      *
      * @param scene
      */
-    void render(const Scene &scene) const override;
+    void render(const Scene &scene, std::string filename) const override;
 };
 
 /**
@@ -113,7 +114,7 @@ public:
      *
      * @param scene
      */
-    void render(const Scene &scene) const override;
+    void render(const Scene &scene, std::string filename) const override;
 
     /**
      * @brief Construct a new Fixed Anti Aliasing Ray Tracer and set its power to 4.
