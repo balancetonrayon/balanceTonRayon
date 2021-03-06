@@ -15,7 +15,6 @@
 #include <algorithm>
 
 #include <glm/gtc/constants.hpp>
-#include <opencv2/opencv.hpp>
 
 float fresnel(Ray iRay, const glm::vec3 &normal, const float &refractionIndex) {
     float kr;  // quantity of reflexion to be computed
