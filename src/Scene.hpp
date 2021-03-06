@@ -1,8 +1,10 @@
 /**
  * @file Scene.hpp
  * @author Atoli Huppé & Olivier Laurent
- * @brief
- * @version 0.1
+ * @brief Definition of the Scene class which contains the information of the 3D scene that will be
+ * rendered by a raytracer
+ * @sa RayTracer.hpp
+ * @version 1
  * @date 2021-03-06
  *
  * @copyright Copyright (c) 2021
@@ -21,70 +23,79 @@
  */
 class Scene {
     /**
-     * @brief
+     * @brief The objects contained in the scene
      *
      */
     std::vector<std::shared_ptr<BasicObject>> objects;
+
     /**
-     * @brief
+     * @brief The sources of light contained in the scene
      *
      */
     std::vector<std::shared_ptr<Light>> sources;
+
     /**
-     * @brief
+     * @brief The camera of the scene
      *
      */
     std::shared_ptr<Camera> camera;
+    
     /**
-     * @brief
+     * @brief The background color of the scene
      *
      */
     glm::vec3 backgroundColor;
 
 public:
     /**
-     * @brief Get the Objects object
+     * @brief Get the pointers of the objects of the scene
      *
-     * @return auto
+     * @return std::shared_ptr<BasisObject>
      */
+
     auto getObjects() const { return objects; }
+
     /**
-     * @brief Get the Sources object
+     * @brief Get the pointers of the light sources of the scene
      *
-     * @return auto
+     * @return std::shared_ptr<LightSource>
      */
     auto getSources() const { return sources; }
+
     /**
-     * @brief Get the Camera object
+     * @brief Get a pointer of the camera of the scene
      *
      * @return auto
      */
     auto getCamera() const { return camera; }
+
     /**
-     * @brief Get the Color object
+     * @brief Get the background color of the scene
      *
      * @return glm::vec3
      */
-    glm::vec3 getColor() { return backgroundColor; }
+    glm::vec3 getColor() const { return backgroundColor; }
+
     /**
-     * @brief
+     * @brief Add an object to the scene
      *
      * @param object
      */
-    void addObject(std::shared_ptr<BasicObject> object) { objects.push_back(object); }
+    void addObject(const std::shared_ptr<BasicObject> &object) { objects.push_back(object); }
+
     /**
-     * @brief
+     * @brief Add a light source to the scene
      *
      * @param source
      */
-    void addSource(std::shared_ptr<Light> source) { sources.push_back(source); }
+    void addSource(const std::shared_ptr<Light> &source) { sources.push_back(source); }
 
     /**
-     * @brief Set the Camera object
+     * @brief Set the camera of the scene
      *
      * @param camera
      */
-    void setCamera(std::shared_ptr<Camera> camera) { this->camera = camera; }
+    void setCamera(const std::shared_ptr<Camera> &camera) { this->camera = camera; }
 
     /** The default constructor.
     /**
