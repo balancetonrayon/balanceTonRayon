@@ -89,7 +89,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
             shadowRays.clear();
             hitObject->intersect(ray, lightSource, inter, shadowRays);
 
-            shadowRays[0].biais(inter.normal, 0.0001f);
+            shadowRays[0].biais(inter.normal, 0.00001f);
 
             bool blocked = false;
             float iDistance;  // distance with the intersection
@@ -152,8 +152,8 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                 Ray reflectedRay =
                     Ray(shadowRays[0].getInitPt(),
                         ray.getDir() - 2 * glm::dot(ray.getDir(), inter.normal) * inter.normal);
-                outside ? reflectedRay.biais(+inter.normal, 0.001f)
-                        : reflectedRay.biais(-inter.normal, 0.001f);
+                outside ? reflectedRay.biais(+inter.normal, 0.00001f)
+                        : reflectedRay.biais(-inter.normal, 0.00001f);
                 glm::vec3 reflectionColor = castRay(reflectedRay, lightSource, objects,
                                                     backgroundColor, depth + 1, maxDepth);
 
