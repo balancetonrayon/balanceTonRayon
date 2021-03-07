@@ -184,7 +184,7 @@ void StdRayTracer::render(const Scene &scene, const std::string& filename) const
             int depth = 0;
             Ray primRay = camera->genRay(x, y);
 
-            color = castRay(primRay, lightSources, objects, scene.getColor(), depth,
+            color = castRay(primRay, lightSources, objects, scene.getBackgroundColor(), depth,
                             this->getMaxDepth());
             std::vector<unsigned char> colorVec{(unsigned char)color[0], (unsigned char)color[1],
                                                 (unsigned char)color[2], (unsigned char)255};
@@ -217,7 +217,7 @@ void FixedAntiAliasingRayTracer::render(const Scene &scene, const std::string& f
                 for (int idRayH = 1; idRayH < sqrtAAPower + 1; ++idRayH) {
                     int depth = 0;
                     Ray primRay = camera->genRay(x + d * idRayH, y + d * idRayV);
-                    color = color + castRay(primRay, lightSources, objects, scene.getColor(), depth,
+                    color = color + castRay(primRay, lightSources, objects, scene.getBackgroundColor(), depth,
                                             this->getMaxDepth());
                 }
             }
