@@ -16,6 +16,8 @@
 #include "ObjParser.hpp"
 #include "Parser.hpp"
 #include "RayTracer.hpp"
+#include "Object/TriangleMesh.hpp"
+#include "Object/DirectLight.hpp"
 
 Scene loadScene(std::string filename) {
     Scene scene;

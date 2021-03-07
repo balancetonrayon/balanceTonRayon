@@ -1,3 +1,13 @@
+/**
+ * @file Parser.hpp
+ * @author Atoli Huppé & Olivier Laurent
+ * @brief Parses XML to retrieve data about a scene.
+ * @version 1.0
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
+
 #pragma once
 
 #include <string>
@@ -6,8 +16,15 @@
 #include <glm/vec3.hpp>
 #include <tinyxml2.h>
 
-#include "Object.hpp"
+#include "Object/Camera.hpp"
+#include "Object/BasicObject.hpp"
+#include "Object/DirectLight.hpp"
 
+/**
+ * @class Parser
+ * @brief Parses XML for scene generation.
+ *
+ */
 class Parser {
     tinyxml2::XMLDocument doc;
 
@@ -35,7 +52,29 @@ public:
     const std::shared_ptr<Camera>& getCamera() const { return camera; }
 
 private:
+     /**
+     * @brief Fetch data from an XML element containing x, y elements.
+     *
+     * @param The element where the xy data lies.
+     * @return glm::vec2
+     */
+
     glm::vec2 getXY(const tinyxml2::XMLElement* element);
+
+    /**
+     * @brief Fetch data from an XML element containing x, y and z elements.
+     *
+     * @param The element where the xyz data lies.
+     * @return glm::vec3
+     */
     glm::vec3 getXYZ(const tinyxml2::XMLElement* element);
+
+     /**
+     * @brief Fetch data from an XML element containing r, g and b elements.
+     *
+     * @param The element where the rgb data lies.
+     * @return glm::vec3
+     */
+
     glm::vec3 getRGB(const tinyxml2::XMLElement* element);
 };

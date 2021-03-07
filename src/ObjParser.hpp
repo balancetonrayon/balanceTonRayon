@@ -13,7 +13,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "Object.hpp"
+#include "Object/PolygonMesh.hpp"
+
 
 /**
  * @class ObjParser
