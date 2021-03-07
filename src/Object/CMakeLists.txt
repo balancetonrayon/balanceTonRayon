@@ -13,7 +13,7 @@ set(SRC
     Triangle.cpp
     TriangleMesh.cpp
 
-    AeraLight.hpp
+    AreaLight.hpp
     BasicObject.hpp
     Box.hpp
     Camera.hpp

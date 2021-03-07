@@ -10,9 +10,9 @@
 #include <glm/gtx/norm.hpp>
 #include <glm/vec3.hpp>
 
+#include "PhysicalObject.hpp"
 #include "Ray.hpp"
 #include "Texture.hpp"
-#include "PhysicalObject.hpp"
 
 //!  The Camera class.
 /**
@@ -70,6 +70,13 @@ public:
     float focalLength;
 
     /**
+     * @brief Get the Number Of Pixels object
+     * 
+     * @return int 
+     */
+    int getNumberOfPixels() const { return resX * resY; }
+    
+    /**
      * @brief A normal member taking two arguments and returning the generated ray
      *
      * @param x the number of the x pixel
@@ -119,7 +126,6 @@ public:
             float y = std::sqrt(1 / (1 + dir[2] * dir[2] / (dir[1] * dir[1])));
             hv = glm::vec3(-dir[2] / dir[1] * y, y, 0);
         }
-
     }
 
 protected:

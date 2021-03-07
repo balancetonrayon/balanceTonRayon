@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 
 project(RayTracing VERSION 1.0)
 
-SET(CUSTOM_COMPILE_FLAGS "-O3 -Wno-comment")
+SET(CUSTOM_COMPILE_FLAGS "-O3 -march=native -flto -Wl,-O1 -Wno-comment")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

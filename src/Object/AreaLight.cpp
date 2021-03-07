@@ -1,4 +1,4 @@
-#include "AeraLight.hpp"
+#include "AreaLight.hpp"
 
 void AreaLight::outboundRays(const glm::vec3 &hitPt, std::vector<Ray> &rays) const {
     Ray ray;
