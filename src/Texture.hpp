@@ -211,7 +211,6 @@ public:
         // If the image is not a square, change the origin
         if (this->width != this->height) {
             if (glm::cross(hVec, wVec)[0] > 0) {
-                std::cout << glm::l2Norm(this->hVec) << " " << glm::l2Norm(this->wVec) << std::endl;
                 this->origin[1] =
                     origin[1] + glm::l2Norm(this->hVec) / 2.0f - glm::l2Norm(this->wVec) / 2.0f;
 

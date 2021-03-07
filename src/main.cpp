@@ -83,11 +83,10 @@ int main(int argc, const char **argv) {
                    "Please find the output file in the data folder."
                 << std::endl;
 
-            // Scene scene = loadScene("../data/walkTrees.xml");
-            Scene scene = testObj();
+            Scene scene = loadScene("../data/walkTrees.xml");
             FixedAntiAliasingRayTracer AArt(true, scene.getMaxDepth(), 1);
 
-            AArt.render(scene, "obj.png");  //"../data/AWalkThroughTheTrees.png");
+            AArt.render(scene, "../data/AWalkThroughTheTrees.png");
         } else if (rdm < 0.6) {
             std::cout << "Since no arguments have been given, generating 'The Dalton Family'. "
                          "Please find the output file in the data folder."
@@ -117,26 +116,32 @@ int main(int argc, const char **argv) {
             Scene scene = testObj();
             StdRayTracer srt(true, scene.getMaxDepth());
 
-            srt.render(scene, "../data/obj.png");
+            srt.render(scene, "../data/sphere.png");
         }
     } else if (argc == 2) {
         std::cout << "Your file is going to be loaded. If you want, you may specify n - with "
                      "(n<5) - if you want some anti-anliasing."
                   << std::endl;
-        Scene scene = loadScene(argv[1]);
-        std::cout << scene.getColor();
-        StdRayTracer srt(true, scene.getMaxDepth());
-
-        srt.render(scene, argv[1]);
-    } else if (argc >= 3) {
-        std::cout << "Your file is going to be loaded." << std::endl;
+        
         std::string filename = argv[1];
-        Scene scene = loadScene(argv[1]);
-
-        FixedAntiAliasingRayTracer AArt(true, scene.getMaxDepth(), std::stoi(argv[2]));
-
         size_t lastindex = filename.find_last_of(".");
         std::string rawname = filename.substr(0, lastindex);
+
+        Scene scene = loadScene("../data/" + filename);
+
+        StdRayTracer srt(true, scene.getMaxDepth());
+
+        srt.render(scene, "../data/" + rawname + ".png");
+    } else if (argc >= 3) {
+        std::cout << "Your file is going to be loaded." << std::endl;
+        
+        std::string filename = argv[1];
+        size_t lastindex = filename.find_last_of(".");
+        std::string rawname = filename.substr(0, lastindex);
+
+        Scene scene = loadScene("../data/" + filename);
+
+        FixedAntiAliasingRayTracer AArt(true, scene.getMaxDepth(), std::stoi(argv[2]));
 
         AArt.render(scene, "../data/" + rawname + ".png");
     }

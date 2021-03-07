@@ -492,8 +492,7 @@ public:
             float y = std::sqrt(1 / (1 + dir[2] * dir[2] / (dir[1] * dir[1])));
             hv = glm::vec3(-dir[2] / dir[1] * y, y, 0);
         }
-        // std::cout <<"pos : "<<pos <<std::endl<< vv << std::endl << dir << std::endl << hv <<
-        // std::endl;
+
     }
 
 protected:
