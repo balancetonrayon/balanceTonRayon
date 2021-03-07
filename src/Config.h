@@ -1,4 +1,2 @@
-#pragma once
-
-#define RayTracing_VERSION_MAJOR 1
-#define RayTracing_VERSION_MINOR 0
+#define RayTracing_VERSION_MAJOR @RayTracing_VERSION_MAJOR @
+#define RayTracing_VERSION_MINOR @RayTracing_VERSION_MINOR @

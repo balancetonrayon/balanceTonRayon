@@ -6,7 +6,9 @@
 #include <glm/vec3.hpp>
 #include <tinyxml2.h>
 
-#include "Object.hpp"
+#include "Object/Camera.hpp"
+#include "Object/BasicObject.hpp"
+#include "Object/DirectLight.hpp"
 
 class Parser {
     tinyxml2::XMLDocument doc;

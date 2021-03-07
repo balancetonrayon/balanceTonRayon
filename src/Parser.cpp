@@ -2,6 +2,11 @@
 
 #include <string>
 
+#include "Object/Plane.hpp"
+#include "Object/Sphere.hpp"
+#include "Object/Triangle.hpp"
+
+
 Parser::Parser(std::string xmlData) {
     doc.Parse(xmlData.c_str());
     auto scene = doc.FirstChildElement("scene");
@@ -72,7 +77,7 @@ Parser::Parser(std::string xmlData) {
                 foundChecked = true;
             }
         } catch (std::exception exc) {
-            -1;  // it doesn't matter
+            // -1;  // it doesn't matter
         }
 
         // object specific

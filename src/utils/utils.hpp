@@ -10,6 +10,9 @@
 #pragma once
 
 #include <glm/vec3.hpp>
+
+#define KEPSILON 0.00001
+
 /**
  * @brief Overload of the operator << for the glm::vec3
  *

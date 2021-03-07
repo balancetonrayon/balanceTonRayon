@@ -15,7 +15,9 @@
 #include <memory>
 #include <vector>
 
-#include "Object.hpp"
+#include "Object/BasicObject.hpp"
+#include "Object/Camera.hpp"
+
 /**
  * @class Scene
  * @brief
