@@ -443,6 +443,13 @@ public:
     float focalLength;
 
     /**
+     * @brief Get the Number of pixels of the image created by the camera
+     * 
+     * @return int the number of pixels
+     */
+    int getNumberOfPixels() const { return resX * resY; }
+
+    /**
      * @brief A normal member taking two arguments and returning the generated ray
      *
      * @param x the number of the x pixel
@@ -492,7 +499,6 @@ public:
             float y = std::sqrt(1 / (1 + dir[2] * dir[2] / (dir[1] * dir[1])));
             hv = glm::vec3(-dir[2] / dir[1] * y, y, 0);
         }
-
     }
 
 protected:

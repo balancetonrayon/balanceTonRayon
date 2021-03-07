@@ -108,7 +108,7 @@ public:
                     c5Vect.push_back(c5);
                 }
                 Polygon poly;
-                for (int k = 0; k < c1Vect.size(); ++k) {
+                for (unsigned k = 0; k < c1Vect.size(); ++k) {
                     poly.addVertex(v[c1Vect[k] - 1]);  // Les indices de l'obj commencent à 1
                     poly.addTexture(vt[c3Vect[k] - 1]);
                 }

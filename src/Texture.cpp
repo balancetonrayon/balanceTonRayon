@@ -12,7 +12,6 @@
 
 void Image::getPixelId(const glm::vec3 &intersectPt, int &hPix, int &wPix) const {
     glm::vec3 pos = intersectPt - this->origin;
-    float posNorm = glm::l2Norm(pos);
 
     float hAxis = glm::dot(pos, hVec) / hVecNorm2;
     float wAxis = glm::dot(pos, wVec) / wVecNorm2;
@@ -21,7 +20,7 @@ void Image::getPixelId(const glm::vec3 &intersectPt, int &hPix, int &wPix) const
 }
 
 bool Image::isInPicture(const int &hPix, const int &wPix) const {
-    return hPix >= 0 && wPix >= 0 && hPix < height && wPix < width;
+    return hPix >= 0 && wPix >= 0 && hPix < (int)height && wPix < (int)width;
 }
 
 void Image::getPixel(const int &hPix, const int &wPix, std::vector<unsigned char> &color) const {

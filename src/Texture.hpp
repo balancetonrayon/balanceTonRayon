@@ -135,16 +135,6 @@ public:
     std::vector<unsigned char> getPixels() { return this->pixels; }
 
     /**
-     * @brief Saves the pixels of the image as a PNG.
-     *
-     * @param filename
-     */
-    void savePixels(char *filename) {
-        ImgHandler ImgHandler;
-        ImgHandler.writePNG(filename, this->pixels, this->height, this->width);
-    }
-
-    /**
      * @brief Set the Pixels of the image.
      *
      * @param pix the pixels read from an image
