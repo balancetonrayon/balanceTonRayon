@@ -99,13 +99,6 @@ public:
     auto getCamera() const { return camera; }
 
     /**
-     * @brief Get the background color of the scene
-     *
-     * @return glm::vec3
-     */
-    glm::vec3 getColor() const { return backgroundColor; }
-
-    /**
      * @brief Add an object to the scene
      *
      * @param object
