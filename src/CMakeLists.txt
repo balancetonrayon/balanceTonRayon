@@ -45,6 +45,14 @@ find_package(tinyxml2 CONFIG REQUIRED)
 target_include_directories(RayTracing PUBLIC ${tinyxml2})
 target_link_libraries(RayTracing tinyxml2::tinyxml2)
 
+# OpenMP
+find_package(OpenMP)
+if (OPENMP_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+endif()
+
 # Adding include path by default to temporarily fix glm bug
 target_include_directories(RayTracing PUBLIC "/usr/local/include")
 
