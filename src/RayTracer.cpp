@@ -12,8 +12,10 @@
 #include "RayTracer.hpp"
 
 #include <algorithm>
+#include <chrono>
 
 #include <glm/gtc/constants.hpp>
+#include <omp.h>
 
 float fresnel(Ray iRay, const glm::vec3 &normal, const float &refractionIndex) {
     float kr;  // quantity of reflexion to be computed
@@ -68,7 +70,6 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
     if (depth > maxDepth) {
         return color;
     } else {
-
         std::vector<Ray> shadowRays;
         Inter inter;
         float closestDistance = INFINITY;
@@ -92,7 +93,6 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
             shadowRays[0].biais(inter.normal, 0.00001f);
 
             bool blocked = false;
-            float iDistance;  // distance with the intersection
 
             std::vector<Ray> sRays;
             glm::vec3 norm;
@@ -127,7 +127,7 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
                 Ray reflectedRay(
                     shadowRays[0].getInitPt(),
                     ray.getDir() - 2 * glm::dot(ray.getDir(), inter.normal) * inter.normal);
-             
+
                 color +=
                     detail::mult(hitObject->color, castRay(reflectedRay, lightSource, objects,
                                                            backgroundColor, depth + 1, maxDepth)) *
@@ -169,34 +169,62 @@ glm::vec3 castRay(Ray const &ray, std::shared_ptr<Light> const &lightSource,
     }
 }
 
-void StdRayTracer::render(const Scene &scene, const std::string& filename) const {
+void StdRayTracer::render(const Scene &scene, const std::string &filename) const {
+    std::chrono::time_point<std::chrono::system_clock> start, end, startRT, endRT, startC, endC;
+    std::chrono::duration<double> elapsRT;
+    double duration = 0;
     ImgHandler imgHandler;
 
     auto lightSources = scene.getSources()[0];
     auto objects = scene.getObjects();
     auto camera = scene.getCamera();
 
-    std::vector<unsigned char> image;
-    glm::vec3 color;
+    int resX = camera->resX;
+    int resY = camera->resY;
 
+    std::vector<unsigned char> image(scene.getCamera()->getNumberOfPixels() * 4);
+    glm::vec3 backgroundColor = scene.getBackgroundColor();
+    start = std::chrono::system_clock::now();
+
+#pragma omp parallel for simd schedule(dynamic, 10)
     for (unsigned x = 0; x < camera->resX; ++x) {
         for (unsigned y = 0; y < camera->resY; ++y) {
             int depth = 0;
+
             Ray primRay = camera->genRay(x, y);
 
-            color = castRay(primRay, lightSources, objects, scene.getBackgroundColor(), depth,
-                            this->getMaxDepth());
-            std::vector<unsigned char> colorVec{(unsigned char)color[0], (unsigned char)color[1],
-                                                (unsigned char)color[2], (unsigned char)255};
-            image.insert(image.end(), colorVec.begin(), colorVec.end());
+            if (omp_get_thread_num() == 0) startRT = std::chrono::system_clock::now();
+            glm::vec3 color = castRay(primRay, lightSources, objects, backgroundColor, depth,
+                                      this->getMaxDepth());
+            if (omp_get_thread_num() == 0) {
+                endRT = std::chrono::system_clock::now();
+                elapsRT = endRT - startRT;
+                duration += elapsRT.count();
+            }
+
+            image[((int)x * resX + (int)y) * 4] = (unsigned char)color[0];
+            image[((int)x * resX + (int)y) * 4 + 1] = (unsigned char)color[1];
+            image[((int)x * resX + (int)y) * 4 + 2] = (unsigned char)color[2];
+            image[((int)x * resX + (int)y) * 4 + 3] = (unsigned char)255;
         }
     }
+    end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elaps = end - start;
+    std::cout << "CPU(s) : calcul " << elaps.count() << std::endl
+              << "RT: " << duration << std::endl;
 
     imgHandler.writePNG(filename, image, camera->resX, camera->resY);
 }
 
-void FixedAntiAliasingRayTracer::render(const Scene &scene, const std::string& filename) const {
+void FixedAntiAliasingRayTracer::render(const Scene &scene, const std::string &filename) const {
+    std::chrono::time_point<std::chrono::system_clock> start, end, startRT, endRT;
+    std::chrono::duration<double> elapsRT;
+    double duration = 0;
+
     ImgHandler imgHandler;
+
+    std::vector<unsigned char> image(scene.getCamera()->getNumberOfPixels() * 4);
+    start = std::chrono::system_clock::now();
 
     int sqrtAAPower = this->getAAPower();
     float d = 1.0 / sqrtAAPower;
@@ -204,31 +232,47 @@ void FixedAntiAliasingRayTracer::render(const Scene &scene, const std::string& f
     auto lightSources = scene.getSources()[0];
     auto objects = scene.getObjects();
     auto camera = scene.getCamera();
+    int resX = camera->resX;
+    int resY = camera->resY;
+    int maxDepth = this->getMaxDepth();
 
-    std::vector<unsigned char> image;
+    glm::vec3 backgroundColor = scene.getBackgroundColor();
 
-    glm::vec3 color;
-    for (float x = 0; x < camera->resX; ++x) {
-        //std::cout << x << std::endl;
-        for (float y = 0; y < camera->resY; ++y) {
-            color = glm::vec3(0, 0, 0);
+#pragma omp parallel for simd schedule(dynamic, 10)
+    for (int x = 0; x < resX; x++) {
+        // std::cout << x << std::endl;
+        // std::cout << omp_get_thread_num() << std::endl;
+        for (int y = 0; y < resY; y++) {
+            glm::vec3 color = glm::vec3(0, 0, 0);
 
             for (int idRayV = 1; idRayV < sqrtAAPower + 1; ++idRayV) {
                 for (int idRayH = 1; idRayH < sqrtAAPower + 1; ++idRayH) {
                     int depth = 0;
-                    Ray primRay = camera->genRay(x + d * idRayH, y + d * idRayV);
-                    color = color + castRay(primRay, lightSources, objects, scene.getBackgroundColor(), depth,
-                                            this->getMaxDepth());
+                    Ray primRay = camera->genRay((float)x + d * idRayH, (float)y + d * idRayV);
+                    if (omp_get_thread_num() == 0) startRT = std::chrono::system_clock::now();
+                    color = color + castRay(primRay, lightSources, objects, backgroundColor, depth,
+                                            maxDepth);
+                    if (omp_get_thread_num() == 0) {
+                        endRT = std::chrono::system_clock::now();
+                        elapsRT = endRT - startRT;
+                        duration += elapsRT.count();
+                    }
                 }
             }
             color = color / ((float)(sqrtAAPower * sqrtAAPower));
-            std::vector<unsigned char> colorVec{(unsigned char)color[0], (unsigned char)color[1],
-                                                (unsigned char)color[2], (unsigned char)255};
-            image.insert(image.end(), colorVec.begin(), colorVec.end());
+            image[((int)x * resX + (int)y) * 4] = (unsigned char)color[0];
+            image[((int)x * resX + (int)y) * 4 + 1] = (unsigned char)color[1];
+            image[((int)x * resX + (int)y) * 4 + 2] = (unsigned char)color[2];
+            image[((int)x * resX + (int)y) * 4 + 3] = (unsigned char)255;
         }
     }
 
-    imgHandler.writePNG(filename, image, camera->resX, camera->resY);
+    end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elaps = end - start;
+    std::cout << "CPU(s) : calcul " << elaps.count() << std::endl
+              << "RT: " << duration << std::endl;
+
+    imgHandler.writePNG(filename, image, scene.getCamera()->resX, scene.getCamera()->resY);
 }
 
 // A finir :(
