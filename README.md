@@ -46,7 +46,7 @@ To use the project, just type
 ./RayTracing
 ```
 
-### Advanced use
+### Somewhat advanced use
 
 Look at the \*.xml files. Create your own, let's say file.xml. Put it in /data. Then type :
 

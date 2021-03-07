@@ -37,3 +37,11 @@ Nous avons décidé de créer une documentation en deux parties. La documentatio
 ## Cmake
 
 Cmake permet une gestion très facile des dépendances et permet plus de souplesse qu'un Makefile fait main. Le Makefile ou cmake étaient absolument nécessaires pour le projet. La compilation aurait sinon été trop complexe. De plus, il est possible de compiler sur les différents processeurs et ainsi gagner beaucoup de temps.
+
+## Arguments de compilation
+
+Nous avons décidé d'utiliser -O3 pour améliorer la compilation du code. La différence entre -O3 -O2 et -O1 semble assez faible sur notre problème.
+
+## Architecture du projet
+
+Posez-nous des questions ! :)
