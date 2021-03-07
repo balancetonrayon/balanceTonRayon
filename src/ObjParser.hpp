@@ -29,7 +29,6 @@ public:
      * @return PolygonMesh
      */
     PolygonMesh readObj(std::string filename) noexcept(false) {
-        std::cout << filename << std::endl;
         std::vector<glm::vec3> v;
         std::vector<glm::vec2> vt;
         std::vector<glm::vec3> vn;
@@ -53,7 +52,6 @@ public:
                 objFile >> type;
                 v.push_back(glm::vec3(v1, v2, v3));
             }
-            std::cout << v.size() << std::endl;
 
             bool texture3D = false;
             // Get the texture
@@ -69,7 +67,7 @@ public:
                 vt.push_back(glm::vec3(v1, v2, v3));
                 objFile >> type;
             }
-            std::cout << vt.size() << std::endl;
+
             // Get the normals
             while (type == "vn") {
                 objFile >> v1;
@@ -78,7 +76,7 @@ public:
                 vn.push_back(glm::vec3(v1, v2, v3));
                 objFile >> type;
             }
-            std::cout << vn.size() << std::endl;
+
             // Faces
             int c1;
             char c2;
@@ -108,16 +106,13 @@ public:
                     c1Vect.push_back(c1);
                     c3Vect.push_back(c3);
                     c5Vect.push_back(c5);
-                    std::cout << c1 << " " << c3 << " " << c5 << std::endl;
                 }
                 Polygon poly;
                 for (int k = 0; k < c1Vect.size(); ++k) {
                     poly.addVertex(v[c1Vect[k] - 1]);  // Les indices de l'obj commencent à 1
                     poly.addTexture(vt[c3Vect[k] - 1]);
                 }
-                std::cout << vn[c5Vect[0]] << std::endl;
                 poly.setNormal(vn[c5Vect[0]]);
-                std::cout << poly.normal << std::endl;
                 mesh.addPolygon(poly);
 
                 if (objFile.eof()) break;
