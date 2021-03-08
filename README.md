@@ -10,6 +10,8 @@ The developers have tried to reduce the amount of third parties/dependencies.
 
 You will need at least glm and tinyxml2. Lodepng is already included in the code.
 
+To install glm : `sudo apt install glmlib-dev` and tinyxml : `sudo apt install libtinyxml2-6`.
+
 ## How to Build the project
 
 First, you need to build the binaries. To do so clone the repository. Then type the following commands inside the new folder.
@@ -21,7 +23,7 @@ cmake ../src
 cmake --build .
 ```
 
-On peut utiliser `make -j` pour accélerer la compilation.
+Use `make -j` for faster compilation.
 
 Building Xcode Project
 
